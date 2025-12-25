@@ -1,27 +1,25 @@
-# main.py
-
 import os
 from datetime import datetime, timezone
 from playwright.sync_api import sync_playwright
-from typing import cast, List
 
-from config.types import EmpireSnapshotDict, PlanetDict
-from config.config import LOBBY_URL, MAIN_PAGE_URL_TEMPLATE, DEFAULT_PLANET_ID
+from config.types import EmpireSnapshotDict
+from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
+from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+
+from core.notifications.telegram_notifier import TelegramNotifier
+
 from core.session_manager import save_session, load_session
 from core.navigation import enter_universe
-from core.info_extractor import extract_empire_view
 from core.snapshot_manager import save_empire_snapshot
 from core.upgrade.auto_storage import upgrade_full_storages
-from core.notifications.telegram_notifier import TelegramNotifier
-from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_random_interval
-
+from core.info.empire import extract_empire_info
 
 def main() -> None:
     notifier = None
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
-        notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, verbose=True)
+        notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
         try:
             notifier.send_message("OGameBot is now ACTIVE.")
         except Exception as e:
@@ -45,39 +43,31 @@ def main() -> None:
         game_page = enter_universe(page)
         # After entering, optionally go directly to overview using config
         try:
-            url = MAIN_PAGE_URL_TEMPLATE.format(planet_id=DEFAULT_PLANET_ID)
+            url = COMPONENT_URL_TEMPLATE.format(planet_id=DEFAULT_PLANET_ID)
             game_page.goto(url)
         except Exception:
             pass
 
         try:
             while True:
-                print("Entered main game. Extracting basic info...")
+                print("Entered main game.")
 
-                # --- Empire View Extraction ---
-                print("\nNavigating to Empire View page and extracting all planet data...")
                 # --- Attack detection (overview page) ---
+                print("\nChecking for attack alerts on Overview page...")
                 attack_info = check_for_attack_alert(game_page)
                 if attack_info and notifier:
                     notifier.send_message(f"⚠️ ALERT: {attack_info}")
 
-                # Continue with empire view extraction
-                empire_url = "https://s271-en.ogame.gameforge.com/game/index.php?page=standalone&component=empire"
-                game_page.goto(empire_url)
-                html = game_page.content()
-                empire_data = extract_empire_view(html)
-                print("Empire View Planets:")
-                for planet in empire_data['planets']:
-                    print(f"- {planet['name']} (ID: {planet['id']}, Coords: {planet['coords']})")
-                    print(f"    Resources: {planet['resources']}")
-                    print(f"    Buildings: { {k: v['level'] for k, v in planet['buildings'].items()} }")
+                # --- Get Empire Info ---
+                print("\nNavigating to Empire View page and extracting all planets data...")
+                empire_data = extract_empire_info(game_page, notifier)
 
                 # Save the empire snapshot to a file
                 timestamp_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
                 filename = f"empire_snapshot_{timestamp_str.replace(':', '').replace('-', '').replace('.', '')}.json"
                 snapshot: EmpireSnapshotDict = {
                     "timestamp": timestamp_str,
-                    "planets": cast(List[PlanetDict], empire_data['planets'])
+                    "planets": empire_data['planets']
                 }
                 save_empire_snapshot(snapshot, filename)
 

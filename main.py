@@ -82,7 +82,7 @@ def main() -> None:
                 save_empire_snapshot(snapshot, filename)
 
                 # Always check and upgrade storages if needed (every loop)
-                upgrade_full_storages(snapshot)
+                upgrade_full_storages(snapshot, notifier)
 
                 sleep_random_interval()
         except KeyboardInterrupt:

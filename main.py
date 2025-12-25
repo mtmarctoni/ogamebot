@@ -8,9 +8,9 @@ from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
 from core.notifications.telegram_notifier import TelegramNotifier
 
-from core.session_manager import save_session, load_session
-from core.navigation import enter_universe
-from core.snapshot_manager import save_empire_snapshot
+from core.auth.session_manager import save_session, load_session
+from core.navigation.enter_universe import enter_universe
+from core.data.snapshot_manager import save_empire_snapshot
 from core.upgrade.auto_storage import upgrade_full_storages
 from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_random_interval

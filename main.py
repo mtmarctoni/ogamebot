@@ -1,4 +1,3 @@
-from core.utils.sleep_utils import sleep_random_interval
 # main.py
 
 import os
@@ -15,6 +14,8 @@ from core.snapshot_manager import save_empire_snapshot
 from core.upgrade.auto_storage import upgrade_full_storages
 from core.notifications.telegram_notifier import TelegramNotifier
 from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+from core.utils.attack_detection import check_for_attack_alert
+from core.utils.sleep_utils import sleep_random_interval
 
 
 def main() -> None:
@@ -55,6 +56,12 @@ def main() -> None:
 
                 # --- Empire View Extraction ---
                 print("\nNavigating to Empire View page and extracting all planet data...")
+                # --- Attack detection (overview page) ---
+                attack_info = check_for_attack_alert(game_page)
+                if attack_info and notifier:
+                    notifier.send_message(f"⚠️ ALERT: {attack_info}")
+
+                # Continue with empire view extraction
                 empire_url = "https://s271-en.ogame.gameforge.com/game/index.php?page=standalone&component=empire"
                 game_page.goto(empire_url)
                 html = game_page.content()

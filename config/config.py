@@ -11,13 +11,16 @@ REFRESH_TIME = 10  # seconds
 # Base URL for OGame server
 OGAME_BASE_URL = f"https://{DOMAIN}"
 
+# Main game URL
+OGAME_GAME_URL = f"{OGAME_BASE_URL}/game/index.php?page=ingame"
+
+# URL template for specific component navigation
+COMPONENT_URL_TEMPLATE = OGAME_GAME_URL + "&component={component}&cp={planet_id}"
+
 # Main page URL template (overview for a given planet)
 MAIN_PAGE_URL_TEMPLATE = (
     f"https://s{SERVER_ID}-{LANG}.ogame.gameforge.com/game/index.php?page=ingame&cp={{planet_id}}"
 )
-
-# URL template for specific component navigation
-COMPONENT_URL_TEMPLATE = "https://s{server}-{language}.ogame.gameforge.com/game/index.php?page=ingame&component={component}&cp={planet_id}"
 
 # OGame page components
 COMPONENTS = {

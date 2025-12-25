@@ -1,4 +1,9 @@
+
 import re
+from typing import Tuple
+
+# Type alias for all technology tuples (id, amount/level, category)
+TechnologyTuple = Tuple[int, int, str]
 
 
 class destination(object):
@@ -61,45 +66,45 @@ class speed(object):
 
 
 class buildings:
-    metal_mine: tuple[int, int, str] = (1, 1, 'supplies')
-    crystal_mine: tuple[int, int, str] = (2, 1, 'supplies')
-    deuterium_mine: tuple[int, int, str] = (3, 1, 'supplies')
-    solar_plant: tuple[int, int, str] = (4, 1, 'supplies')
-    fusion_plant: tuple[int, int, str] = (12, 1, 'supplies')
-    metal_storage: tuple[int, int, str] = (22, 1, 'supplies')
-    crystal_storage: tuple[int, int, str] = (23, 1, 'supplies')
-    deuterium_storage: tuple[int, int, str] = (24, 1, 'supplies')
+    metal_mine: TechnologyTuple = (1, 1, 'supplies')
+    crystal_mine: TechnologyTuple = (2, 1, 'supplies')
+    deuterium_mine: TechnologyTuple = (3, 1, 'supplies')
+    solar_plant: TechnologyTuple = (4, 1, 'supplies')
+    fusion_plant: TechnologyTuple = (12, 1, 'supplies')
+    metal_storage: TechnologyTuple = (22, 1, 'supplies')
+    crystal_storage: TechnologyTuple = (23, 1, 'supplies')
+    deuterium_storage: TechnologyTuple = (24, 1, 'supplies')
 
-    robotics_factory: tuple[int, int, str] = (14, 1, 'facilities')
-    shipyard: tuple[int, int, str] = (21, 1, 'facilities')
-    research_laboratory: tuple[int, int, str] = (31, 1, 'facilities')
-    alliance_depot: tuple[int, int, str] = (34, 1, 'facilities')
-    missile_silo: tuple[int, int, str] = (44, 1, 'facilities')
-    nanite_factory: tuple[int, int, str] = (15, 1, 'facilities')
-    terraformer: tuple[int, int, str] = (33, 1, 'facilities')
-    repair_dock: tuple[int, int, str] = (36, 1, 'facilities')
-    moon_base: tuple[int, int, str] = (41, 1, 'facilities')
-    sensor_phalanx: tuple[int, int, str] = (42, 1, 'facilities')
-    jump_gate: tuple[int, int, str] = (43, 1, 'facilities')
+    robotics_factory: TechnologyTuple = (14, 1, 'facilities')
+    shipyard: TechnologyTuple = (21, 1, 'facilities')
+    research_laboratory: TechnologyTuple = (31, 1, 'facilities')
+    alliance_depot: TechnologyTuple = (34, 1, 'facilities')
+    missile_silo: TechnologyTuple = (44, 1, 'facilities')
+    nanite_factory: TechnologyTuple = (15, 1, 'facilities')
+    terraformer: TechnologyTuple = (33, 1, 'facilities')
+    repair_dock: TechnologyTuple = (36, 1, 'facilities')
+    moon_base: TechnologyTuple = (41, 1, 'facilities')
+    sensor_phalanx: TechnologyTuple = (42, 1, 'facilities')
+    jump_gate: TechnologyTuple = (43, 1, 'facilities')
 
     @staticmethod
-    def solar_satellite(amount: int = 1) -> tuple[int, int, str]:
+    def solar_satellite(amount: int = 1) -> TechnologyTuple:
         return (212, amount, 'supplies')
 
     @staticmethod
-    def crawler(amount: int = 1) -> tuple[int, int, str]:
+    def crawler(amount: int = 1) -> TechnologyTuple:
         return (217, amount, 'supplies')
 
     @staticmethod
-    def is_supplies(supplies: tuple[int, int, str]) -> bool:
+    def is_supplies(supplies: TechnologyTuple) -> bool:
         return supplies[2] == 'supplies'
 
     @staticmethod
-    def is_facilities(facilities: tuple[int, int, str]) -> bool:
+    def is_facilities(facilities: TechnologyTuple) -> bool:
         return facilities[2] == 'facilities'
 
     @staticmethod
-    def building_name(building: tuple[int, int, str]) -> str | None:
+    def building_name(building: TechnologyTuple) -> str | None:
         mapping = {
             14: 'robotics_factory',
             21: 'shipyard',
@@ -126,51 +131,51 @@ class buildings:
         return mapping.get(building[0])
 
     @staticmethod
-    def rocket_launcher(amount: int = 1) -> tuple[int, int, str]:
+    def rocket_launcher(amount: int = 1) -> TechnologyTuple:
         return (401, amount, 'defenses')
 
     @staticmethod
-    def laser_cannon_light(amount: int = 1) -> tuple[int, int, str]:
+    def laser_cannon_light(amount: int = 1) -> TechnologyTuple:
         return (402, amount, 'defenses')
 
     @staticmethod
-    def laser_cannon_heavy(amount: int = 1) -> tuple[int, int, str]:
+    def laser_cannon_heavy(amount: int = 1) -> TechnologyTuple:
         return (403, amount, 'defenses')
 
     @staticmethod
-    def gauss_cannon(amount: int = 1) -> tuple[int, int, str]:
+    def gauss_cannon(amount: int = 1) -> TechnologyTuple:
         return (404, amount, 'defenses')
 
     @staticmethod
-    def ion_cannon(amount: int = 1) -> tuple[int, int, str]:
+    def ion_cannon(amount: int = 1) -> TechnologyTuple:
         return (405, amount, 'defenses')
 
     @staticmethod
-    def plasma_cannon(amount: int = 1) -> tuple[int, int, str]:
+    def plasma_cannon(amount: int = 1) -> TechnologyTuple:
         return (406, amount, 'defenses')
 
     @staticmethod
-    def shield_dome_small(amount: int = 1) -> tuple[int, int, str]:
+    def shield_dome_small(amount: int = 1) -> TechnologyTuple:
         return (407, amount, 'defenses')
 
     @staticmethod
-    def shield_dome_large(amount: int = 1) -> tuple[int, int, str]:
+    def shield_dome_large(amount: int = 1) -> TechnologyTuple:
         return (408, amount, 'defenses')
 
     @staticmethod
-    def missile_interceptor(amount: int = 1) -> tuple[int, int, str]:
+    def missile_interceptor(amount: int = 1) -> TechnologyTuple:
         return (502, amount, 'defenses')
 
     @staticmethod
-    def missile_interplanetary(amount: int = 1) -> tuple[int, int, str]:
+    def missile_interplanetary(amount: int = 1) -> TechnologyTuple:
         return (503, amount, 'defenses')
 
     @staticmethod
-    def is_defenses(defenses: tuple[int, int, str]) -> bool:
+    def is_defenses(defenses: TechnologyTuple) -> bool:
         return defenses[2] == 'defenses'
 
     @staticmethod
-    def defense_name(defense: tuple[int, int, str]) -> str | None:
+    def defense_name(defense: TechnologyTuple) -> str | None:
         if not buildings.is_defenses(defense):
             return None
         mapping = {
@@ -189,30 +194,29 @@ class buildings:
 
 
 class research(object):
-    energy = 113, 1, 'research'
-    laser = 120, 1, 'research'
-    ion = 121, 1, 'research'
-    hyperspace = 114, 1, 'research'
-    plasma = 122, 1, 'research'
-    combustion_drive = 115, 1, 'research'
-    impulse_drive = 117, 1, 'research'
-    hyperspace_drive = 118, 1, 'research'
-    espionage = 106, 1, 'research'
-    computer = 108, 1, 'research'
-    astrophysics = 124, 1, 'research'
-    research_network = 123, 1, 'research'
-    graviton = 199, 1, 'research'
-    weapons = 109, 1, 'research'
-    shielding = 110, 1, 'research'
-    armor = 111, 1, 'research'
+    energy: TechnologyTuple = (113, 1, 'research')
+    laser: TechnologyTuple = (120, 1, 'research')
+    ion: TechnologyTuple = (121, 1, 'research')
+    hyperspace: TechnologyTuple = (114, 1, 'research')
+    plasma: TechnologyTuple = (122, 1, 'research')
+    combustion_drive: TechnologyTuple = (115, 1, 'research')
+    impulse_drive: TechnologyTuple = (117, 1, 'research')
+    hyperspace_drive: TechnologyTuple = (118, 1, 'research')
+    espionage: TechnologyTuple = (106, 1, 'research')
+    computer: TechnologyTuple = (108, 1, 'research')
+    astrophysics: TechnologyTuple = (124, 1, 'research')
+    research_network: TechnologyTuple = (123, 1, 'research')
+    graviton: TechnologyTuple = (199, 1, 'research')
+    weapons: TechnologyTuple = (109, 1, 'research')
+    shielding: TechnologyTuple = (110, 1, 'research')
+    armor: TechnologyTuple = (111, 1, 'research')
 
-    def is_research(research):
-        if research[2] == 'research':
-            return True
-        else:
-            return False
+    @staticmethod
+    def is_research(research: TechnologyTuple) -> bool:
+        return research[2] == 'research'
 
-    def research_name(res):
+    @staticmethod
+    def research_name(res: TechnologyTuple) -> str | None:
         if research.is_research(res):
             if res[0] == 113: return 'energy'
             elif res[0] == 120: return 'laser'
@@ -232,30 +236,48 @@ class research(object):
             elif res[0] == 111: return 'armor'
 
 class ships(object):
-    def light_fighter(self: int = 1): return 204, self, 'shipyard'
-    def heavy_fighter(self: int = 1): return 205, self, 'shipyard'
-    def cruiser(self: int = 1): return 206, self, 'shipyard'
-    def battleship(self: int = 1): return 207, self, 'shipyard'
-    def interceptor(self: int = 1): return 215, self, 'shipyard'
-    def bomber(self: int = 1): return 211, self, 'shipyard'
-    def destroyer(self: int = 1): return 213, self, 'shipyard'
-    def deathstar(self: int = 1): return 214, self, 'shipyard'
-    def reaper(self: int = 1): return 218, self, 'shipyard'
-    def explorer(self: int = 1): return 219, self, 'shipyard'
-    def small_transporter(self: int = 1): return 202, self, 'shipyard'
-    def large_transporter(self: int = 1): return 203, self, 'shipyard'
-    def colonyShip(self: int = 1): return 208, self, 'shipyard'
-    def recycler(self: int = 1): return 209, self, 'shipyard'
-    def espionage_probe(self: int = 1): return 210, self, 'shipyard'
-    def crawler(self: int = 1): return 217, self, 'shipyard'
+    @staticmethod
+    def light_fighter(amount: int = 1) -> TechnologyTuple: return (204, amount, 'shipyard')
+    @staticmethod
+    def heavy_fighter(amount: int = 1) -> TechnologyTuple: return (205, amount, 'shipyard')
+    @staticmethod
+    def cruiser(amount: int = 1) -> TechnologyTuple: return (206, amount, 'shipyard')
+    @staticmethod
+    def battleship(amount: int = 1) -> TechnologyTuple: return (207, amount, 'shipyard')
+    @staticmethod
+    def interceptor(amount: int = 1) -> TechnologyTuple: return (215, amount, 'shipyard')
+    @staticmethod
+    def bomber(amount: int = 1) -> TechnologyTuple: return (211, amount, 'shipyard')
+    @staticmethod
+    def destroyer(amount: int = 1) -> TechnologyTuple: return (213, amount, 'shipyard')
+    @staticmethod
+    def deathstar(amount: int = 1) -> TechnologyTuple: return (214, amount, 'shipyard')
+    @staticmethod
+    def reaper(amount: int = 1) -> TechnologyTuple: return (218, amount, 'shipyard')
+    @staticmethod
+    def explorer(amount: int = 1) -> TechnologyTuple: return (219, amount, 'shipyard')
+    @staticmethod
+    def small_transporter(amount: int = 1) -> TechnologyTuple: return (202, amount, 'shipyard')
+    @staticmethod
+    def large_transporter(amount: int = 1) -> TechnologyTuple: return (203, amount, 'shipyard')
+    @staticmethod
+    def colonyShip(amount: int = 1) -> TechnologyTuple: return (208, amount, 'shipyard')
+    @staticmethod
+    def recycler(amount: int = 1) -> TechnologyTuple: return (209, amount, 'shipyard')
+    @staticmethod
+    def espionage_probe(amount: int = 1) -> TechnologyTuple: return (210, amount, 'shipyard')
+    @staticmethod
+    def crawler(amount: int = 1) -> TechnologyTuple: return (217, amount, 'shipyard')
 
-    def is_ship(ship):
+    @staticmethod
+    def is_ship(ship: TechnologyTuple) -> bool:
         if ship[2] == 'shipyard':
             return True
         else:
             return False
 
-    def ship_name(ship):
+    @staticmethod
+    def ship_name(ship: TechnologyTuple) -> str | None:
         if ships.is_ship(ship):
             if ship[0] == 204: return 'light_fighter'
             elif ship[0] == 205: return 'heavy_fighter'
@@ -274,34 +296,36 @@ class ships(object):
             elif ship[0] == 210: return 'espionage_probe'
             elif ship[0] == 217: return 'crawler'
 
-    def ship_amount(ship):
+    @staticmethod
+    def ship_amount(ship: TechnologyTuple) -> int | None:
         if ships.is_ship(ship):
             return ship[1]
 
-    def ship_id(ship):
+    @staticmethod
+    def ship_id(ship: TechnologyTuple) -> int | None:
         if ships.is_ship(ship):
             return ship[0]
 
 
 def fleet(
-        light_fighter=0,
-        heavy_fighter=0,
-        cruiser=0,
-        battleship=0,
-        interceptor=0,
-        bomber=0,
-        destroyer=0,
-        deathstar=0,
-        reaper=0,
-        explorer=0,
-        small_transporter=0,
-        large_transporter=0,
-        colonyShip=0,
-        recycler=0,
-        espionage_probe=0,
-        crawler=0
-):
-    fleetList = [
+    light_fighter: int = 0,
+    heavy_fighter: int = 0,
+    cruiser: int = 0,
+    battleship: int = 0,
+    interceptor: int = 0,
+    bomber: int = 0,
+    destroyer: int = 0,
+    deathstar: int = 0,
+    reaper: int = 0,
+    explorer: int = 0,
+    small_transporter: int = 0,
+    large_transporter: int = 0,
+    colonyShip: int = 0,
+    recycler: int = 0,
+    espionage_probe: int = 0,
+    crawler: int = 0
+) -> list[TechnologyTuple]:
+    fleetList: list[TechnologyTuple] = [
         ships.light_fighter(light_fighter),
         ships.heavy_fighter(heavy_fighter),
         ships.cruiser(cruiser),
@@ -319,16 +343,13 @@ def fleet(
         ships.espionage_probe(espionage_probe),
         ships.crawler(crawler)
     ]
-    fleetList = [ship for ship in fleetList if ship[1] != 0]
-    return fleetList
+    return [ship for ship in fleetList if ship[1] != 0]
 
-
-
-def convert_tech(code, category):
+def convert_tech(code: int, category: str) -> TechnologyTuple:
     return code, 1, category
 
 
-def resources(metal=0.0, crystal=0.0, deuterium=0.0):
+def resources(metal: float =0.0, crystal: float =0.0, deuterium: float =0.0):
     return [int(metal), int(crystal), int(deuterium)]
 
 
@@ -355,8 +376,8 @@ class messages:
     spy_reports = 20
 
 
-def price(technology, level=1):
-    def multipli_resources(resources, multiplyer):
+def price(technology: TechnologyTuple, level: int = 1):
+    def multipli_resources(resources: list[int], multiplyer: int) -> list[int]:
         return [resource * multiplyer for resource in resources]
 
     if ships.is_ship(technology):

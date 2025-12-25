@@ -2,6 +2,7 @@
 
 # Core dependencies
 python-dotenv
+requests
 playwright
 beautifulsoup4
 

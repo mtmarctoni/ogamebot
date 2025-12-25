@@ -20,7 +20,7 @@ from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 def main() -> None:
     notifier = None
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
-        notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
+        notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, verbose=True)
         try:
             notifier.send_message("OGameBot is now ACTIVE.")
         except Exception as e:

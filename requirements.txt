@@ -1,0 +1,9 @@
+# requirements.txt
+
+# Core dependencies
+python-dotenv
+playwright
+beautifulsoup4
+
+# Standard library modules (no need to install):
+# typing, os, datetime, time, json, re

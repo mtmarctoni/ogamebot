@@ -102,6 +102,31 @@ class buildings:
     jump_gate: TechnologyTuple = (43, 1, 'facilities')
 
     @staticmethod
+    def get_name(building_id: int) -> str | None:
+        mapping = {
+            1: 'Metal Mine',
+            2: 'Crystal Mine',
+            3: 'Deuterium Mine',
+            4: 'Solar Plant',
+            12: 'Fusion Reactor',
+            22: 'Metal Storage',
+            23: 'Crystal Storage',
+            24: 'Deuterium Tank',
+            14: 'Robotics Factory',
+            21: 'Shipyard',
+            31: 'Research Laboratory',
+            34: 'Alliance Depot',
+            44: 'Missile Silo',
+            15: 'Nanite Factory',
+            33: 'Terraformer',
+            36: 'Repair Dock',
+            41: 'Moon Base',
+            42: 'Sensor Phalanx',
+            43: 'Jump Gate',
+        }
+        return mapping.get(building_id)
+
+    @staticmethod
     def solar_satellite(amount: int = 1) -> TechnologyTuple:
         return (212, amount, 'supplies')
 

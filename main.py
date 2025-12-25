@@ -9,7 +9,7 @@ from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 from core.notifications.telegram_notifier import TelegramNotifier
 
 from core.auth.session_manager import save_session, load_session
-from core.navigation.enter_universe import enter_universe
+from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
 from core.upgrade.auto_storage import upgrade_full_storages
 from core.utils.attack_detection import check_for_attack_alert
@@ -72,7 +72,7 @@ def main() -> None:
                 save_empire_snapshot(snapshot, filename)
 
                 # Always check and upgrade storages if needed (every loop)
-                upgrade_full_storages(snapshot, notifier)
+                upgrade_full_storages(snapshot, game_page, notifier)
 
                 sleep_random_interval()
         except KeyboardInterrupt:

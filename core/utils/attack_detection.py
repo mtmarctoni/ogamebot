@@ -2,7 +2,8 @@
 from bs4 import BeautifulSoup
 from typing import Optional
 from playwright.sync_api import Page
-from config.config import COMPONENT_URL_TEMPLATE, COMPONENTS, DEFAULT_PLANET_ID
+from config.config import COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
+from config.constants import COMPONENTS
 from core.notifications.telegram_notifier import TelegramNotifier
 
 def detect_attack(html: str) -> Optional[str]:
@@ -26,7 +27,7 @@ def check_for_attack_alert(page: Page, notifier: Optional[TelegramNotifier] = No
     If notifier is provided, sends a Telegram message on attack.
     """
     overview_url = COMPONENT_URL_TEMPLATE.format(
-        component=COMPONENTS["overview"],
+        component=COMPONENTS.overview,
         planet_id=DEFAULT_PLANET_ID
     )
     page.goto(overview_url)

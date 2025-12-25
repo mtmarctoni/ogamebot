@@ -8,22 +8,6 @@ LANG = "en"
 DOMAIN = f"s{SERVER_ID}-{LANG}.ogame.gameforge.com"
 REFRESH_TIME = 10  # seconds
 
-# OGame page components
-COMPONENTS = {
-    "overview": "overview",
-    "supplies": "supplies",
-    "lfbuildings": "lfbuildings",
-    "facilities": "facilities",
-    "traderOverview": "traderOverview",
-    "research": "research",
-    "shipyard": "shipyard",
-    "defenses": "defenses",
-    "fleetdispatch": "fleetdispatch",
-    "galaxy": "galaxy",
-    "empire": "empire",
-    "messages": "messages",
-}
-
 # Base URL for OGame server
 OGAME_BASE_URL = f"https://{DOMAIN}"
 
@@ -34,8 +18,7 @@ OGAME_GAME_URL = f"{OGAME_BASE_URL}/game/index.php?page=ingame"
 COMPONENT_URL_TEMPLATE = f"{OGAME_GAME_URL}&component={{component}}&cp={{planet_id}}"
 
 # URL to get empire view
-EMPIRE_VIEW_URL = f'{OGAME_BASE_URL}/game/index.php?page=standalone&component={COMPONENTS["empire"]}'
-
+EMPIRE_VIEW_URL = f'{OGAME_BASE_URL}/game/index.php?page=standalone&component=empire'
 
 # Default planet ids
 PLANET_IDS = {

@@ -5,6 +5,20 @@ from typing import Tuple
 # Type alias for all technology tuples (id, amount/level, category)
 TechnologyTuple = Tuple[int, int, str]
 
+# OGame page components
+class COMPONENTS:
+    overview = "overview"
+    supplies = "supplies"
+    lfbuildings = "lfbuildings"
+    facilities = "facilities"
+    traderOverview = "traderOverview"
+    research = "research"
+    shipyard = "shipyard"
+    defenses = "defenses"
+    fleetdispatch = "fleetdispatch"
+    galaxy = "galaxy"
+    empire = "empire"
+    messages = "messages"
 
 class destination(object):
     outer_space = 0

@@ -48,6 +48,18 @@ class EmpireSnapshotDict(TypedDict):
     timestamp: str  # ISO8601
     planets: List[PlanetDict]
 
+class StorageUpgradeCandidate(TypedDict):
+    planet_id: str
+    planet_name: str
+    coordinates: str
+    resource: str
+    current: int
+    max: int
+    percent: float
+    building_id: int
+    building_level: int | str
+    upgradable: bool
+
 # Example usage:
 # snapshot: EmpireSnapshotDict = {...}
 # with open('empire_snapshot.json', 'w') as f:

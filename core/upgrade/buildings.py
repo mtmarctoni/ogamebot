@@ -1,8 +1,29 @@
-from typing import List, Dict, Any
-from config.types import EmpireSnapshotDict
+from playwright.sync_api import Page
+from typing import List
+
+from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
 from config.constants import buildings
 
-def find_storages_to_upgrade(snapshot: EmpireSnapshotDict, threshold: float = 0.95) -> List[Dict[str, Any]]:
+def is_upgrading(page: Page, building_id: int) -> bool:
+    """
+    Checks if the storage building with building_id is currently upgrading on the current planet.
+    Looks for data-status="active" or a countdown timer in the technology li.
+    """
+    tech_li_selector = f'#technologies li.technology[data-technology="{building_id}"]'
+    li = page.query_selector(tech_li_selector)
+    if not li:
+        return False
+    # Check for data-status="active"
+    if li.get_attribute('data-status') == 'active':
+        return True
+    # Or check for countdown timer
+    countdown = li.query_selector('time.buildingCountdown')
+    
+    return countdown is not None
+
+def find_storages_to_upgrade(
+    snapshot: EmpireSnapshotDict, threshold: float = 0.95
+) -> List[StorageUpgradeCandidate]:
     """
     Analyze the empire snapshot and return a list of storages that should be upgraded.
     Each item contains verbose info: planet, resource, current, max, percent, building_id, upgradable.
@@ -13,8 +34,9 @@ def find_storages_to_upgrade(snapshot: EmpireSnapshotDict, threshold: float = 0.
         'crystal': buildings.crystal_storage[0],
         'deuterium': buildings.deuterium_storage[0],
     }
-    results: List[Dict[str, Any]] = []
+    results: List[StorageUpgradeCandidate] = []
     for planet in snapshot.get('planets', []):
+        planet_id = planet.get('id')
         planet_name = planet.get('name')
         coords = planet.get('coordinates')
         storage = planet.get('storage', {})
@@ -31,14 +53,15 @@ def find_storages_to_upgrade(snapshot: EmpireSnapshotDict, threshold: float = 0.
             level = building_info.get('level', '?')
             if percent >= threshold and upgradable:
                 results.append({
-                    'planet': planet_name,
-                    'coordinates': coords,
-                    'resource': resource,
-                    'current': current,
-                    'max': max_cap,
-                    'percent': percent,
-                    'building_id': building_id,
-                    'building_level': level,
-                    'upgradable': upgradable,
+                    'planet_id': str(planet_id) if planet_id is not None else "",
+                    'planet_name': str(planet_name) if planet_name is not None else '',
+                    'coordinates': str(coords) if coords is not None else '',
+                    'resource': str(resource),
+                    'current': int(current),
+                    'max': int(max_cap),
+                    'percent': float(percent),
+                    'building_id': int(building_id),
+                    'building_level': int(level) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else str(level),
+                    'upgradable': bool(upgradable),
                 })
     return results

@@ -1,32 +1,60 @@
-
 from typing import Optional
+from playwright.sync_api import Page
+
 from config.types import EmpireSnapshotDict
 from core.notifications.telegram_notifier import TelegramNotifier
-from core.upgrade.buildings import find_storages_to_upgrade
+from core.upgrade.buildings import find_storages_to_upgrade, is_upgrading
+from core.navigation.planet import navigate_to_planet
 
-# Placeholder for navigation and upgrade logic
-# You will need to implement the actual browser automation logic
-
-def upgrade_full_storages(snapshot: EmpireSnapshotDict, notifier: Optional[TelegramNotifier] = None) -> None:
+def click_upgrade_button(page: Page, building_id: int) -> bool:
     """
-    Wrapper function to find storages to upgrade and trigger the upgrade process.
-    Loads the latest snapshot if not provided, finds storages to upgrade, and (in the future) upgrades them.
+    Clicks the upgrade button for the given building ID on the current planet.
+    Returns True if upgrade was triggered, False otherwise.
     """
+    # Find the correct upgrade button inside #technologies for the given building_id
+    selector = f'#technologies li.technology[data-technology="{building_id}"] button.upgrade'
+    try:
+        page.wait_for_selector(selector, timeout=3000)
+        btn = page.query_selector(selector)
+        if btn:
+            btn.click()
+            # Wait up to 5 seconds for confirmation
+            for _ in range(10):
+                if is_upgrading(page, building_id):
+                    return True
+                page.wait_for_timeout(500)
+    except Exception:
+        pass
+    return False
 
-    storages_to_upgrade =find_storages_to_upgrade(snapshot)
+def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> None:
+    """
+    Finds storages to upgrade and triggers the upgrade process using Playwright.
+    """
+    storages_to_upgrade = find_storages_to_upgrade(snapshot)
     if not storages_to_upgrade:
         print("No storages need upgrading.")
         return
 
     for storage in storages_to_upgrade:
-        print(f"[UPGRADE] {storage['planet']} {storage['coordinates']}: {storage['resource']} is {storage['percent']*100:.1f}% full (level {storage['building_level']}). Should upgrade building ID {storage['building_id']}.")
-        # TODO: Implement navigation and upgrade logic here
-        # Example: navigate_to_planet(storage['planet'])
-        #          click_upgrade_button(storage['building_id'])
+        print(f"[UPGRADE] {storage['planet_name']} {storage['coordinates']}: {storage['resource']} is {storage['percent']*100:.1f}% full (level {storage['building_level']}). Should upgrade building ID {storage['building_id']}.")
         if notifier:
             try:
                 notifier.send_message(
-                    f"⚠️ STORAGE ALERT: {storage['planet']} {storage['coordinates']}: {storage['resource'].title()} storage at {int(storage['percent']*100)}% (Level {storage['building_level']}, {storage['current']}/{storage['max']}) needs upgrade."
+                    f"⚠️ STORAGE ALERT: {storage['planet_name']} {storage['coordinates']}: {storage['resource'].title()} storage at {int(storage['percent']*100)}% (Level {storage['building_level']}, {storage['current']}/{storage['max']}) needs upgrade."
                 )
             except Exception as e:
                 print(f"[TELEGRAM ERROR] Could not send storage alert: {e}")
+        try:
+            navigate_to_planet(page, storage['planet_id'])
+            upgraded = click_upgrade_button(page, storage['building_id'])
+            if upgraded:
+                print(f"[ACTION] Upgrade triggered for {storage['resource']} storage on {storage['planet_name']}.")
+                if notifier:
+                    notifier.send_message(f"✅ Upgrade triggered for {storage['resource'].title()} storage on {storage['planet_name']}.")
+            else:
+                print(f"[WARN] Could not trigger upgrade for {storage['resource']} storage on {storage['planet_name']}.")
+        except Exception as e:
+            print(f"[ERROR] Failed to upgrade {storage['resource']} storage on {storage['planet_name']}: {e}")
+            if notifier:
+                notifier.send_message(f"❌ Failed to upgrade {storage['resource'].title()} storage on {storage['planet_name']}: {e}")

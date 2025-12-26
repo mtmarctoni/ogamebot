@@ -1,5 +1,6 @@
 from typing import List, Optional
 from config.constants import RESOURCE_TO_STORAGE, ResourceClass
+from config.config import STORAGE_WARNING_THRESHOLD, STORAGE_UPGRADE_THRESHOLD
 from config.types import EmpireSnapshotDict, PlanetResources, PlanetStorage
 from core.notifications.telegram_notifier import TelegramNotifier
 
@@ -22,7 +23,13 @@ def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[Telegram
             current = resources.get(r, 0)
             max_cap = storage.get(RESOURCE_TO_STORAGE[r])
             percent = (current / max_cap * 100) if max_cap else 0
-            lines.append(f"{res_map.get(r, r.title())} {current:,} - ({percent:.1f}%)")
+            alert = ''
+            if max_cap:
+                if percent >= STORAGE_UPGRADE_THRESHOLD * 100:
+                    alert = '🚨'
+                elif percent >= STORAGE_WARNING_THRESHOLD * 100:
+                    alert = '⚠️'
+            lines.append(f"{res_map.get(r, r.title())} {current:,} - ({percent:.1f}%) {alert}")
         res_str = '\n'.join(lines)
         planet_summary = (
             f"★ {name} [{coords}]\n"

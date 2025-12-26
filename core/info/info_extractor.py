@@ -1,13 +1,12 @@
-# info_extractor.py
-"""
-Extracts basic game info from the OGame main page using Playwright.
-"""
-
-from typing import Dict, Any, List, cast, Match
 from playwright.sync_api import Page
 import re
-from config.config import OGAME_BASE_URL
 from bs4 import BeautifulSoup
+
+from typing import Dict, Any, List, cast, Match
+from config.config import OGAME_BASE_URL
+
+from config.constants import ResourceClass, ResourceStorageClass
+
 
 def extract_empire_view_from_page(page: Page) -> Dict[str, List[Dict[str, Any]]]:
     """
@@ -84,7 +83,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
 
         # Resources
         resources = {}
-        for res in ['metal', 'crystal', 'deuterium', 'food', 'population']:
+        for res in ResourceClass.allResources():
             tag = planet_div.select_one(f'.values.resources .{res} span')
             if tag:
                 val = tag.get_text(strip=True).replace(',', '')
@@ -104,7 +103,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
 
         # Storage
         storage = {}
-        for res in ['metalStorage', 'crystalStorage', 'deuteriumStorage', 'foodStorage', 'populationStorage']:
+        for res in ResourceStorageClass.allStorages():
             tag = planet_div.select_one(f'.values.storage .{res}')
             if tag:
                 val = tag.get_text(strip=True).replace(',', '')

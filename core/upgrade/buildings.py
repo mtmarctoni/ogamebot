@@ -2,7 +2,7 @@ from playwright.sync_api import Page
 from typing import List
 
 from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
-from config.constants import buildings
+from config.constants import RESOURCE_TO_STORAGE, buildings
 
 def is_upgrading(page: Page, building_id: int) -> bool:
     """
@@ -42,16 +42,24 @@ def find_storages_to_upgrade(
         storage = planet.get('storage', {})
         resources = planet.get('resources', {})
         buildings_data = planet.get('buildings', {})
+        print(f"[DEBUG] Planet: {planet_name} ({coords})")
+        print(f"  Storage: {storage}")
+        print(f"  Resources: {resources}")
+        print(f"  Buildings: {buildings_data}")
         for resource, building_id in resource_to_building.items():
             current = resources.get(resource)
-            max_cap = storage.get(resource)
+            max_cap = storage.get(RESOURCE_TO_STORAGE[resource])
+            print(f"    [DEBUG] Resource: {resource}, Current: {current}, Max: {max_cap}")
             if current is None or max_cap is None or max_cap == 0:
+                print(f"      [SKIP] Missing or zero max_cap for {resource}")
                 continue
             percent = current / max_cap
             building_info = buildings_data.get(str(building_id), {})
             upgradable = building_info.get('upgradable', False)
             level = building_info.get('level', '?')
+            print(f"      [DEBUG] Percent: {percent:.2f}, Upgradable: {upgradable}, Level: {level}")
             if percent >= threshold and upgradable:
+                print(f"      [ADD] Storage upgrade candidate for {resource}")
                 results.append({
                     'planet_id': str(planet_id) if planet_id is not None else "",
                     'planet_name': str(planet_name) if planet_name is not None else '',
@@ -64,4 +72,6 @@ def find_storages_to_upgrade(
                     'building_level': int(level) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else str(level),
                     'upgradable': bool(upgradable),
                 })
+            else:
+                print(f"      [NO ADD] Not over threshold or not upgradable")
     return results

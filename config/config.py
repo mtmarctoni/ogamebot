@@ -25,6 +25,7 @@ PLANET_IDS = {
     "default": "33625285",
     "colony1": "33629156",
     "colony2": "33630366",
+    "colony3": "33632165",
 }
 
 DEFAULT_PLANET_ID = PLANET_IDS["default"]  # Main planet

@@ -20,6 +20,49 @@ class COMPONENTS:
     empire = "empire"
     messages = "messages"
 
+class ResourceStorageClass:
+    metal_storage = 'storageMetal'
+    crystal_storage = 'storageCrystal'
+    deuterium_storage = 'storageDeuterium'
+    food_storage = 'storageFood'
+    population_storage = 'storagePopulation'
+
+    @classmethod
+    def allStorages(cls) -> list[str]:
+        return [
+            cls.metal_storage,
+            cls.crystal_storage,
+            cls.deuterium_storage,
+            cls.food_storage,
+            cls.population_storage,
+        ]
+    
+class ResourceClass:
+    metal = 'metal'
+    crystal = 'crystal'
+    deuterium = 'deuterium'
+    energy = 'energy'
+    food = 'food'
+    population = 'population'
+
+    @classmethod
+    def allResources(cls) -> list[str]:
+        return [
+            cls.metal,
+            cls.crystal,
+            cls.deuterium,
+            cls.energy,
+            cls.food,
+            cls.population,
+        ]
+    
+RESOURCE_TO_STORAGE = {
+    ResourceClass.metal: ResourceStorageClass.metal_storage,
+    ResourceClass.crystal: ResourceStorageClass.crystal_storage,
+    ResourceClass.deuterium: ResourceStorageClass.deuterium_storage,
+    ResourceClass.food: ResourceStorageClass.food_storage,
+    ResourceClass.population: ResourceStorageClass.population_storage,
+}
 class destination(object):
     outer_space = 0
     planet = 1

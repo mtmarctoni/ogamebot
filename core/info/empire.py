@@ -55,7 +55,7 @@ def extract_empire_info(page: Page, notifier: Optional[TelegramNotifier]) -> Emp
     Navigates to the Empire View page and extracts planet data.
     """
     page.goto(EMPIRE_VIEW_URL)
-    page.wait_for_selector("div.planet")  # Wait for at least one planet to load
+    page.wait_for_selector("div.planetWrapper div.planet", state="visible", timeout=30000)
     html = page.content()
     empire_data = cast(EmpireSnapshotDict, extract_empire_view(html))
     log_empire_view(empire_data, notifier)  # Log and notify

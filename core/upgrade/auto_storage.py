@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Tuple
 from playwright.sync_api import Page
 
 from config.types import EmpireSnapshotDict
@@ -6,10 +6,12 @@ from core.notifications.telegram_notifier import TelegramNotifier
 from core.upgrade.buildings import find_storages_to_upgrade, is_upgrading
 from core.navigation.planet import navigate_to_planet
 
-def click_upgrade_button(page: Page, building_id: int) -> bool:
+def click_upgrade_button(page: Page, building_id: int) -> Tuple[bool, Optional[int]]:
     """
     Clicks the upgrade button for the given building ID on the current planet.
-    Returns True if upgrade was triggered, False otherwise.
+    Returns a tuple (bool, Optional[int]):
+    - True if upgrade was triggered, False otherwise.
+    - The upgrade duration in seconds, or None if not available.
     """
     # Find the correct upgrade button inside #technologies for the given building_id
     selector = f'#technologies li.technology[data-technology="{building_id}"] button.upgrade'
@@ -21,20 +23,37 @@ def click_upgrade_button(page: Page, building_id: int) -> bool:
             # Wait up to 5 seconds for confirmation
             for _ in range(10):
                 if is_upgrading(page, building_id):
-                    return True
+                    # Extract upgrade duration from the page
+                    duration_selector = '#technologies li.technology.active time.countdown.buildingCountdown'
+                    try:
+                        time_element = page.query_selector(duration_selector)
+                        if time_element:
+                            start_attr = time_element.get_attribute("data-start")
+                            end_attr = time_element.get_attribute("data-end")
+                            if start_attr and end_attr:
+                                start = int(start_attr)
+                                end = int(end_attr)
+                                duration_seconds = end - start
+                                return True, duration_seconds
+                            return True, None
+                    except Exception:
+                        return True, None
                 page.wait_for_timeout(500)
     except Exception:
         pass
-    return False
+    return False, None
 
-def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> None:
+def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
     Finds storages to upgrade and triggers the upgrade process using Playwright.
+    Returns a list of upgrade durations (in seconds) for triggered upgrades.
     """
     storages_to_upgrade = find_storages_to_upgrade(snapshot)
     if not storages_to_upgrade:
         print("No storages need upgrading.")
-        return
+        return []
+
+    upgrade_durations: List[int] = []
 
     for storage in storages_to_upgrade:
         print(f"[UPGRADE] {storage['planet_name']} {storage['coordinates']}: {storage['resource']} is {storage['percent']*100:.1f}% full (level {storage['building_level']}). Should upgrade building ID {storage['building_id']}.")
@@ -47,9 +66,11 @@ def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Op
                 print(f"[TELEGRAM ERROR] Could not send storage alert: {e}")
         try:
             navigate_to_planet(page, storage['planet_id'])
-            upgraded = click_upgrade_button(page, storage['building_id'])
+            upgraded, duration = click_upgrade_button(page, storage['building_id'])
             if upgraded:
                 print(f"[ACTION] Upgrade triggered for {storage['resource']} storage on {storage['planet_name']}.")
+                if duration is not None:
+                    upgrade_durations.append(duration)
                 if notifier:
                     notifier.send_message(f"✅ Upgrade triggered for {storage['resource'].title()} storage on {storage['planet_name']}.")
             else:
@@ -58,3 +79,5 @@ def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Op
             print(f"[ERROR] Failed to upgrade {storage['resource']} storage on {storage['planet_name']}: {e}")
             if notifier:
                 notifier.send_message(f"❌ Failed to upgrade {storage['resource'].title()} storage on {storage['planet_name']}: {e}")
+
+    return upgrade_durations

@@ -66,9 +66,16 @@ def main() -> None:
                 save_empire_snapshot(empire_data)
 
                 # Always check and upgrade storages if needed (every loop)
-                upgrade_full_storages(empire_data, game_page, notifier)
+                upgrade_durations = upgrade_full_storages(empire_data, game_page, notifier)
 
-                sleep_random_interval()
+                if upgrade_durations:
+                    # If upgrades were triggered, wait for the longest upgrade duration
+                    longest_duration = max(upgrade_durations)
+                    print(f"Upgrades triggered. Waiting for {longest_duration} seconds before next cycle.")
+                    sleep_random_interval(longest_duration, longest_duration + 10)
+                else:
+                    # If no upgrades, sleep for a random interval
+                    sleep_random_interval()
         except KeyboardInterrupt:
             print("\nBot stopped by user.")
             if notifier:

@@ -21,11 +21,11 @@ class COMPONENTS:
     messages = "messages"
 
 class ResourceStorageClass:
-    metal_storage = 'storageMetal'
-    crystal_storage = 'storageCrystal'
-    deuterium_storage = 'storageDeuterium'
-    food_storage = 'storageFood'
-    population_storage = 'storagePopulation'
+    metal_storage = 'metalStorage'
+    crystal_storage = 'crystalStorage'
+    deuterium_storage = 'deuteriumStorage'
+    food_storage = 'foodStorage'
+    population_storage = 'populationStorage'
 
     @classmethod
     def allStorages(cls) -> list[str]:

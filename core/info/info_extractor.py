@@ -110,8 +110,12 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
                 val = tag.get_text(strip=True).replace(',', '')
                 try:
                     storage[res] = int(val)
+                    print(f"[DEBUG] Storage extraction: {res} = {val} (int)")
                 except ValueError:
                     storage[res] = val
+                    print(f"[DEBUG] Storage extraction: {res} = {val} (str)")
+            else:
+                print(f"[DEBUG] Storage extraction: tag for '{res}' not found in planet {planet_id} ({name})")
 
         # Helper to extract building/ship/defense/research/lifeform levels
         def escape_class(cls: str) -> str:

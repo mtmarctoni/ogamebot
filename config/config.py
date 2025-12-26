@@ -1,3 +1,4 @@
+
 # config.py
 """
 Configuration for OGame bot: server, language, universe, and URLs.
@@ -32,3 +33,7 @@ DEFAULT_PLANET_ID = PLANET_IDS["default"]  # Main planet
 
 # Lobby URL
 LOBBY_URL = f"https://lobby.ogame.gameforge.com/en_GB/hub"
+
+# Storage thresholds
+STORAGE_WARNING_THRESHOLD = 0.90  # 90%: warn user
+STORAGE_UPGRADE_THRESHOLD = 0.95  # 95%: trigger upgrade

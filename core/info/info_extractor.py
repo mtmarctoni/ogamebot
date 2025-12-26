@@ -6,6 +6,7 @@ from typing import Dict, Any, List, cast, Match
 from config.config import OGAME_BASE_URL
 
 from config.constants import ResourceClass, ResourceStorageClass
+from config.types import PlanetResources, PlanetStorage
 
 
 def extract_empire_view_from_page(page: Page) -> Dict[str, List[Dict[str, Any]]]:
@@ -82,7 +83,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
             energy = energy_tag.get_text(strip=True)
 
         # Resources
-        resources = {}
+        resources: PlanetResources = {}
         for res in ResourceClass.allResources():
             tag = planet_div.select_one(f'.values.resources .{res} span')
             if tag:
@@ -102,7 +103,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
                         resources[res] = val
 
         # Storage
-        storage = {}
+        storage: PlanetStorage = {}
         for res in ResourceStorageClass.allStorages():
             tag = planet_div.select_one(f'.values.storage .{res}')
             if tag:

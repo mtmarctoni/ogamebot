@@ -2,7 +2,7 @@
 VENV            := venv
 PYTHON          := $(VENV)/bin/python3
 PIP             := $(VENV)/bin/pip
-DATA_DIR        := data
+DATA_DIR        := database
 SNAPSHOT_PATTERN := empire_snapshot_*.json
 SNAPSHOT_LATEST := empire_snapshot_latest.json
 FB_SESSION_FILE := fb_session.json
@@ -24,7 +24,7 @@ run: $(VENV)/bin/activate
 	export APPDATA="$$HOME/Library/Application Support"; \
 	$(PYTHON) main.py
 
-clean:
+clean-session:
 	rm -f $(FB_SESSION_FILE)
 
 clean-db:

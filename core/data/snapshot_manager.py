@@ -1,14 +1,27 @@
 import json
 import os
+from datetime import datetime, timezone
 from typing import Optional
 from config.types import EmpireSnapshotDict
 
-def save_empire_snapshot(snapshot: EmpireSnapshotDict, filename: Optional[str] = None) -> None:
+db_folder_path: str = "data" 
+
+def save_empire_snapshot(empire_data: EmpireSnapshotDict, filename: Optional[str] = None) -> None:
     """Save the latest empire snapshot to a JSON file inside the data folder."""
-    if filename is None:
-        filename = os.path.join("data", "empire_snapshot.json")
-    else:
-        filename = os.path.join("data", filename)
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w") as f:
+    timestamp_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+    snapshot: EmpireSnapshotDict = {
+        "timestamp": timestamp_str,
+        "planets": empire_data['planets']
+    }
+
+    # Save with timestamped filename
+    ts_filename = f"empire_snapshot_{timestamp_str.replace(':', '').replace('-', '').replace('.', '')}.json"
+    ts_path = os.path.join(db_folder_path, ts_filename)
+    os.makedirs(os.path.dirname(ts_path), exist_ok=True)
+    with open(ts_path, "w") as f:
+        json.dump(snapshot, f, indent=2)
+
+    # Also save/overwrite empire_snapshot_latest.json
+    latest_path = os.path.join(db_folder_path, "empire_snapshot_latest.json")
+    with open(latest_path, "w") as f:
         json.dump(snapshot, f, indent=2)

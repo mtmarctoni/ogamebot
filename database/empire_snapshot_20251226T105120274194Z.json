@@ -1,0 +1,1905 @@
+{
+  "timestamp": "2025-12-26T10:51:20.274194Z",
+  "planets": [
+    {
+      "id": 33625285,
+      "name": "Abyssal Nexus",
+      "coords": "[2:8:12]",
+      "fields": "109/188",
+      "temperature": "-12\u00b0C to 28\u00b0C",
+      "energy": "+17",
+      "resources": {
+        "metal": 248264,
+        "crystal": 252813,
+        "deuterium": 111226,
+        "food": 0,
+        "population": 308769
+      },
+      "storage": {},
+      "buildings": {
+        "1": {
+          "level": 19,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "2": {
+          "level": 16,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "3": {
+          "level": 14,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "4": {
+          "level": 19,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "12": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "22": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "23": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "24": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "station": {
+        "14": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "15": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "21": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "31": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "33": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "34": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "44": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "36": {
+          "level": 3,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "defense": {
+        "401": {
+          "level": 102,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "402": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "403": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "404": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "405": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "406": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "407": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "408": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "502": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "503": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "ships": {
+        "204": {
+          "level": 40,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "205": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "219": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "202": {
+          "level": 30,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "203": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "210": {
+          "level": 180,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "212": {
+          "level": 3,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "research": {
+        "113": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "120": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "121": {
+          "level": 2,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "114": {
+          "level": 3,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "122": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "106": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "108": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "124": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "123": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "199": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "115": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "117": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "118": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "109": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "110": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "111": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_buildings": {
+        "11101": {
+          "level": 23,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(11101, 33625285, 1, 0, 0); return false;"
+        },
+        "11102": {
+          "level": 22,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(11102, 33625285, 1, 0, 0); return false;"
+        },
+        "11103": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11104": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11105": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11106": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11107": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11108": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11109": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11110": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11111": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11112": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_research": {
+        "11201": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11202": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11204": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11210": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11212": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11216": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      }
+    },
+    {
+      "id": 33629156,
+      "name": "Echoes of t...",
+      "coords": "[2:21:8]",
+      "fields": "95/266",
+      "temperature": "-7\u00b0C to 33\u00b0C",
+      "energy": null,
+      "resources": {
+        "metal": 44500,
+        "crystal": 11074,
+        "deuterium": 5129,
+        "food": 1937,
+        "population": 8424
+      },
+      "storage": {},
+      "buildings": {
+        "1": {
+          "level": 16,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(1, 33629156, 1, 0, 0); return false;"
+        },
+        "2": {
+          "level": 16,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "3": {
+          "level": 13,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "4": {
+          "level": 18,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "12": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "22": {
+          "level": 5,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(22, 33629156, 1, 0, 0); return false;"
+        },
+        "23": {
+          "level": 4,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(23, 33629156, 1, 0, 0); return false;"
+        },
+        "24": {
+          "level": 3,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(24, 33629156, 1, 0, 0); return false;"
+        }
+      },
+      "station": {
+        "14": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "15": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "21": {
+          "level": 5,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(21, 33629156, 1, 0, 0); return false;"
+        },
+        "31": {
+          "level": 3,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(31, 33629156, 1, 0, 0); return false;"
+        },
+        "33": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "34": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "44": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "36": {
+          "level": 1,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(36, 33629156, 1, 0, 0); return false;"
+        }
+      },
+      "defense": {
+        "401": {
+          "level": 22,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "402": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "403": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "404": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "405": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "406": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "407": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "408": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "502": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "503": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "ships": {
+        "204": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "206": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "219": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "202": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "210": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "212": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "research": {
+        "113": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "120": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "121": {
+          "level": 2,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "114": {
+          "level": 3,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "122": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "106": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "108": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "124": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "123": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "199": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "115": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "117": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "118": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "109": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "110": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "111": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_buildings": {
+        "11101": {
+          "level": 8,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(11101, 33629156, 1, 0, 0); return false;"
+        },
+        "11102": {
+          "level": 17,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(11102, 33629156, 1, 0, 0); return false;"
+        },
+        "11103": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11104": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11105": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11106": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11107": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11108": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11109": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11110": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11111": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11112": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_research": {
+        "11201": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11202": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11204": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11210": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11212": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11216": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      }
+    },
+    {
+      "id": 33630366,
+      "name": "Halo of the...",
+      "coords": "[2:8:9]",
+      "fields": "83/245",
+      "temperature": "-9\u00b0C to 31\u00b0C",
+      "energy": "+35",
+      "resources": {
+        "metal": 216117,
+        "crystal": 114613,
+        "deuterium": 42595,
+        "food": 39,
+        "population": 922
+      },
+      "storage": {},
+      "buildings": {
+        "1": {
+          "level": 16,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(1, 33630366, 1, 0, 0); return false;"
+        },
+        "2": {
+          "level": 14,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(2, 33630366, 1, 0, 0); return false;"
+        },
+        "3": {
+          "level": 11,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(3, 33630366, 1, 0, 0); return false;"
+        },
+        "4": {
+          "level": 17,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(4, 33630366, 1, 0, 0); return false;"
+        },
+        "12": {
+          "level": 4,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(12, 33630366, 1, 0, 0); return false;"
+        },
+        "22": {
+          "level": 5,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(22, 33630366, 1, 0, 0); return false;"
+        },
+        "23": {
+          "level": 4,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(23, 33630366, 1, 0, 0); return false;"
+        },
+        "24": {
+          "level": 3,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(24, 33630366, 1, 0, 0); return false;"
+        }
+      },
+      "station": {
+        "14": {
+          "level": 5,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(14, 33630366, 1, 0, 0); return false;"
+        },
+        "15": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "21": {
+          "level": 4,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(21, 33630366, 1, 0, 0); return false;"
+        },
+        "31": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(31, 33630366, 1, 0, 0); return false;"
+        },
+        "33": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "34": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(34, 33630366, 1, 0, 0); return false;"
+        },
+        "44": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(44, 33630366, 1, 0, 0); return false;"
+        },
+        "36": {
+          "level": 1,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(36, 33630366, 1, 0, 0); return false;"
+        }
+      },
+      "defense": {
+        "401": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "402": {
+          "level": 2,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "403": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "404": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "405": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "406": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "407": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "408": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "502": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "503": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "ships": {
+        "204": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "219": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "202": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "210": {
+          "level": 18,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "212": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "research": {
+        "113": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "120": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "121": {
+          "level": 2,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "114": {
+          "level": 3,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "122": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "106": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "108": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "124": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "123": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "199": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "115": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "117": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "118": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "109": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "110": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "111": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_buildings": {
+        "11101": {
+          "level": 2,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(11101, 33630366, 1, 0, 0); return false;"
+        },
+        "11102": {
+          "level": 2,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(11102, 33630366, 1, 0, 0); return false;"
+        },
+        "11103": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11104": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11105": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11106": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11107": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11108": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11109": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11110": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11111": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11112": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_research": {
+        "11201": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11202": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11204": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11210": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11212": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11216": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      }
+    },
+    {
+      "id": 33632165,
+      "name": "Nexus Senti...",
+      "coords": "[2:8:7]",
+      "fields": "57/296",
+      "temperature": "25\u00b0C to 65\u00b0C",
+      "energy": "+214",
+      "resources": {
+        "metal": 122201,
+        "crystal": 46425,
+        "deuterium": 12343,
+        "food": 0,
+        "population": 100
+      },
+      "storage": {},
+      "buildings": {
+        "1": {
+          "level": 12,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(1, 33632165, 1, 0, 0); return false;"
+        },
+        "2": {
+          "level": 10,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(2, 33632165, 1, 0, 0); return false;"
+        },
+        "3": {
+          "level": 7,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(3, 33632165, 1, 0, 0); return false;"
+        },
+        "4": {
+          "level": 13,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(4, 33632165, 1, 0, 0); return false;"
+        },
+        "12": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(12, 33632165, 1, 0, 0); return false;"
+        },
+        "22": {
+          "level": 4,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(22, 33632165, 1, 0, 0); return false;"
+        },
+        "23": {
+          "level": 3,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(23, 33632165, 1, 0, 0); return false;"
+        },
+        "24": {
+          "level": 1,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(24, 33632165, 1, 0, 0); return false;"
+        }
+      },
+      "station": {
+        "14": {
+          "level": 5,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(14, 33632165, 1, 0, 0); return false;"
+        },
+        "15": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "21": {
+          "level": 2,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(21, 33632165, 1, 0, 0); return false;"
+        },
+        "31": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(31, 33632165, 1, 0, 0); return false;"
+        },
+        "33": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "34": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(34, 33632165, 1, 0, 0); return false;"
+        },
+        "44": {
+          "level": 0,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(44, 33632165, 1, 0, 0); return false;"
+        },
+        "36": {
+          "level": 1,
+          "upgradable": true,
+          "upgrade_js": "doUpgrade(36, 33632165, 1, 0, 0); return false;"
+        }
+      },
+      "defense": {
+        "401": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "402": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "403": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "404": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "405": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "406": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "407": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "408": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "502": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "503": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "ships": {
+        "204": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "219": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "202": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "210": {
+          "level": 10,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "212": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "research": {
+        "113": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "120": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "121": {
+          "level": 2,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "114": {
+          "level": 3,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "122": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "106": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "108": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "124": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "123": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "199": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "115": {
+          "level": 5,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "117": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "118": {
+          "level": 1,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "109": {
+          "level": 4,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "110": {
+          "level": 6,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "111": {
+          "level": 7,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_buildings": {
+        "11101": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11102": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11103": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11104": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11105": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11106": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11107": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11108": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11109": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11110": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11111": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11112": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      },
+      "lifeform_research": {
+        "11201": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11202": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11203": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11204": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11205": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11206": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11207": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11208": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11209": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11210": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11211": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11212": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11213": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11214": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11215": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11216": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11217": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        },
+        "11218": {
+          "level": 0,
+          "upgradable": false,
+          "upgrade_js": null
+        }
+      }
+    }
+  ]
+}

@@ -1,8 +1,6 @@
 import os
-from datetime import datetime, timezone
 from playwright.sync_api import sync_playwright
 
-from config.types import EmpireSnapshotDict
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
 from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
@@ -45,6 +43,8 @@ def main() -> None:
         try:
             url = COMPONENT_URL_TEMPLATE.format(planet_id=DEFAULT_PLANET_ID)
             game_page.goto(url)
+            game_page.wait_for_selector('a.menubutton.selected span.textlabel', timeout=10000)
+            assert game_page.inner_text('a.menubutton.selected span.textlabel') == "Resources"
         except Exception:
             pass
 
@@ -63,16 +63,10 @@ def main() -> None:
                 empire_data = extract_empire_info(game_page, notifier)
 
                 # Save the empire snapshot to a file
-                timestamp_str = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
-                filename = f"empire_snapshot_{timestamp_str.replace(':', '').replace('-', '').replace('.', '')}.json"
-                snapshot: EmpireSnapshotDict = {
-                    "timestamp": timestamp_str,
-                    "planets": empire_data['planets']
-                }
-                save_empire_snapshot(snapshot, filename)
+                save_empire_snapshot(empire_data)
 
                 # Always check and upgrade storages if needed (every loop)
-                upgrade_full_storages(snapshot, game_page, notifier)
+                upgrade_full_storages(empire_data, game_page, notifier)
 
                 sleep_random_interval()
         except KeyboardInterrupt:

@@ -36,6 +36,7 @@ def find_storages_to_upgrade(
     }
     results: List[StorageUpgradeCandidate] = []
     for planet in snapshot.get('planets', []):
+        print(f"[DEBUG] Planet data: {planet}")
         planet_id = planet.get('id')
         planet_name = planet.get('name')
         coords = planet.get('coordinates')

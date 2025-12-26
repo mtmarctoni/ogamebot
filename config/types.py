@@ -1,12 +1,21 @@
 from typing import TypedDict, List, Dict, Optional
 
-class ResourceDict(TypedDict, total=False):
+
+# Explicit resource and storage types for planets
+class PlanetResources(TypedDict, total=False):
     metal: int
     crystal: int
     deuterium: int
     energy: int
     food: int
     population: int
+
+class PlanetStorage(TypedDict, total=False):
+    metalStorage: int
+    crystalStorage: int
+    deuteriumStorage: int
+    foodStorage: int
+    populationStorage: int
 
 class QueueItemDict(TypedDict, total=False):
     type: str  # building, research, shipyard
@@ -29,8 +38,8 @@ class PlanetDict(TypedDict, total=False):
     fields: str
     temperature: str
     energy: str
-    resources: ResourceDict
-    storage: Dict[str, int]
+    resources: PlanetResources
+    storage: PlanetStorage
     buildings: Dict[str, BuildingInfoDict]
     station: Dict[str, BuildingInfoDict]
     defense: Dict[str, BuildingInfoDict]

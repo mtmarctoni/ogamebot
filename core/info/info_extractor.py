@@ -52,7 +52,10 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
 
         # Name
         name_tag = planet_div.select_one('.planetname')
-        name = name_tag.get_text(strip=True) if name_tag else None
+        if name_tag:
+            name = name_tag.get('data-tooltip-title') or name_tag.get_text(strip=True)
+        else:
+            name = None
 
         # Coords
         coords = None
@@ -110,10 +113,8 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
                 val = tag.get_text(strip=True).replace(',', '')
                 try:
                     storage[res] = int(val)
-                    print(f"[DEBUG] Storage extraction: {res} = {val} (int)")
                 except ValueError:
                     storage[res] = val
-                    print(f"[DEBUG] Storage extraction: {res} = {val} (str)")
             else:
                 print(f"[DEBUG] Storage extraction: tag for '{res}' not found in planet {planet_id} ({name})")
 

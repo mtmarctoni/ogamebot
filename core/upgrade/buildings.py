@@ -116,10 +116,11 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding], empire_data: EmpireSnapshotDict) -> Optional[UpgradableBuilding]:
+def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding], empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableBuilding]:
     """
     Determine which building to upgrade based on custom logic.
     Prioritize the lowest level building that has enough energy available on the planet.
+    Notify if there is a building to upgrade but not enough energy.
     """
     if not upgradable_buildings:
         return None
@@ -142,10 +143,17 @@ def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding]
         if current_energy >= energy_needed:
             return building
 
+        # Notify when there is a building to upgrade but not enough energy
+        if notifier is not None:
+            notifier.send_message(
+                f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). "
+                f"Energy needed: {energy_needed}, Current energy: {current_energy}."
+            )
+
     print("[DEBUG] No building has enough energy for an upgrade.")
     return None
 
-def upgrade_building(page: Page, building: UpgradableBuilding) -> int:
+def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
     """
     Perform the upgrade for the given building and return the upgrade duration.
     """
@@ -184,6 +192,12 @@ def upgrade_building(page: Page, building: UpgradableBuilding) -> int:
                     minutes, seconds = map(int, match.groups())
                     return minutes * 60 + seconds
 
+    # Notify when a building has been successfully upgraded
+    if notifier:
+        notifier.send_message(
+            f"[NOTIFICATION] Successfully upgraded {building['resource']} to level {building['level'] + 1} on {building['planet_name']} ({building['coordinates']})."
+        )
+
     return 0
 
 def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
@@ -198,7 +212,7 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
     attempts = 0
 
     while upgradable_buildings and attempts < max_attempts:
-        building_to_upgrade = determine_building_to_upgrade(upgradable_buildings, empire_data)
+        building_to_upgrade = determine_building_to_upgrade(upgradable_buildings, empire_data, notifier)
         if not building_to_upgrade:
             break
 

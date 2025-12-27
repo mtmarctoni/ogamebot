@@ -4,7 +4,7 @@ from playwright.sync_api import Page
 from config.types import EmpireSnapshotDict
 from core.notifications.telegram_notifier import TelegramNotifier
 from core.upgrade.buildings import find_storages_to_upgrade, is_upgrading
-from core.navigation.planet import navigate_to_planet
+from core.navigation.planet import navigate_to_resources_page
 
 def click_upgrade_button(page: Page, building_id: int) -> Tuple[bool, Optional[int]]:
     """
@@ -65,7 +65,7 @@ def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Op
             except Exception as e:
                 print(f"[TELEGRAM ERROR] Could not send storage alert: {e}")
         try:
-            navigate_to_planet(page, storage['planet_id'])
+            navigate_to_resources_page(page, storage['planet_id'])
             upgraded, duration = click_upgrade_button(page, storage['building_id'])
             if upgraded:
                 print(f"[ACTION] Upgrade triggered for {storage['resource']} storage on {storage['planet_name']}.")

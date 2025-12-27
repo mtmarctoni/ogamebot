@@ -3,12 +3,12 @@ from playwright.sync_api import Page
 import isodate # type: ignore
 from datetime import timedelta
 
-
 from config.types import EmpireSnapshotDict, UpgradableBuilding
 from core.notifications.telegram_notifier import TelegramNotifier
 from typing import List, Optional
 from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
 from config.constants import RESOURCE_TO_STORAGE, buildings
+from core.navigation.planet import navigate_to_resources_page
 
 def is_upgrading(page: Page, building_id: int) -> bool:
     """
@@ -129,6 +129,9 @@ def upgrade_building(page: Page, building: UpgradableBuilding) -> int:
     """
     Perform the upgrade for the given building and return the upgrade duration.
     """
+    # Navigate to the resources page of the planet
+    navigate_to_resources_page(page, building['planet_id'])
+
     building_id = building['building_id']
     tech_li_selector = f'#technologies li.technology[data-technology="{building_id}"] button.build-it'
     button = page.query_selector(tech_li_selector)
@@ -154,17 +157,9 @@ def upgrade_building(page: Page, building: UpgradableBuilding) -> int:
                 if duration_attr:
                     # Parse ISO 8601 duration (e.g., PT49M15S)
                     try:
-                        # Explicitly annotate the type of duration as timedelta
                         duration: timedelta = isodate.parse_duration(duration_attr)  # type: ignore
-                        # Ensure `total_seconds` is treated as a callable method
-                        # Explicitly cast `total_seconds` to a float before converting to int
-                        # Refine type handling for `total_seconds` to ensure compatibility
-                        # Final refinement: Explicitly cast `total_seconds` to a float
-                        # Simplify and ensure type safety for `total_seconds`
-                        # Explicitly cast `duration` to `timedelta` to ensure type safety
                         if isinstance(duration, timedelta):
                             return int(duration.total_seconds())
-                        return 0
                     except Exception as e:
                         print(f"Error parsing duration: {e}")
 

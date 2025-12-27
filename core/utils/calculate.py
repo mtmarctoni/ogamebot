@@ -11,4 +11,6 @@ def calculate_energy_needed(resource: str, level: int) -> int:
     Returns:
         int: The energy needed for the next level.
     """
-    return ENERGY_CONSUMPTION[f"{resource}"](level + 1)
+    current_level_energy = ENERGY_CONSUMPTION[f"{resource}"](level)
+    next_level_energy = ENERGY_CONSUMPTION[f"{resource}"](level + 1)
+    return next_level_energy - current_level_energy

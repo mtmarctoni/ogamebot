@@ -89,6 +89,14 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
     """
     upgradable_buildings: List[UpgradableBuilding] = []
 
+    # Debugging: Log all planets and their upgradable buildings
+    print("[DEBUG] Checking for upgradable buildings on all planets.")
+    for planet in empire_data.get('planets', []):
+        print(f"[DEBUG] Planet: {planet.get('name')} ({planet.get('coords')})")
+        buildings_data = planet.get('buildings', {})
+        for building_id, building_info in buildings_data.items():
+            print(f"    [DEBUG] Building ID: {building_id}, Info: {building_info}")
+
     for planet in empire_data.get('planets', []):
         planet_id = planet.get('id')
         planet_name = planet.get('name')
@@ -119,6 +127,7 @@ def determine_building_to_upgrade(building: UpgradableBuilding, empire_data: Emp
     Prioritize the lowest level building that has enough energy available on the planet.
     Notify if there is a building to upgrade but not enough energy.
     """
+    print(f"[DEBUG] Determining if building can be upgraded: {building}")
     planet_id = building['planet_id']
     resource = building['resource']
     building_level = building['level']
@@ -145,8 +154,9 @@ def determine_building_to_upgrade(building: UpgradableBuilding, empire_data: Emp
             f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). "
             f"Energy needed: {energy_needed}, Current energy: {current_energy}."
         )
+    
+    print(f"[DEBUG] Not enough energy to upgrade {resource} on {planet.get('name')} ({building['coordinates']}). Needed: {energy_needed}, Available: {current_energy}")
 
-    print("[DEBUG] No building has enough energy for an upgrade.")
     return None
 
 def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
@@ -168,33 +178,33 @@ def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optiona
 
         # Wait for the building state to update (e.g., countdown timer or level change)
         try:
-            page.wait_for_selector('time.buildingCountdown', timeout=5000)  # Adjust timeout as needed
+            page.wait_for_selector('time.buildingCountdown', state="visible", timeout=5000)  # Adjust timeout as needed
             print(f"[DEBUG] Upgrade started for {building['resource']} on {building['planet_name']} ({building['coordinates']})")
+            # Extract the upgrade duration from the countdown timer
+            countdown = page.locator('time.buildingCountdown').first
+            if countdown:
+                duration_attr = countdown.get_attribute('datetime')
+                if duration_attr:
+                    try:
+                        duration: timedelta = isodate.parse_duration(duration_attr) # type: ignore
+                        if isinstance(duration, timedelta):
+                            return int(duration.total_seconds())
+                    except Exception as e:
+                        print(f"[ERROR] Failed to parse upgrade duration: {e}")
+
+
+                # Fallback: Extract duration from text content
+                duration_text = countdown.inner_text()
+                if duration_text:
+                    import re
+                    match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
+                    if match:
+                        minutes, seconds = map(int, match.groups())
+                        return minutes * 60 + seconds
         except Exception as e:
             print(f"[ERROR] Upgrade did not start for {building['resource']} on {building['planet_name']} ({building['coordinates']}): {e}")
             return 0
 
-        # Extract the upgrade duration from the countdown timer
-        countdown = page.query_selector('time.buildingCountdown')
-        if countdown:
-            duration_attr = countdown.get_attribute('datetime')
-            if duration_attr:
-                try:
-                    duration: timedelta = isodate.parse_duration(duration_attr) # type: ignore
-                    if isinstance(duration, timedelta):
-                        return int(duration.total_seconds())
-                except Exception as e:
-                    print(f"[ERROR] Failed to parse upgrade duration: {e}")
-
-
-            # Fallback: Extract duration from text content
-            duration_text = countdown.inner_text()
-            if duration_text:
-                import re
-                match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
-                if match:
-                    minutes, seconds = map(int, match.groups())
-                    return minutes * 60 + seconds
 
     # Notify when a building has been successfully upgraded
     if notifier:
@@ -215,25 +225,23 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
     # Sort the upgradable buildings list before determining which one to upgrade
     upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level']))
 
-    max_attempts = 5  # Limit the number of iterations to prevent infinite loops
-
     print(f"[DEBUG] Found {upgradable_buildings} upgradable buildings.")
-    for _ in range(max_attempts):
-        if not upgradable_buildings:
-            break
+    if not upgradable_buildings:
+        print("No resource buildings to upgrade.")
+        return upgrade_durations
 
-        for building in upgradable_buildings:
-            building_to_upgrade = determine_building_to_upgrade(building, empire_data, notifier)
-            print(f"[DEBUG] Determined building to upgrade: {building_to_upgrade}")
-            if not building_to_upgrade:
-                continue
+    for building in upgradable_buildings:
+        building_to_upgrade = determine_building_to_upgrade(building, empire_data, notifier)
+        print(f"[DEBUG] Determined building to upgrade: {building_to_upgrade}")
+        if not building_to_upgrade:
+            continue
 
-            duration = upgrade_building(game_page, building_to_upgrade)
-            if duration > 0:
-                upgrade_durations.append(duration)
+        duration = upgrade_building(game_page, building_to_upgrade)
+        if duration > 0:
+            upgrade_durations.append(duration)
 
-            # Re-check upgradable buildings after upgrading one building
-            upgradable_buildings = check_for_upgradable_buildings(empire_data)
-            break  # Exit after upgrading one building
+        # Re-check upgradable buildings after upgrading one building
+        upgradable_buildings = check_for_upgradable_buildings(empire_data)
+        break  # Exit after upgrading one building
 
     return upgrade_durations

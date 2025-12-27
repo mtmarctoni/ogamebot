@@ -7,7 +7,7 @@ from config.types import EmpireSnapshotDict, UpgradableBuilding
 from core.notifications.telegram_notifier import TelegramNotifier
 from typing import List, Optional
 from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
-from config.constants import RESOURCE_TO_STORAGE, buildings  # Removed unused ENERGY_CONSUMPTION import
+from config.constants import RESOURCE_TO_STORAGE, buildings, RESOURCE_UPGRADE_PREFERENCE  # Removed unused ENERGY_CONSUMPTION import
 from core.navigation.planet import navigate_to_resources_page
 from core.utils.calculate import calculate_energy_needed
 
@@ -124,7 +124,8 @@ def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding]
     if not upgradable_buildings:
         return None
 
-    for building in sorted(upgradable_buildings, key=lambda b: b['level']):
+    # Sort buildings by preference and level
+    for building in sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level'])):
         planet_id = building['planet_id']
         resource = building['resource']
         building_level = building['level']

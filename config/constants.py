@@ -4,12 +4,6 @@ from typing import Tuple, Callable
 # Type alias for all technology tuples (id, amount/level, category)
 TechnologyTuple = Tuple[int, int, str]
 
-# Energy consumption formulas for mines
-ENERGY_CONSUMPTION: dict[str, Callable[[int], int]] = {
-    'metal_mine': lambda level: int(10 * level * (1.1 ** level)),
-    'crystal_mine': lambda level: int(10 * level * (1.1 ** level)),
-    'deuterium_mine': lambda level: int(20 * level * (1.1 ** level)),
-}
 
 # OGame page components
 class COMPONENTS:
@@ -75,6 +69,15 @@ class destination(object):
     debris = 2
     moon = 3
 
+# Energy consumption formulas for mines
+ENERGY_CONSUMPTION: dict[str, Callable[[int], int]] = {
+    ResourceClass.metal: lambda level: int(10 * level * (1.1 ** level)),
+    ResourceClass.crystal: lambda level: int(10 * level * (1.1 ** level)),
+    ResourceClass.deuterium: lambda level: int(20 * level * (1.1 ** level)),
+}
+
+# Resource upgrade preference
+RESOURCE_UPGRADE_PREFERENCE = [ResourceClass.crystal, ResourceClass.deuterium, ResourceClass.metal]
 
 
 def convert_to_destinations(dest: str | None) -> int:

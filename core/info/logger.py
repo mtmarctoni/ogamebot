@@ -1,5 +1,5 @@
 from typing import List, Optional
-from config.constants import RESOURCE_TO_STORAGE, ResourceClass
+from config.constants import RESOURCE_TO_STORAGE, ResourceClass, buildings
 from config.config import STORAGE_WARNING_THRESHOLD, STORAGE_UPGRADE_THRESHOLD
 from config.types import EmpireSnapshotDict, PlanetResources, PlanetStorage
 from core.notifications.telegram_notifier import TelegramNotifier
@@ -20,6 +20,7 @@ def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[Telegram
                 energy_val = planet.get('energy', 0)
                 lines.append(f"⚡ {energy_val}")
                 continue
+            building_id: str = str(buildings.get_building_id(RESOURCE_TO_STORAGE[r]))
             current = resources.get(r, 0)
             max_cap = storage.get(RESOURCE_TO_STORAGE[r])
             percent = (current / max_cap * 100) if max_cap else 0
@@ -31,10 +32,10 @@ def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[Telegram
                 elif percent >= STORAGE_WARNING_THRESHOLD * 100:
                     alert = '⚠️'
 
-                # Check if the resource is upgradable
-                building_info = planet.get('buildings', {}).get(str(RESOURCE_TO_STORAGE[r]), {})
-                if building_info.get('upgradable', False):
-                    upgradable = '⬆️'
+            # Check if the resource is upgradable
+            building_info = planet.get('buildings', {}).get(building_id, {})
+            if building_info.get('upgradable', False):
+                upgradable = '⬆️'
 
             lines.append(f"{res_map.get(r, r.title())} {current:,} - ({percent:.1f}%) {alert} {upgradable}")
         res_str = '\n'.join(lines)

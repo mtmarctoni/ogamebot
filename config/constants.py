@@ -177,6 +177,20 @@ class buildings:
             43: 'Jump Gate',
         }
         return mapping.get(building_id)
+    
+    @staticmethod
+    def get_building_id(resource_name: str) -> int | None:
+        """
+        Get the building ID for a given resource name (e.g., 'metal', 'crystal').
+        """
+        storage_class = RESOURCE_TO_STORAGE.get(resource_name)
+        if not storage_class:
+            return None  # Resource not found
+
+        building = getattr(buildings, storage_class, None)
+        if building:
+            return building[0]  # Return the building ID (first element of the tuple)
+        return None
 
     @staticmethod
     def solar_satellite(amount: int = 1) -> TechnologyTuple:

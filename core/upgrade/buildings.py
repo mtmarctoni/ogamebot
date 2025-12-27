@@ -113,43 +113,38 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding], empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableBuilding]:
+def determine_building_to_upgrade(building: UpgradableBuilding, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableBuilding]:
     """
     Determine which building to upgrade based on custom logic.
     Prioritize the lowest level building that has enough energy available on the planet.
     Notify if there is a building to upgrade but not enough energy.
     """
-    if not upgradable_buildings:
+    planet_id = building['planet_id']
+    resource = building['resource']
+    building_level = building['level']
+    planet = next((p for p in empire_data.get('planets', []) if str(p.get('id')) == planet_id), None)
+    if not planet:
+        print(f"[DEBUG] Planet with ID {planet_id} not found in empire data.")
         return None
+    # Get current energy on the planet
+    current_energy: int = 0
+    
+    # Handle energy as a string (e.g., '+328') and convert to integer
+    if isinstance(planet.get('energy'), str):
+        current_energy = int(planet.get('energy', '0').replace('+', ''))
 
-    # Sort buildings by preference and level
-    for building in sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level'])):
-        planet_id = building['planet_id']
-        resource = building['resource']
-        building_level = building['level']
-        planet = next((p for p in empire_data.get('planets', []) if str(p.get('id')) == planet_id), None)
-        if not planet:
-            continue
+    # Calculate energy consumption after the upgrade
+    energy_needed = calculate_energy_needed(resource, building_level)
 
-        # Get current energy on the planet
-        current_energy: int = 0
-        
-        # Handle energy as a string (e.g., '+328') and convert to integer
-        if isinstance(planet.get('energy'), str):
-            current_energy = int(planet.get('energy', '0').replace('+', ''))
+    if current_energy >= energy_needed:
+        return building
 
-        # Calculate energy consumption after the upgrade
-        energy_needed = calculate_energy_needed(resource, building_level)
-
-        if current_energy >= energy_needed:
-            return building
-
-        # Notify when there is a building to upgrade but not enough energy
-        if notifier is not None:
-            notifier.send_message(
-                f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). "
-                f"Energy needed: {energy_needed}, Current energy: {current_energy}."
-            )
+    # Notify when there is a building to upgrade but not enough energy
+    if notifier is not None:
+        notifier.send_message(
+            f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). "
+            f"Energy needed: {energy_needed}, Current energy: {current_energy}."
+        )
 
     print("[DEBUG] No building has enough energy for an upgrade.")
     return None
@@ -171,18 +166,26 @@ def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optiona
         button.click()
         print(f"Clicked to open upgrade details for {building['resource']} on {building['planet_name']} ({building['coordinates']})")
 
-        # Extract the upgrade duration from the `datetime` attribute or text content
+        # Wait for the building state to update (e.g., countdown timer or level change)
+        try:
+            page.wait_for_selector('time.buildingCountdown', timeout=5000)  # Adjust timeout as needed
+            print(f"[DEBUG] Upgrade started for {building['resource']} on {building['planet_name']} ({building['coordinates']})")
+        except Exception as e:
+            print(f"[ERROR] Upgrade did not start for {building['resource']} on {building['planet_name']} ({building['coordinates']}): {e}")
+            return 0
+
+        # Extract the upgrade duration from the countdown timer
         countdown = page.query_selector('time.buildingCountdown')
         if countdown:
             duration_attr = countdown.get_attribute('datetime')
             if duration_attr:
-                # Parse ISO 8601 duration (e.g., PT49M15S)
                 try:
-                    duration: timedelta = isodate.parse_duration(duration_attr)  # type: ignore
+                    duration: timedelta = isodate.parse_duration(duration_attr) # type: ignore
                     if isinstance(duration, timedelta):
                         return int(duration.total_seconds())
                 except Exception as e:
-                    print(f"Error parsing duration: {e}")
+                    print(f"[ERROR] Failed to parse upgrade duration: {e}")
+
 
             # Fallback: Extract duration from text content
             duration_text = countdown.inner_text()
@@ -209,6 +212,9 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
     upgradable_buildings = check_for_upgradable_buildings(empire_data)
     upgrade_durations: List[int] = []  # Explicitly define the type of the list
 
+    # Sort the upgradable buildings list before determining which one to upgrade
+    upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level']))
+
     max_attempts = 5  # Limit the number of iterations to prevent infinite loops
 
     print(f"[DEBUG] Found {upgradable_buildings} upgradable buildings.")
@@ -217,7 +223,7 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
             break
 
         for building in upgradable_buildings:
-            building_to_upgrade = determine_building_to_upgrade([building], empire_data, notifier)
+            building_to_upgrade = determine_building_to_upgrade(building, empire_data, notifier)
             print(f"[DEBUG] Determined building to upgrade: {building_to_upgrade}")
             if not building_to_upgrade:
                 continue

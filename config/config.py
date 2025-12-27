@@ -9,6 +9,9 @@ LANG = "en"
 DOMAIN = f"s{SERVER_ID}-{LANG}.ogame.gameforge.com"
 REFRESH_TIME = 10  # seconds
 
+# Added a constant for the database folder path
+DB_FOLDER_PATH = "database"
+
 # Base URL for OGame server
 OGAME_BASE_URL = f"https://{DOMAIN}"
 

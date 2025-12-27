@@ -130,47 +130,39 @@ def upgrade_building(page: Page, building: UpgradableBuilding) -> int:
     Perform the upgrade for the given building and return the upgrade duration.
     """
     # Navigate to the resources page of the planet
+    print(f"[DEBUG] Upgrading building on planet ID {building['planet_id']}")
     navigate_to_resources_page(page, building['planet_id'])
+    print(f"[DEBUG] Navigated to planet ID {building['planet_id']} for upgrading.")
 
     building_id = building['building_id']
-    tech_li_selector = f'#technologies li.technology[data-technology="{building_id}"] button.build-it'
+    tech_li_selector = f'#technologies li.technology[data-technology="{building_id}"] button.upgrade'
     button = page.query_selector(tech_li_selector)
 
     if button:
         button.click()
         print(f"Clicked to open upgrade details for {building['resource']} on {building['planet_name']} ({building['coordinates']})")
 
-        # Wait for the upgrade details modal to appear
-        details_selector = f'#technologydetails[data-technology-id="{building_id}"] .build-it_wrap button.upgrade'
-        page.wait_for_selector(details_selector, timeout=5000)
+        # Extract the upgrade duration from the `datetime` attribute or text content
+        countdown = page.query_selector('time.buildingCountdown')
+        if countdown:
+            duration_attr = countdown.get_attribute('datetime')
+            if duration_attr:
+                # Parse ISO 8601 duration (e.g., PT49M15S)
+                try:
+                    duration: timedelta = isodate.parse_duration(duration_attr)  # type: ignore
+                    if isinstance(duration, timedelta):
+                        return int(duration.total_seconds())
+                except Exception as e:
+                    print(f"Error parsing duration: {e}")
 
-        # Click the actual upgrade button
-        upgrade_button = page.query_selector(details_selector)
-        if upgrade_button:
-            upgrade_button.click()
-            print(f"Upgrading {building['resource']} on {building['planet_name']} ({building['coordinates']})")
-
-            # Extract the upgrade duration from the `datetime` attribute or text content
-            countdown = page.query_selector('time.buildingCountdown')
-            if countdown:
-                duration_attr = countdown.get_attribute('datetime')
-                if duration_attr:
-                    # Parse ISO 8601 duration (e.g., PT49M15S)
-                    try:
-                        duration: timedelta = isodate.parse_duration(duration_attr)  # type: ignore
-                        if isinstance(duration, timedelta):
-                            return int(duration.total_seconds())
-                    except Exception as e:
-                        print(f"Error parsing duration: {e}")
-
-                # Fallback: Extract duration from text content
-                duration_text = countdown.inner_text()
-                if duration_text:
-                    import re
-                    match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
-                    if match:
-                        minutes, seconds = map(int, match.groups())
-                        return minutes * 60 + seconds
+            # Fallback: Extract duration from text content
+            duration_text = countdown.inner_text()
+            if duration_text:
+                import re
+                match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
+                if match:
+                    minutes, seconds = map(int, match.groups())
+                    return minutes * 60 + seconds
 
     return 0
 
@@ -182,7 +174,10 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
     upgradable_buildings = check_for_upgradable_buildings(empire_data)
     upgrade_durations: List[int] = []  # Explicitly define the type of the list
 
-    while upgradable_buildings:
+    max_attempts = 5  # Limit the number of iterations to prevent infinite loops
+    attempts = 0
+
+    while upgradable_buildings and attempts < max_attempts:
         building_to_upgrade = determine_building_to_upgrade(upgradable_buildings)
         if not building_to_upgrade:
             break
@@ -193,5 +188,9 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
 
         # Re-check upgradable buildings after each upgrade
         upgradable_buildings = check_for_upgradable_buildings(empire_data)
+        attempts += 1
+
+    if attempts == max_attempts:
+        print("[DEBUG] Reached maximum upgrade attempts. Exiting loop to prevent infinite iterations.")
 
     return upgrade_durations

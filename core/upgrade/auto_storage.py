@@ -54,8 +54,16 @@ def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Op
         return []
 
     upgrade_durations: List[int] = []
+    current_planet_id = None  # Track the current planet ID to avoid redundant navigation
 
     for storage in storages_to_upgrade:
+        if current_planet_id != storage['planet_id']:
+            print(f"[DEBUG] Navigating to planet ID {storage['planet_id']}.")
+            navigate_to_resources_page(page, storage['planet_id'])
+            current_planet_id = storage['planet_id']
+        else:
+            print(f"[DEBUG] Already on planet ID {storage['planet_id']}, skipping navigation.")
+
         print(f"[UPGRADE] {storage['planet_name']} {storage['coordinates']}: {storage['resource']} is {storage['percent']*100:.1f}% full (level {storage['building_level']}). Should upgrade building ID {storage['building_id']}.")
         if notifier:
             try:
@@ -65,7 +73,6 @@ def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Op
             except Exception as e:
                 print(f"[TELEGRAM ERROR] Could not send storage alert: {e}")
         try:
-            navigate_to_resources_page(page, storage['planet_id'])
             upgraded, duration = click_upgrade_button(page, storage['building_id'])
             if upgraded:
                 print(f"[ACTION] Upgrade triggered for {storage['resource']} storage on {storage['planet_name']}.")

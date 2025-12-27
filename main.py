@@ -1,5 +1,4 @@
 import os
-from typing import List
 from playwright.sync_api import sync_playwright
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
 from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
@@ -75,16 +74,10 @@ def main() -> None:
                 # Ensure return values are lists
                 storage_upgrade_durations = storage_upgrade_durations or []
                 resource_upgrade_durations = resource_upgrade_durations or []
-
-                if storage_upgrade_durations or resource_upgrade_durations:
-                    # Combine durations
-                    valid_durations: List[int] = storage_upgrade_durations + resource_upgrade_durations
-
-                    # Calculate the longest duration
-                    longest_duration = max(valid_durations) if valid_durations else 0
-
+                upgrade_duration: int = max(storage_upgrade_durations + resource_upgrade_durations, default=0)
+                if upgrade_duration:
                     # Directly use longest_duration in sleep logic
-                    sleep_random_interval(longest_duration, longest_duration + 10)
+                    sleep_random_interval(upgrade_duration, upgrade_duration + 10)
                 else:
                     # If no upgrades, sleep for a random interval
                     sleep_random_interval()

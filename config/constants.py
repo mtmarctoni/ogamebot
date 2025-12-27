@@ -1,9 +1,15 @@
-
 import re
-from typing import Tuple
+from typing import Tuple, Callable
 
 # Type alias for all technology tuples (id, amount/level, category)
 TechnologyTuple = Tuple[int, int, str]
+
+# Energy consumption formulas for mines
+ENERGY_CONSUMPTION: dict[str, Callable[[int], int]] = {
+    'metal_mine': lambda level: int(10 * level * (1.1 ** level)),
+    'crystal_mine': lambda level: int(10 * level * (1.1 ** level)),
+    'deuterium_mine': lambda level: int(20 * level * (1.1 ** level)),
+}
 
 # OGame page components
 class COMPONENTS:

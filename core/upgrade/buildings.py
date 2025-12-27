@@ -7,8 +7,9 @@ from config.types import EmpireSnapshotDict, UpgradableBuilding
 from core.notifications.telegram_notifier import TelegramNotifier
 from typing import List, Optional
 from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
-from config.constants import RESOURCE_TO_STORAGE, buildings
+from config.constants import RESOURCE_TO_STORAGE, buildings  # Removed unused ENERGY_CONSUMPTION import
 from core.navigation.planet import navigate_to_resources_page
+from core.utils.calculate import calculate_energy_needed
 
 def is_upgrading(page: Page, building_id: int) -> bool:
     """
@@ -115,15 +116,33 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding]) -> Optional[UpgradableBuilding]:
+def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding], empire_data: EmpireSnapshotDict) -> Optional[UpgradableBuilding]:
     """
     Determine which building to upgrade based on custom logic.
-    For now, prioritize the lowest level building.
+    Prioritize the lowest level building that has enough energy available on the planet.
     """
     if not upgradable_buildings:
         return None
 
-    return min(upgradable_buildings, key=lambda b: b['level'])
+    for building in sorted(upgradable_buildings, key=lambda b: b['level']):
+        planet_id = building['planet_id']
+        resource = building['resource']
+        building_level = building['level']
+        planet = next((p for p in empire_data.get('planets', []) if str(p.get('id')) == planet_id), None)
+        if not planet:
+            continue
+
+        # Get current energy on the planet
+        current_energy = planet.get('resources', {}).get('energy', 0)
+
+        # Calculate energy consumption after the upgrade
+        energy_needed = calculate_energy_needed(resource, building_level)
+
+        if current_energy >= energy_needed:
+            return building
+
+    print("[DEBUG] No building has enough energy for an upgrade.")
+    return None
 
 def upgrade_building(page: Page, building: UpgradableBuilding) -> int:
     """
@@ -178,7 +197,7 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
     attempts = 0
 
     while upgradable_buildings and attempts < max_attempts:
-        building_to_upgrade = determine_building_to_upgrade(upgradable_buildings)
+        building_to_upgrade = determine_building_to_upgrade(upgradable_buildings, empire_data)
         if not building_to_upgrade:
             break
 

@@ -135,7 +135,11 @@ def determine_building_to_upgrade(upgradable_buildings: List[UpgradableBuilding]
             continue
 
         # Get current energy on the planet
-        current_energy = planet.get('resources', {}).get('energy', 0)
+        current_energy: int = 0
+        
+        # Handle energy as a string (e.g., '+328') and convert to integer
+        if isinstance(planet.get('energy'), str):
+            current_energy = int(planet.get('energy', '0').replace('+', ''))
 
         # Calculate energy consumption after the upgrade
         energy_needed = calculate_energy_needed(resource, building_level)

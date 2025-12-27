@@ -37,3 +37,12 @@ LOBBY_URL = f"https://lobby.ogame.gameforge.com/en_GB/hub"
 # Storage thresholds
 STORAGE_WARNING_THRESHOLD = 0.90  # 90%: warn user
 STORAGE_UPGRADE_THRESHOLD = 0.95  # 95%: trigger upgrade
+
+# Sleep intervals (in minutes)
+NIGHT_MIN_SLEEP = 240  # 4 hours
+NIGHT_MAX_SLEEP = 300  # 5 hours
+DAY_MIN_SLEEP = 23     
+DAY_MAX_SLEEP = 38     
+DEFAULT_MIN_SLEEP = 45
+DEFAULT_MAX_SLEEP = 75
+

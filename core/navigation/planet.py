@@ -22,16 +22,25 @@ def navigate_to_resources_page(page: Page, planet_id: str | int) -> None:
     print(f"[DEBUG] Navigating to resources page for planet_id: {planet_id}")
     print(f"[DEBUG] Generated URL: {url}")
 
-    page.goto(url)
+    retries = 3
+    for attempt in range(retries):
+        try:
+            page.goto(url, timeout=3000)  # Increase timeout to 60 seconds
 
-    # Debugging: Log the current URL after navigation
-    print(f"[DEBUG] Current page URL after navigation: {page.url}")
+            # Debugging: Log the current URL after navigation
+            print(f"[DEBUG] Current page URL after navigation: {page.url}")
 
-    # Confirm the page has reloaded successfully by checking for a specific element
-    page.wait_for_selector("#technologies", timeout=5000)
+            # Confirm the page has reloaded successfully by checking for a specific element
+            page.wait_for_selector("#technologies", timeout=10000)  # Increase timeout to 10 seconds
 
-    # Debugging: Log if the page reload check passes
-    print(f"[DEBUG] Page reload check passed for planet_id: {planet_id}")
+            # Debugging: Log if the page reload check passes
+            print(f"[DEBUG] Page reload check passed for planet_id: {planet_id}")
 
-    if not page.url.startswith(url):
-        raise RuntimeError(f"Failed to navigate to the resources page for planet_id {planet_id}.")
+            if not page.url.startswith(url):
+                raise RuntimeError(f"Failed to navigate to the resources page for planet_id {planet_id}.")
+
+            return  # Exit the function if navigation is successful
+        except Exception as e:
+            print(f"[ERROR] Navigation attempt {attempt + 1} failed for planet_id {planet_id}: {e}")
+            if attempt == retries - 1:
+                raise RuntimeError(f"All navigation attempts failed for planet_id {planet_id}.")

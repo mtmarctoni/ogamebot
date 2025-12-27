@@ -213,22 +213,22 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
     upgrade_durations: List[int] = []  # Explicitly define the type of the list
 
     max_attempts = 5  # Limit the number of iterations to prevent infinite loops
-    attempts = 0
 
-    while upgradable_buildings and attempts < max_attempts:
-        building_to_upgrade = determine_building_to_upgrade(upgradable_buildings, empire_data, notifier)
-        if not building_to_upgrade:
+    for _ in range(max_attempts):
+        if not upgradable_buildings:
             break
 
-        duration = upgrade_building(game_page, building_to_upgrade)
-        if duration > 0:
-            upgrade_durations.append(duration)
+        for building in upgradable_buildings:
+            building_to_upgrade = determine_building_to_upgrade([building], empire_data, notifier)
+            if not building_to_upgrade:
+                continue
 
-        # Re-check upgradable buildings after each upgrade
-        upgradable_buildings = check_for_upgradable_buildings(empire_data)
-        attempts += 1
+            duration = upgrade_building(game_page, building_to_upgrade)
+            if duration > 0:
+                upgrade_durations.append(duration)
 
-    if attempts == max_attempts:
-        print("[DEBUG] Reached maximum upgrade attempts. Exiting loop to prevent infinite iterations.")
+            # Re-check upgradable buildings after upgrading one building
+            upgradable_buildings = check_for_upgradable_buildings(empire_data)
+            break  # Exit after upgrading one building
 
     return upgrade_durations

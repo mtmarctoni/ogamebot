@@ -1,9 +1,11 @@
+from datetime import timedelta
+import isodate # type: ignore
 from typing import Optional, List, Tuple
 from playwright.sync_api import Page
 
 from config.types import EmpireSnapshotDict
 from core.notifications.telegram_notifier import TelegramNotifier
-from core.upgrade.buildings import find_storages_to_upgrade, is_upgrading
+from core.upgrade.buildings import find_storages_to_upgrade
 from core.navigation.planet import navigate_to_resources_page
 
 def click_upgrade_button(page: Page, building_id: int) -> Tuple[bool, Optional[int]]:
@@ -20,25 +22,28 @@ def click_upgrade_button(page: Page, building_id: int) -> Tuple[bool, Optional[i
         btn = page.query_selector(selector)
         if btn:
             btn.click()
-            # Wait up to 5 seconds for confirmation
-            for _ in range(10):
-                if is_upgrading(page, building_id):
-                    # Extract upgrade duration from the page
-                    duration_selector = '#technologies li.technology.active time.countdown.buildingCountdown'
+
+            # Extract the upgrade duration from the `datetime` attribute or text content
+            countdown = page.query_selector('time.buildingCountdown')
+            if countdown:
+                duration_attr = countdown.get_attribute('datetime')
+                if duration_attr:
+                    # Parse ISO 8601 duration (e.g., PT49M15S)
                     try:
-                        time_element = page.query_selector(duration_selector)
-                        if time_element:
-                            start_attr = time_element.get_attribute("data-start")
-                            end_attr = time_element.get_attribute("data-end")
-                            if start_attr and end_attr:
-                                start = int(start_attr)
-                                end = int(end_attr)
-                                duration_seconds = end - start
-                                return True, duration_seconds
-                            return True, None
-                    except Exception:
-                        return True, None
-                page.wait_for_timeout(500)
+                        duration: timedelta = isodate.parse_duration(duration_attr)  # type: ignore
+                        if isinstance(duration, timedelta):
+                            return True, int(duration.total_seconds())
+                    except Exception as e:
+                        print(f"Error parsing duration: {e}")
+
+                # Fallback: Extract duration from text content
+                duration_text = countdown.inner_text()
+                if duration_text:
+                    import re
+                    match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
+                    if match:
+                        minutes, seconds = map(int, match.groups())
+                        return True, minutes * 60 + seconds
     except Exception:
         pass
     return False, None

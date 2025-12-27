@@ -50,9 +50,6 @@ def find_storages_to_upgrade(
         resources = planet.get('resources', {})
         buildings_data = planet.get('buildings', {})
         print(f"[DEBUG] Planet: {planet_name} ({coords})")
-        print(f"  Storage: {storage}")
-        print(f"  Resources: {resources}")
-        print(f"  Buildings: {buildings_data}")
         for resource, building_id in resource_to_building.items():
             current = resources.get(resource)
             max_cap = storage.get(RESOURCE_TO_STORAGE[resource])
@@ -95,7 +92,7 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
     for planet in empire_data.get('planets', []):
         planet_id = planet.get('id')
         planet_name = planet.get('name')
-        coords = planet.get('coordinates')
+        coords = planet.get('coords')
         buildings_data = planet.get('buildings', {})
 
         for resource, building_id in {
@@ -214,12 +211,14 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
 
     max_attempts = 5  # Limit the number of iterations to prevent infinite loops
 
+    print(f"[DEBUG] Found {upgradable_buildings} upgradable buildings.")
     for _ in range(max_attempts):
         if not upgradable_buildings:
             break
 
         for building in upgradable_buildings:
             building_to_upgrade = determine_building_to_upgrade([building], empire_data, notifier)
+            print(f"[DEBUG] Determined building to upgrade: {building_to_upgrade}")
             if not building_to_upgrade:
                 continue
 

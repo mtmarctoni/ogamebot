@@ -24,12 +24,19 @@ def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[Telegram
             max_cap = storage.get(RESOURCE_TO_STORAGE[r])
             percent = (current / max_cap * 100) if max_cap else 0
             alert = ''
+            upgradable = ''
             if max_cap:
                 if percent >= STORAGE_UPGRADE_THRESHOLD * 100:
                     alert = '🚨'
                 elif percent >= STORAGE_WARNING_THRESHOLD * 100:
                     alert = '⚠️'
-            lines.append(f"{res_map.get(r, r.title())} {current:,} - ({percent:.1f}%) {alert}")
+
+                # Check if the resource is upgradable
+                building_info = planet.get('buildings', {}).get(str(RESOURCE_TO_STORAGE[r]), {})
+                if building_info.get('upgradable', False):
+                    upgradable = '⬆️'
+
+            lines.append(f"{res_map.get(r, r.title())} {current:,} - ({percent:.1f}%) {alert} {upgradable}")
         res_str = '\n'.join(lines)
         planet_summary = (
             f"★ {name} [{coords}]\n"

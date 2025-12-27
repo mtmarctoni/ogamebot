@@ -1,6 +1,6 @@
 import os
+from typing import List
 from playwright.sync_api import sync_playwright
-
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
 from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
@@ -13,6 +13,7 @@ from core.upgrade.auto_storage import upgrade_full_storages
 from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_random_interval
 from core.info.empire import extract_empire_info
+from core.upgrade.buildings import handle_resources_upgrades
 
 def main() -> None:
     notifier = None
@@ -65,13 +66,24 @@ def main() -> None:
                 # Save the empire snapshot to a file
                 save_empire_snapshot(empire_data)
 
-                # Always check and upgrade storages if needed (every loop)
-                upgrade_durations = upgrade_full_storages(empire_data, game_page, notifier)
+                # Check and upgrade resources (metal, crystal, deuterium) on all planets
+                resource_upgrade_durations = handle_resources_upgrades(empire_data, game_page, notifier)
 
-                if upgrade_durations:
-                    # If upgrades were triggered, wait for the longest upgrade duration
-                    longest_duration = max(upgrade_durations)
-                    print(f"Upgrades triggered. Waiting for {longest_duration} seconds before next cycle.")
+                # Always check and upgrade storages if needed (every loop)
+                storage_upgrade_durations = upgrade_full_storages(empire_data, game_page, notifier)
+
+                # Ensure return values are lists
+                storage_upgrade_durations = storage_upgrade_durations or []
+                resource_upgrade_durations = resource_upgrade_durations or []
+
+                if storage_upgrade_durations or resource_upgrade_durations:
+                    # Combine durations
+                    valid_durations: List[int] = storage_upgrade_durations + resource_upgrade_durations
+
+                    # Calculate the longest duration
+                    longest_duration = max(valid_durations) if valid_durations else 0
+
+                    # Directly use longest_duration in sleep logic
                     sleep_random_interval(longest_duration, longest_duration + 10)
                 else:
                     # If no upgrades, sleep for a random interval

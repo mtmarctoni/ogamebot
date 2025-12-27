@@ -1,6 +1,7 @@
 from typing import TypedDict, List, Dict, Optional
 
 
+
 # Explicit resource and storage types for planets
 class PlanetResources(TypedDict, total=False):
     metal: int
@@ -69,8 +70,11 @@ class StorageUpgradeCandidate(TypedDict):
     building_level: int | str
     upgradable: bool
 
-# Example usage:
-# snapshot: EmpireSnapshotDict = {...}
-# with open('empire_snapshot.json', 'w') as f:
-#     import json
-#     json.dump(snapshot, f, indent=2)
+class UpgradableBuilding(TypedDict):
+    planet_id: str
+    planet_name: str
+    coordinates: str
+    resource: str
+    building_id: int
+    level: int
+

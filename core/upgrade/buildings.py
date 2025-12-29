@@ -1,7 +1,5 @@
 from typing import Optional, List
 from playwright.sync_api import Page
-import isodate # type: ignore
-from datetime import timedelta
 
 from config.types import EmpireSnapshotDict, UpgradableBuilding
 from core.notifications.telegram_notifier import TelegramNotifier
@@ -10,6 +8,7 @@ from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
 from config.constants import RESOURCE_TO_STORAGE, buildings, RESOURCE_UPGRADE_PREFERENCE  # Removed unused ENERGY_CONSUMPTION import
 from core.navigation.planet import navigate_to_resources_page
 from core.utils.calculate import calculate_energy_needed
+from core.utils.time_utils import parse_duration
 
 def is_upgrading(page: Page, building_id: int) -> bool:
     """
@@ -183,24 +182,9 @@ def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optiona
             # Extract the upgrade duration from the countdown timer
             countdown = page.locator('time.buildingCountdown').first
             if countdown:
-                duration_attr = countdown.get_attribute('datetime')
-                if duration_attr:
-                    try:
-                        duration: timedelta = isodate.parse_duration(duration_attr) # type: ignore
-                        if isinstance(duration, timedelta):
-                            return int(duration.total_seconds())
-                    except Exception as e:
-                        print(f"[ERROR] Failed to parse upgrade duration: {e}")
-
-
-                # Fallback: Extract duration from text content
-                duration_text = countdown.inner_text()
-                if duration_text:
-                    import re
-                    match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
-                    if match:
-                        minutes, seconds = map(int, match.groups())
-                        return minutes * 60 + seconds
+                duration_attr = countdown.get_attribute('datetime') or ""
+                duration_text = countdown.inner_text() or ""
+                return parse_duration(duration_attr, duration_text)
         except Exception as e:
             print(f"[ERROR] Upgrade did not start for {building['resource']} on {building['planet_name']} ({building['coordinates']}): {e}")
             return 0

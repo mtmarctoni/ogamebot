@@ -78,3 +78,11 @@ class UpgradableBuilding(TypedDict):
     building_id: int
     level: int
 
+class UpgradableLifeformBuilding(TypedDict):
+    planet_id: str
+    planet_name: str
+    coordinates: str
+    building_id: int
+    building: str
+    level: int
+

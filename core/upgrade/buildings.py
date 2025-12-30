@@ -90,12 +90,12 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
     upgradable_buildings: List[UpgradableBuilding] = []
 
     # Debugging: Log all planets and their upgradable buildings
-    print("[DEBUG] Checking for upgradable buildings on all planets.")
-    for planet in empire_data.get('planets', []):
-        print(f"[DEBUG] Planet: {planet.get('name')} ({planet.get('coords')})")
-        buildings_data = planet.get('buildings', {})
-        for building_id, building_info in buildings_data.items():
-            print(f"    [DEBUG] Building ID: {building_id}, Info: {building_info}")
+    # print("[DEBUG] Checking for upgradable buildings on all planets.")
+    # for planet in empire_data.get('planets', []):
+    #     print(f"[DEBUG] Planet: {planet.get('name')} ({planet.get('coords')})")
+    #     buildings_data = planet.get('buildings', {})
+    #     for building_id, building_info in buildings_data.items():
+    #         print(f"    [DEBUG] Building ID: {building_id}, Info: {building_info}")
 
     for planet in empire_data.get('planets', []):
         planet_id = planet.get('id')

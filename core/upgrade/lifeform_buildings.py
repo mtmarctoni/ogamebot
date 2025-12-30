@@ -85,12 +85,16 @@ def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: O
     upgrade_durations: List[int] = []
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
 
+    if notifier:
+        notifier.send_message(f"🔍 Found {len(upgradable_buildings)} upgradable lifeform buildings on planet {planet.get('name', 'Unknown')}.")
+
     # Group buildings by planet
     grouped_buildings = group_upgradable_buildings_by_planet(upgradable_buildings)
 
     for planet_id, buildings in grouped_buildings.items():
         building_to_upgrade = buildings[0]  # The first building is the highest priority
         building_id = building_to_upgrade['building_id']
+        building_name = building_to_upgrade['building']
 
         # Simulate navigation and upgrade logic
         params: UpgradeTech = {
@@ -105,8 +109,12 @@ def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: O
 
         if duration > 0:
             upgrade_durations.append(duration)
+            if notifier:
+                notifier.send_message(f"✅ Successfully started upgrade for '{building_name}' on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
+        else:
+            if notifier:
+                notifier.send_message(f"⚠️ Failed to upgrade '{building_name}' on planet {planet.get('name', 'Unknown')}. Please check manually.")
 
         break  # Exit after upgrading one building
-
     return upgrade_durations
 

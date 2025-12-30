@@ -1,7 +1,7 @@
 import time
 import random
 import datetime
-from typing import List, Optional
+from typing import Optional
 from config.config import NIGHT_MIN_SLEEP, NIGHT_MAX_SLEEP, DAY_MIN_SLEEP, DAY_MAX_SLEEP, DEFAULT_MIN_SLEEP, DEFAULT_MAX_SLEEP
 from core.notifications.telegram_notifier import TelegramNotifier
 
@@ -31,7 +31,7 @@ def sleep_random_interval(min_minutes: int = 0, max_minutes: int = 0) -> None:
     print(f"\nSleeping for {minutes} minutes before next check... (Ctrl+C to stop)")
     time.sleep(minutes * 60)
 
-def sleep_for_minimum_duration(duration_lists: List[int], notifier: Optional[TelegramNotifier]) -> None:
+def sleep_for_minimum_duration(duration: int, notifier: Optional[TelegramNotifier]) -> None:
     """
     Calculate the minimum non-zero duration from a list of lists of durations
     and sleep for that duration.
@@ -42,15 +42,12 @@ def sleep_for_minimum_duration(duration_lists: List[int], notifier: Optional[Tel
     Returns:
         None
     """
-    # Flatten the list of lists and filter out zero durations
-    all_durations: List[int] = [duration for duration in duration_lists if duration > 0]
 
-    if all_durations:
-        min_duration = min(all_durations)
-        print(f"[DEBUG] Sleeping for minimum duration: {min_duration}")
-        sleep_random_interval(min_duration, min_duration + 1)
+    if duration > 0:
+        print(f"[DEBUG] Sleeping for minimum duration: {duration} minutes.")
+        sleep_random_interval(duration, duration + 1)
         
-        notifier.send_message(f"Sleeping for {min_duration} seconds before next check.") if notifier else None
+        notifier.send_message(f"Sleeping for {duration} minutes before next check.") if notifier else None
     else:
         print("[DEBUG] No valid durations found. Sleeping for a random interval.")
         sleep_random_interval()

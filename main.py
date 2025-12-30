@@ -8,12 +8,10 @@ from core.notifications.telegram_notifier import TelegramNotifier
 from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
-from core.upgrade.auto_storage import upgrade_full_storages
-from core.upgrade.lifeform_buildings import handle_lifeform_uildings_upgrade
 from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
-from core.upgrade.buildings import handle_resources_upgrades
+from core.upgrade.handle_upgrades import handle_upgrades
 
 def main() -> None:
     notifier = None
@@ -66,26 +64,11 @@ def main() -> None:
                 # Save the empire snapshot to a file
                 save_empire_snapshot(empire_data)
 
-                # Iterate through all planets and handle upgrades for each
-                for planet in empire_data["planets"]:
-                    planet_name = planet.get('name', 'Unknown')
-                    planet_id = planet.get('id', 'Unknown')
-                    print(f"\nProcessing upgrades for planet: {planet_name} (ID: {planet_id})")
+                # Handle all upgrades for the empire
+                next_action_duration = handle_upgrades(empire_data, game_page, notifier)
 
-                    # Check and upgrade resources (metal, crystal, deuterium) for the planet
-                    resource_upgrade_durations = handle_resources_upgrades(planet, game_page, notifier)
-
-                    # Check and upgrade storages for the planet
-                    storage_upgrade_durations = upgrade_full_storages(planet, game_page, notifier)
-
-                    # Check and upgrade lifeform buildings for the planet
-                    lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(planet, game_page, notifier)
-
-                    # Combine durations for sleep calculation
-                    total_durations = resource_upgrade_durations + storage_upgrade_durations + lifeform_upgrade_durations
-
-                    # Sleep for the minimum duration required for this planet
-                    sleep_for_minimum_duration(total_durations, notifier)
+                # Sleep for the minimum duration across all planets
+                sleep_for_minimum_duration(next_action_duration, notifier)
 
         except KeyboardInterrupt:
             print("\nBot stopped by user.")

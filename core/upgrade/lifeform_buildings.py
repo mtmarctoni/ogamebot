@@ -1,7 +1,12 @@
-from config.types import UpgradableLifeformBuilding
-from constants.lifeform_buildings import HumanLifeformBuildingClass
+from playwright.sync_api import Page
+from typing import List, Dict, Optional
+
+from config.types import EmpireSnapshotDict, PlanetId, PlanetName, UpgradableLifeformBuilding, Coordinates, TechId, TechName, TechLevel
 from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY
-from typing import List, Dict, Any
+from constants.lifeform_buildings import HumanLifeformBuildingClass
+from core.notifications.telegram_notifier import TelegramNotifier
+from core.upgrade.actions import UpgradeTech, upgrade_tech
+
 
 def prioritize_lifeform_buildings(buildings: list[str]) -> list[str]:
     """
@@ -16,12 +21,12 @@ def prioritize_lifeform_buildings(buildings: list[str]) -> list[str]:
     priority_map = {name: index for index, name in enumerate(HUMAN_LIFEFORM_BUILDING_PRIORITY)}
     return sorted(buildings, key=lambda b: priority_map.get(b, float('inf')))
 
-def find_upgradable_lifeform_buildings(empire_data: Dict[str, Any]) -> List[UpgradableLifeformBuilding]:
+def find_upgradable_lifeform_buildings(empire_data: EmpireSnapshotDict) -> List[UpgradableLifeformBuilding]:
     """
     Finds upgradable lifeform buildings across all planets in the empire data.
 
     Args:
-        empire_data (Dict[str, Any]): The empire data containing planet information.
+        empire_data (Dict[str, Any): The empire data containing planet information.
 
     Returns:
         List[UpgradableLifeformBuilding]: A list of upgradable buildings with planet ID and details.
@@ -30,20 +35,20 @@ def find_upgradable_lifeform_buildings(empire_data: Dict[str, Any]) -> List[Upgr
 
     for planet in empire_data.get('planets', []):
         planet_id = planet.get('id')
-        planet_name = planet.get('name')
-        coords = planet.get('coords')
+        planet_name = planet.get('name') or "Unknown"
+        coords = planet.get('coords') or "?"
         lifeform_buildings_data = planet.get('lifeform_buildings', {})
 
         for building_id, building_info in lifeform_buildings_data.items():
-            building_name = HumanLifeformBuildingClass.get_name_by_id(building_id) or "Not a lifeform building"
+            building_name = HumanLifeformBuildingClass.get_name_by_id(int(building_id)) or "Not a lifeform building"
             if building_info.get('upgradable'):
                 upgradable_buildings.append({
-                    'planet_id': str(planet_id),
-                    'planet_name': str(planet_name),
-                    'coordinates': str(coords),
-                    'building': building_name,
-                    'building_id': building_id,
-                    'level': building_info.get('level', 0),
+                    'planet_id': PlanetId(str(planet_id)),
+                    'planet_name': PlanetName(planet_name),
+                    'coordinates': Coordinates(coords),
+                    'building': TechName(building_name),
+                    'building_id': TechId(building_id),
+                    'level': TechLevel(building_info.get('level', 0)),
                 })
 
     return upgradable_buildings
@@ -68,7 +73,7 @@ def group_upgradable_buildings_by_planet(upgradable_buildings: List[UpgradableLi
 
     return grouped_buildings
 
-def upgrade_lifeform_buildings(empire_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+def handle_lifeform_uildings_upgrade(empire_data: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
     """
     Loops through all planets to upgrade the first lifeform building for each planet based on priority.
 
@@ -78,7 +83,7 @@ def upgrade_lifeform_buildings(empire_data: Dict[str, Any]) -> List[Dict[str, An
     Returns:
         List[Dict[str, Any]]: A list of upgraded buildings with planet ID and upgrade duration.
     """
-    upgraded_buildings = []
+    upgrade_durations: List[int] = []
     upgradable_buildings = find_upgradable_lifeform_buildings(empire_data)
 
     # Group buildings by planet
@@ -86,29 +91,23 @@ def upgrade_lifeform_buildings(empire_data: Dict[str, Any]) -> List[Dict[str, An
 
     for planet_id, buildings in grouped_buildings.items():
         building_to_upgrade = buildings[0]  # The first building is the highest priority
+        building_id = building_to_upgrade['building_id']
 
         # Simulate navigation and upgrade logic
-        upgrade_duration = simulate_upgrade(planet_id, building_to_upgrade['building'])
+        params: UpgradeTech = {
+            "page": page,  # Replace with actual Page instance
+            "planet_id": str(planet_id),
+            "tech_id": str(building_id),
+            "notifier": notifier
+        }
 
-        upgraded_buildings.append({
-            'planet_id': planet_id,
-            'building': building_to_upgrade['building'],
-            'duration': upgrade_duration
-        })
+        # Unpack the dictionary into the function
+        duration = upgrade_tech(**params)
 
-    return upgraded_buildings
+        if duration > 0:
+            upgrade_durations.append(duration)
 
-def simulate_upgrade(planet_id: int, building: str) -> int:
-    """
-    Simulates the upgrade process for a building on a planet.
+        break  # Exit after upgrading one building
 
-    Args:
-        planet_id (int): The ID of the planet.
-        building (str): The building to upgrade.
+    return upgrade_durations
 
-    Returns:
-        int: The duration of the upgrade in seconds.
-    """
-    # Placeholder logic for simulation
-    print(f"Upgrading {building} on planet {planet_id}...")
-    return 3600  # Assume a fixed duration for now

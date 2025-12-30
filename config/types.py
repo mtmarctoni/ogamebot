@@ -1,6 +1,11 @@
-from typing import TypedDict, List, Dict, Optional
+from typing import NewType, TypedDict, List, Dict, Optional
 
-
+TechId = NewType('TechId', str)
+PlanetId = NewType('PlanetId', str)
+PlanetName = NewType('PlanetName', str)
+TechName = NewType('TechName', str)
+TechLevel = NewType('TechLevel', int)
+Coordinates = NewType('Coordinates', str)
 
 # Explicit resource and storage types for planets
 class PlanetResources(TypedDict, total=False):
@@ -59,30 +64,30 @@ class EmpireSnapshotDict(TypedDict):
     planets: List[PlanetDict]
 
 class StorageUpgradeCandidate(TypedDict):
-    planet_id: str
-    planet_name: str
-    coordinates: str
-    resource: str
+    planet_id: PlanetId
+    planet_name: PlanetName
+    coordinates: Coordinates
+    resource: TechName
     current: int
     max: int
     percent: float
-    building_id: int
-    building_level: int | str
+    building_id: TechId
+    building_level: TechLevel
     upgradable: bool
 
 class UpgradableBuilding(TypedDict):
-    planet_id: str
-    planet_name: str
-    coordinates: str
-    resource: str
-    building_id: int
-    level: int
+    planet_id: PlanetId
+    planet_name: PlanetName
+    coordinates: Coordinates
+    resource: TechName
+    building_id: TechId
+    level: TechLevel
 
 class UpgradableLifeformBuilding(TypedDict):
-    planet_id: str
-    planet_name: str
-    coordinates: str
-    building_id: int
-    building: str
-    level: int
+    planet_id: PlanetId
+    planet_name: PlanetName
+    coordinates: Coordinates
+    building_id: TechId
+    building: TechName
+    level: TechLevel
 

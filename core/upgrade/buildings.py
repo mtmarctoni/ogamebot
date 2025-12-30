@@ -1,7 +1,7 @@
 from typing import Optional, List
 from playwright.sync_api import Page
 
-from config.types import EmpireSnapshotDict, UpgradableBuilding
+from config.types import Coordinates, EmpireSnapshotDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableBuilding
 from constants.buildings import buildings
 from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE
 from core.notifications.telegram_notifier import TelegramNotifier
@@ -65,16 +65,16 @@ def find_storages_to_upgrade(
             if percent >= threshold and upgradable:
                 print(f"      [ADD] Storage upgrade candidate for {resource}")
                 results.append({
-                    'planet_id': str(planet_id),
-                    'planet_name': str(planet_name),
-                    'coordinates': str(coords),
-                    'resource': str(resource),
+                    'planet_id': PlanetId(str(planet_id)),
+                     'planet_name': PlanetName(str(planet_name)),
+                    'coordinates': Coordinates(str(coords)),
+                    'resource': TechName(str(resource)),
                     'current': int(current),
                     'max': int(max_cap),
                     'percent': float(percent),
-                    'building_id': int(building_id),
-                    'building_level': int(level) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else str(level),
-                    'upgradable': bool(upgradable),
+                    'building_id': TechId(str(building_id)),
+                    'building_level': TechLevel(int(level)) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else TechLevel(int((level))),
+                    'upgradable': bool(upgradable)
                 })
             else:
                 print(f"      [NO ADD] Not over threshold or not upgradable")
@@ -111,12 +111,12 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
             building_info = buildings_data.get(str(building_id), {})
             if building_info.get('upgradable', False):
                 upgradable_buildings.append({
-                    'planet_id': str(planet_id),
-                    'planet_name': str(planet_name),
-                    'coordinates': str(coords),
-                    'resource': resource,
-                    'building_id': building_id,
-                    'level': building_info.get('level', 0),
+                    'planet_id': PlanetId(str(planet_id)),  # Convert to PlanetId
+                    'planet_name': PlanetName(str(planet_name)),  # Convert to PlanetName
+                    'coordinates': Coordinates(str(coords)),  # Convert to Coordinates
+                    'resource': TechName(str(resource)),  # Convert to TechName
+                    'building_id': TechId(str(building_id)),  # Convert to TechId
+                    'level': TechLevel(building_info.get('level', 0)),  # Convert to TechLevel
                 })
 
     return upgradable_buildings

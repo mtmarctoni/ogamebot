@@ -27,7 +27,7 @@ def check_for_attack_alert(page: Page, notifier: Optional[TelegramNotifier] = No
     If notifier is provided, sends a Telegram message on attack.
     """
     overview_url = COMPONENT_URL_TEMPLATE.format(
-        component=COMPONENTS.overview,
+        component=COMPONENTS.OVERVIEW,
         planet_id=DEFAULT_PLANET_ID
     )
     page.goto(overview_url)

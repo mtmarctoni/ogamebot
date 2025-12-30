@@ -1,4 +1,7 @@
 from typing import Optional, TypedDict
+from config.types import PlanetId, TechId
+from constants.general import TechIdToSection
+from core.navigation.planet import navigate_to_section
 from core.utils.time_utils import parse_duration
 from playwright.sync_api import Page
 
@@ -6,11 +9,11 @@ from core.notifications.telegram_notifier import TelegramNotifier
 
 class UpgradeTech(TypedDict):
     page: Page
-    planet_id: str
-    tech_id: str
+    planet_id: PlanetId
+    tech_id: TechId
     notifier: Optional[TelegramNotifier]
 
-def upgrade_tech(*, page: Page, planet_id: str, tech_id: str, notifier: Optional[TelegramNotifier] = None) -> int:
+def upgrade_tech(*, page: Page, planet_id: PlanetId, tech_id: TechId, notifier: Optional[TelegramNotifier] = None) -> int:
     """
     Perform the upgrade for any technology (building, research, ship, etc.) and return the upgrade duration.
 
@@ -25,10 +28,12 @@ def upgrade_tech(*, page: Page, planet_id: str, tech_id: str, notifier: Optional
         int: The duration of the upgrade in seconds.
     """
 
-    # Navigate directly to the planet and component using query parameters
-    url = f"/game/index.php?page=ingame&component=overview&cp={planet_id}"
-    page.goto(url)
-    print(f"[DEBUG] Navigated to planet ID {planet_id} for upgrading tech ID {tech_id}.")
+    # Extract the section based on tech_id
+    section = TechIdToSection.get_section(tech_id)  # Default to "overview" if not found
+
+    # Navigate directly to the planet and component using the extracted section
+    navigate_to_section(page, planet_id, section)
+    print(f"[DEBUG] Navigated to planet ID {planet_id} for upgrading tech ID {tech_id} in section {section}.")
 
     # Locate the upgrade button for the technology
     tech_li_selector = f'#technologies li.technology[data-technology="{tech_id}"] button.upgrade'

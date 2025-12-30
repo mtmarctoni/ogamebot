@@ -1,9 +1,10 @@
 from playwright.sync_api import Page
 
 from config.config import COMPONENT_URL_TEMPLATE
+from config.types import PlanetId
 from constants.general import COMPONENTS
 
-def navigate_to_section(page: Page, planet_id: str, section: str) -> None:
+def navigate_to_section(page: Page, planet_id: PlanetId, section: COMPONENTS) -> None:
     """
     Generic function to navigate to a specific section of a planet.
 
@@ -15,10 +16,10 @@ def navigate_to_section(page: Page, planet_id: str, section: str) -> None:
     Returns:
         None
     """
-    if section == COMPONENTS.supplies:
+    if section == COMPONENTS.SUPPLIES:
         navigate_to_resources_page(page, planet_id)
         print(f"[DEBUG] Navigated to resources section of planet ID {planet_id}.")
-    elif section == COMPONENTS.lfbuildings:
+    elif section == COMPONENTS.LFBUILDINGS:
         navigate_to_lifeform_page(page, planet_id)
         print(f"[DEBUG] Navigated to lifeform section of planet ID {planet_id}.")
     else:
@@ -35,7 +36,7 @@ def navigate_to_resources_page(page: Page, planet_id: str | int) -> None:
     if not planet_id.isdigit():
         raise ValueError(f"Invalid planet_id: {planet_id}. It must be a numeric string or integer.")
 
-    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.supplies, planet_id=planet_id)
+    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.SUPPLIES, planet_id=planet_id)
     if not url.startswith("http"):
         raise ValueError(f"Generated URL is invalid: {url}")
 
@@ -83,7 +84,7 @@ def navigate_to_lifeform_page(page: Page, planet_id: str | int) -> None:
     if not planet_id.isdigit():
         raise ValueError(f"Invalid planet_id: {planet_id}. It must be a numeric string or integer.")
 
-    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.lfbuildings, planet_id=planet_id)
+    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.LFBUILDINGS, planet_id=planet_id)
     if not url.startswith("http"):
         raise ValueError(f"Generated URL is invalid: {url}")
 

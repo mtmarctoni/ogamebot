@@ -96,8 +96,8 @@ def handle_lifeform_uildings_upgrade(empire_data: EmpireSnapshotDict, page: Page
         # Simulate navigation and upgrade logic
         params: UpgradeTech = {
             "page": page,  # Replace with actual Page instance
-            "planet_id": str(planet_id),
-            "tech_id": str(building_id),
+            "planet_id": PlanetId(planet_id),
+            "tech_id": TechId(building_id),
             "notifier": notifier
         }
 

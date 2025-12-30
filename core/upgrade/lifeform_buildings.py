@@ -85,9 +85,6 @@ def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: O
     upgrade_durations: List[int] = []
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
 
-    if notifier:
-        notifier.send_message(f"🔍 Found {len(upgradable_buildings)} upgradable lifeform buildings on planet {planet.get('name', 'Unknown')}.")
-
     # Group buildings by planet
     grouped_buildings = group_upgradable_buildings_by_planet(upgradable_buildings)
 

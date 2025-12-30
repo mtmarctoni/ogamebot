@@ -36,9 +36,9 @@ class BuildingInfoDict(TypedDict, total=False):
     upgrade_js: Optional[str]
 
 class PlanetDict(TypedDict, total=False):
-    id: int
-    name: str
-    coords: str
+    id: PlanetId
+    name: PlanetName
+    coords: Coordinates
     coordinates: str
     type: str  # planet or moon
     fields: str

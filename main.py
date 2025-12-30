@@ -66,19 +66,27 @@ def main() -> None:
                 # Save the empire snapshot to a file
                 save_empire_snapshot(empire_data)
 
-                # Check and upgrade resources (metal, crystal, deuterium) on all planets
-                resource_upgrade_durations = handle_resources_upgrades(empire_data, game_page, notifier)
+                # Iterate through all planets and handle upgrades for each
+                for planet in empire_data["planets"]:
+                    planet_name = planet.get('name', 'Unknown')
+                    planet_id = planet.get('id', 'Unknown')
+                    print(f"\nProcessing upgrades for planet: {planet_name} (ID: {planet_id})")
 
-                # Always check and upgrade storages if needed (every loop)
-                storage_upgrade_durations = upgrade_full_storages(empire_data, game_page, notifier)
+                    # Check and upgrade resources (metal, crystal, deuterium) for the planet
+                    resource_upgrade_durations = handle_resources_upgrades(planet, game_page, notifier)
 
-                # Check and upgrade lifeform buildings if applicable
-                lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(empire_data, game_page, notifier)
+                    # Check and upgrade storages for the planet
+                    storage_upgrade_durations = upgrade_full_storages(planet, game_page, notifier)
 
-                sleep_for_minimum_duration(
-                    storage_upgrade_durations + resource_upgrade_durations + lifeform_upgrade_durations,
-                    notifier
-                )
+                    # Check and upgrade lifeform buildings for the planet
+                    lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(planet, game_page, notifier)
+
+                    # Combine durations for sleep calculation
+                    total_durations = resource_upgrade_durations + storage_upgrade_durations + lifeform_upgrade_durations
+
+                    # Sleep for the minimum duration required for this planet
+                    sleep_for_minimum_duration(total_durations, notifier)
+
         except KeyboardInterrupt:
             print("\nBot stopped by user.")
             if notifier:

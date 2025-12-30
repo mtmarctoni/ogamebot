@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
-from config.types import EmpireSnapshotDict, PlanetId, PlanetName, UpgradableLifeformBuilding, Coordinates, TechId, TechName, TechLevel
+from config.types import PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, Coordinates, TechId, TechName, TechLevel
 from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY
 from constants.lifeform_buildings import HumanLifeformBuildingClass
 from core.notifications.telegram_notifier import TelegramNotifier
@@ -21,7 +21,7 @@ def prioritize_lifeform_buildings(buildings: list[str]) -> list[str]:
     priority_map = {name: index for index, name in enumerate(HUMAN_LIFEFORM_BUILDING_PRIORITY)}
     return sorted(buildings, key=lambda b: priority_map.get(b, float('inf')))
 
-def find_upgradable_lifeform_buildings(empire_data: EmpireSnapshotDict) -> List[UpgradableLifeformBuilding]:
+def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLifeformBuilding]:
     """
     Finds upgradable lifeform buildings across all planets in the empire data.
 
@@ -33,22 +33,21 @@ def find_upgradable_lifeform_buildings(empire_data: EmpireSnapshotDict) -> List[
     """
     upgradable_buildings: List[UpgradableLifeformBuilding] = []
 
-    for planet in empire_data.get('planets', []):
-        planet_id = planet.get('id')
-        planet_name = planet.get('name') or "Unknown"
-        coords = planet.get('coords') or "?"
-        lifeform_buildings_data = planet.get('lifeform_buildings', {})
+    planet_id = planet.get('id')
+    planet_name = planet.get('name') or "Unknown"
+    coords = planet.get('coords') or "?"
+    lifeform_buildings_data = planet.get('lifeform_buildings', {})
 
-        for building_id, building_info in lifeform_buildings_data.items():
-            building_name = HumanLifeformBuildingClass.get_name_by_id(int(building_id)) or "Not a lifeform building"
-            if building_info.get('upgradable'):
-                upgradable_buildings.append({
-                    'planet_id': PlanetId(str(planet_id)),
-                    'planet_name': PlanetName(planet_name),
-                    'coordinates': Coordinates(coords),
-                    'building': TechName(building_name),
-                    'building_id': TechId(building_id),
-                    'level': TechLevel(building_info.get('level', 0)),
+    for building_id, building_info in lifeform_buildings_data.items():
+        building_name = HumanLifeformBuildingClass.get_name_by_id(int(building_id)) or "Not a lifeform building"
+        if building_info.get('upgradable'):
+            upgradable_buildings.append({
+                'planet_id': PlanetId(str(planet_id)),
+                'planet_name': PlanetName(planet_name),
+                'coordinates': Coordinates(coords),
+                'building': TechName(building_name),
+                'building_id': TechId(building_id),
+                'level': TechLevel(building_info.get('level', 0)),
                 })
 
     return upgradable_buildings
@@ -73,7 +72,7 @@ def group_upgradable_buildings_by_planet(upgradable_buildings: List[UpgradableLi
 
     return grouped_buildings
 
-def handle_lifeform_uildings_upgrade(empire_data: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
+def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
     """
     Loops through all planets to upgrade the first lifeform building for each planet based on priority.
 
@@ -84,7 +83,7 @@ def handle_lifeform_uildings_upgrade(empire_data: EmpireSnapshotDict, page: Page
         List[Dict[str, Any]]: A list of upgraded buildings with planet ID and upgrade duration.
     """
     upgrade_durations: List[int] = []
-    upgradable_buildings = find_upgradable_lifeform_buildings(empire_data)
+    upgradable_buildings = find_upgradable_lifeform_buildings(planet)
 
     # Group buildings by planet
     grouped_buildings = group_upgradable_buildings_by_planet(upgradable_buildings)

@@ -1,12 +1,12 @@
 from typing import Optional, List
 from playwright.sync_api import Page
 
-from config.types import Coordinates, EmpireSnapshotDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableBuilding
+from config.types import Coordinates, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableBuilding
 from constants.buildings import buildings
 from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE
 from core.notifications.telegram_notifier import TelegramNotifier
 from typing import List, Optional
-from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
+from config.types import StorageUpgradeCandidate
 from core.navigation.planet import navigate_to_resources_page
 from core.utils.calculate import calculate_energy_needed
 from core.utils.time_utils import parse_duration
@@ -29,7 +29,7 @@ def is_upgrading(page: Page, building_id: int) -> bool:
     return countdown is not None
 
 def find_storages_to_upgrade(
-    snapshot: EmpireSnapshotDict, threshold: float = 0.95
+    planet: PlanetDict, threshold: float = 0.95
 ) -> List[StorageUpgradeCandidate]:
     """
     Analyze the empire snapshot and return a list of storages that should be upgraded.
@@ -42,47 +42,46 @@ def find_storages_to_upgrade(
         'deuterium': buildings.deuterium_storage[0],
     }
     results: List[StorageUpgradeCandidate] = []
-    for planet in snapshot.get('planets', []):
-        planet_id = planet.get('id')
-        planet_name = planet.get('name')
-        coords = planet.get('coordinates')
-        storage = planet.get('storage', {})
-        resources = planet.get('resources', {})
-        buildings_data = planet.get('buildings', {})
-        print(f"[DEBUG] Planet: {planet_name} ({coords})")
-        for resource, building_id in resource_to_building.items():
-            current = resources.get(resource)
-            max_cap = storage.get(RESOURCE_TO_STORAGE[resource])
-            print(f"    [DEBUG] Resource: {resource}, Current: {current}, Max: {max_cap}")
-            if current is None or max_cap is None or max_cap == 0:
-                print(f"      [SKIP] Missing or zero max_cap for {resource}")
-                continue
-            percent = current / max_cap
-            building_info = buildings_data.get(str(building_id), {})
-            upgradable = building_info.get('upgradable', False)
-            level = building_info.get('level', '?')
-            print(f"      [DEBUG] Percent: {percent:.2f}, Upgradable: {upgradable}, Level: {level}")
-            if percent >= threshold and upgradable:
-                print(f"      [ADD] Storage upgrade candidate for {resource}")
-                results.append({
-                    'planet_id': PlanetId(str(planet_id)),
-                     'planet_name': PlanetName(str(planet_name)),
-                    'coordinates': Coordinates(str(coords)),
-                    'resource': TechName(str(resource)),
-                    'current': int(current),
-                    'max': int(max_cap),
-                    'percent': float(percent),
-                    'building_id': TechId(str(building_id)),
-                    'building_level': TechLevel(int(level)) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else TechLevel(int((level))),
-                    'upgradable': bool(upgradable)
-                })
-            else:
-                print(f"      [NO ADD] Not over threshold or not upgradable")
+    planet_id = planet.get('id')
+    planet_name = planet.get('name')
+    coords = planet.get('coordinates')
+    storage = planet.get('storage', {})
+    resources = planet.get('resources', {})
+    buildings_data = planet.get('buildings', {})
+    print(f"[DEBUG] Planet: {planet_name} ({coords})")
+    for resource, building_id in resource_to_building.items():
+        current = resources.get(resource)
+        max_cap = storage.get(RESOURCE_TO_STORAGE[resource])
+        print(f"    [DEBUG] Resource: {resource}, Current: {current}, Max: {max_cap}")
+        if current is None or max_cap is None or max_cap == 0:
+            print(f"      [SKIP] Missing or zero max_cap for {resource}")
+            continue
+        percent = current / max_cap
+        building_info = buildings_data.get(str(building_id), {})
+        upgradable = building_info.get('upgradable', False)
+        level = building_info.get('level', '?')
+        print(f"      [DEBUG] Percent: {percent:.2f}, Upgradable: {upgradable}, Level: {level}")
+        if percent >= threshold and upgradable:
+            print(f"      [ADD] Storage upgrade candidate for {resource}")
+            results.append({
+                'planet_id': PlanetId(str(planet_id)),
+                    'planet_name': PlanetName(str(planet_name)),
+                'coordinates': Coordinates(str(coords)),
+                'resource': TechName(str(resource)),
+                'current': int(current),
+                'max': int(max_cap),
+                'percent': float(percent),
+                'building_id': TechId(str(building_id)),
+                'building_level': TechLevel(int(level)) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else TechLevel(int((level))),
+                'upgradable': bool(upgradable)
+            })
+        else:
+            print(f"      [NO ADD] Not over threshold or not upgradable")
     return results
 
 
 
-def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[UpgradableBuilding]:
+def check_for_upgradable_buildings(planet: PlanetDict) -> List[UpgradableBuilding]:
     """
     Check for resource buildings (metal, crystal, deuterium) that are upgradable on all planets.
     Returns a list of dictionaries containing building data.
@@ -97,31 +96,30 @@ def check_for_upgradable_buildings(empire_data: EmpireSnapshotDict) -> List[Upgr
     #     for building_id, building_info in buildings_data.items():
     #         print(f"    [DEBUG] Building ID: {building_id}, Info: {building_info}")
 
-    for planet in empire_data.get('planets', []):
-        planet_id = planet.get('id')
-        planet_name = planet.get('name')
-        coords = planet.get('coords')
-        buildings_data = planet.get('buildings', {})
+    planet_id = planet.get('id')
+    planet_name = planet.get('name')
+    coords = planet.get('coords')
+    buildings_data = planet.get('buildings', {})
 
-        for resource, building_id in {
-            'metal': buildings.metal_mine[0],
-            'crystal': buildings.crystal_mine[0],
-            'deuterium': buildings.deuterium_mine[0],
-        }.items():
-            building_info = buildings_data.get(str(building_id), {})
-            if building_info.get('upgradable', False):
-                upgradable_buildings.append({
-                    'planet_id': PlanetId(str(planet_id)),  # Convert to PlanetId
-                    'planet_name': PlanetName(str(planet_name)),  # Convert to PlanetName
-                    'coordinates': Coordinates(str(coords)),  # Convert to Coordinates
-                    'resource': TechName(str(resource)),  # Convert to TechName
-                    'building_id': TechId(str(building_id)),  # Convert to TechId
-                    'level': TechLevel(building_info.get('level', 0)),  # Convert to TechLevel
-                })
+    for resource, building_id in {
+        'metal': buildings.metal_mine[0],
+        'crystal': buildings.crystal_mine[0],
+        'deuterium': buildings.deuterium_mine[0],
+    }.items():
+        building_info = buildings_data.get(str(building_id), {})
+        if building_info.get('upgradable', False):
+            upgradable_buildings.append({
+                'planet_id': PlanetId(str(planet_id)),  # Convert to PlanetId
+                'planet_name': PlanetName(str(planet_name)),  # Convert to PlanetName
+                'coordinates': Coordinates(str(coords)),  # Convert to Coordinates
+                'resource': TechName(str(resource)),  # Convert to TechName
+                'building_id': TechId(str(building_id)),  # Convert to TechId
+                'level': TechLevel(building_info.get('level', 0)),  # Convert to TechLevel
+            })
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(building: UpgradableBuilding, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableBuilding]:
+def determine_building_to_upgrade(building: UpgradableBuilding, planet: PlanetDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableBuilding]:
     """
     Determine which building to upgrade based on custom logic.
     Prioritize the lowest level building that has enough energy available on the planet.
@@ -131,7 +129,6 @@ def determine_building_to_upgrade(building: UpgradableBuilding, empire_data: Emp
     planet_id = building['planet_id']
     resource = building['resource']
     building_level = building['level']
-    planet = next((p for p in empire_data.get('planets', []) if str(p.get('id')) == planet_id), None)
     if not planet:
         print(f"[DEBUG] Planet with ID {planet_id} not found in empire data.")
         return None
@@ -199,12 +196,12 @@ def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optiona
 
     return 0
 
-def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
+def handle_resources_upgrades(planet: PlanetDict, game_page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
     """
     Checks if resource buildings (metal, crystal, deuterium) are upgradable on any planet.
     Triggers the upgrade if possible and returns a list of upgrade durations.
     """
-    upgradable_buildings = check_for_upgradable_buildings(empire_data)
+    upgradable_buildings = check_for_upgradable_buildings(planet)
     upgrade_durations: List[int] = []  # Explicitly define the type of the list
 
     # Sort the upgradable buildings list before determining which one to upgrade
@@ -216,7 +213,7 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
         return upgrade_durations
 
     for building in upgradable_buildings:
-        building_to_upgrade = determine_building_to_upgrade(building, empire_data, notifier)
+        building_to_upgrade = determine_building_to_upgrade(building, planet, notifier)
         print(f"[DEBUG] Determined building to upgrade: {building_to_upgrade}")
         if not building_to_upgrade:
             continue
@@ -226,7 +223,7 @@ def handle_resources_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, 
             upgrade_durations.append(duration)
 
         # Re-check upgradable buildings after upgrading one building
-        upgradable_buildings = check_for_upgradable_buildings(empire_data)
+        upgradable_buildings = check_for_upgradable_buildings(planet)
         break  # Exit after upgrading one building
 
     return upgrade_durations

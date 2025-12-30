@@ -3,12 +3,12 @@ import isodate # type: ignore
 from typing import Optional, List, Tuple
 from playwright.sync_api import Page
 
-from config.types import EmpireSnapshotDict
+from config.types import PlanetDict, TechId
 from core.notifications.telegram_notifier import TelegramNotifier
 from core.upgrade.buildings import find_storages_to_upgrade
 from core.navigation.planet import navigate_to_resources_page
 
-def click_upgrade_button(page: Page, building_id: int) -> Tuple[bool, Optional[int]]:
+def click_upgrade_button(page: Page, building_id: TechId) -> Tuple[bool, Optional[int]]:
     """
     Clicks the upgrade button for the given building ID on the current planet.
     Returns a tuple (bool, Optional[int]):
@@ -48,12 +48,12 @@ def click_upgrade_button(page: Page, building_id: int) -> Tuple[bool, Optional[i
         pass
     return False, None
 
-def upgrade_full_storages(snapshot: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
+def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
     Finds storages to upgrade and triggers the upgrade process using Playwright.
     Returns a list of upgrade durations (in seconds) for triggered upgrades.
     """
-    storages_to_upgrade = find_storages_to_upgrade(snapshot)
+    storages_to_upgrade = find_storages_to_upgrade(planet)
     if not storages_to_upgrade:
         print("No storages need upgrading.")
         return []

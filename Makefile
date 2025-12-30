@@ -17,9 +17,9 @@ PIP_VENV        := $(VENV)/bin/${PIP}
 # Detect OS and set APPDATA dynamically
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
-    APPDATA := $(HOME)/Library/Application Support
+    APPDATA_PATH := $(HOME)/Library/Application Support
 else
-    APPDATA := $(HOME)/.config
+    APPDATA_PATH := $(HOME)/.config
 endif
 
 # Default goal
@@ -36,7 +36,7 @@ install: $(VENV)/bin/activate
 
 # 3. Run the app (depends on install)
 run: $(VENV)/bin/activate
-    export APPDATA="$(APPDATA)"; \
+    export APPDATA="$(APPDATA_PATH)"; \
     $(PYTHON_VENV) main.py
 
 clean-session:

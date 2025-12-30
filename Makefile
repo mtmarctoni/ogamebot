@@ -17,9 +17,9 @@ PIP_VENV        := $(VENV)/bin/${PIP}
 # Detect OS and set APPDATA dynamically
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
-    APPDATA := $$HOME/Library/Application Support
+    APPDATA := $(HOME)/Library/Application Support
 else
-    APPDATA := $$HOME/.config
+    APPDATA := $(HOME)/.config
 endif
 
 # Default goal

@@ -1,3 +1,6 @@
+.ONESHELL:
+.DEFAULT_GOAL := run
+
 # Variables editable to your environment
 VENV            := venv
 PYTHON_VERSION  := 3.12
@@ -13,6 +16,7 @@ PYTHON_GLOBAL   := $(shell which $(PYTHON))
 PIP_GLOBAL      := $(shell which ${PIP})
 PYTHON_VENV     := $(VENV)/bin/${PYTHON}
 PIP_VENV        := $(VENV)/bin/${PIP}
+ACTIVATE_VENV   := . $(VENV)/bin/activate &&
 
 # Detect OS and set APPDATA dynamically
 UNAME := $(shell uname)
@@ -25,22 +29,21 @@ endif
 # Declare PHONY targets
 .PHONY: install run clean-session clean-db nuke
 
-# Default goal
-.DEFAULT_GOAL := run
-
 # 1. Create venv if it doesn't exist
 $(VENV)/bin/activate:
 	$(PYTHON_GLOBAL) -m venv $(VENV)
 
 # 2. Install dependencies (depends on venv)
 install: $(VENV)/bin/activate
-	$(PIP_VENV) install -r requirements.txt
-	$(PYTHON_VENV) -m playwright install
+	$(ACTIVATE_VENV) $(PIP_VENV) install -r requirements.txt
+	$(ACTIVATE_VENV) $(PYTHON_VENV) -m playwright install
 
 # 3. Run the app (depends on install)
-run: $(VENV)/bin/activate
-    export APPDATA="$(APPDATA_PATH)"; \
-    $(PYTHON_VENV) main.py
+run: install
+	$(ACTIVATE_VENV) $(PYTHON_VENV) main.py
+# run: $(VENV)/bin/activate
+#     export APPDATA="$(APPDATA_PATH)"; \
+#     $(PYTHON_VENV) main.py
 
 clean-session:
 	rm -f $(FB_SESSION_FILE)

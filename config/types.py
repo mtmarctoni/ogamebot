@@ -75,7 +75,7 @@ class StorageUpgradeCandidate(TypedDict):
     building_level: TechLevel
     upgradable: bool
 
-class UpgradableBuilding(TypedDict):
+class UpgradableResourceBuilding(TypedDict):
     planet_id: PlanetId
     planet_name: PlanetName
     coordinates: Coordinates
@@ -89,5 +89,13 @@ class UpgradableLifeformBuilding(TypedDict):
     coordinates: Coordinates
     building_id: TechId
     building: TechName
+    level: TechLevel
+
+class UpgradableEnergyBuidling(TypedDict):
+    planet_id: PlanetId
+    planet_name: PlanetName
+    coordinates: Coordinates
+    resource: TechName
+    building_id: TechId
     level: TechLevel
 

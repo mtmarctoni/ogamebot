@@ -1,7 +1,7 @@
 from typing import Optional, List
 from playwright.sync_api import Page
 
-from config.types import Coordinates, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableBuilding
+from config.types import Coordinates, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
 from constants.buildings import buildings
 from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE
 from core.notifications.telegram_notifier import TelegramNotifier
@@ -81,12 +81,12 @@ def find_storages_to_upgrade(
 
 
 
-def check_for_upgradable_buildings(planet: PlanetDict) -> List[UpgradableBuilding]:
+def check_for_upgradable_resource_buildings(planet: PlanetDict) -> List[UpgradableResourceBuilding]:
     """
     Check for resource buildings (metal, crystal, deuterium) that are upgradable on all planets.
     Returns a list of dictionaries containing building data.
     """
-    upgradable_buildings: List[UpgradableBuilding] = []
+    upgradable_buildings: List[UpgradableResourceBuilding] = []
 
     # Debugging: Log all planets and their upgradable buildings
     # print("[DEBUG] Checking for upgradable buildings on all planets.")
@@ -119,7 +119,7 @@ def check_for_upgradable_buildings(planet: PlanetDict) -> List[UpgradableBuildin
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(building: UpgradableBuilding, planet: PlanetDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableBuilding]:
+def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: PlanetDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableResourceBuilding]:
     """
     Determine which building to upgrade based on custom logic.
     Prioritize the lowest level building that has enough energy available on the planet.
@@ -156,7 +156,7 @@ def determine_building_to_upgrade(building: UpgradableBuilding, planet: PlanetDi
 
     return None
 
-def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
+def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
     """
     Perform the upgrade for the given building and return the upgrade duration.
     """
@@ -196,21 +196,24 @@ def upgrade_building(page: Page, building: UpgradableBuilding, notifier: Optiona
 
     return 0
 
-def handle_resources_upgrades(planet: PlanetDict, game_page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
+def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
     """
     Checks if resource buildings (metal, crystal, deuterium) are upgradable on any planet.
     Triggers the upgrade if possible and returns a list of upgrade durations.
     """
-    upgradable_buildings = check_for_upgradable_buildings(planet)
+    # Initial check for upgradable resources buildings
+    upgradable_buildings = check_for_upgradable_resource_buildings(planet)
     upgrade_durations: List[int] = []  # Explicitly define the type of the list
+
+    if not upgradable_buildings:
+        # Check if solar plant or fusion reactor can be upgraded and add them to the list
+
+        return upgrade_durations
 
     # Sort the upgradable buildings list before determining which one to upgrade
     upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level']))
 
     print(f"[DEBUG] Found {upgradable_buildings} upgradable buildings.")
-    if not upgradable_buildings:
-        print("No resource buildings to upgrade.")
-        return upgrade_durations
 
     for building in upgradable_buildings:
         building_to_upgrade = determine_building_to_upgrade(building, planet, notifier)
@@ -223,7 +226,7 @@ def handle_resources_upgrades(planet: PlanetDict, game_page: Page, notifier: Opt
             upgrade_durations.append(duration)
 
         # Re-check upgradable buildings after upgrading one building
-        upgradable_buildings = check_for_upgradable_buildings(planet)
+        upgradable_buildings = check_for_upgradable_resource_buildings(planet)
         break  # Exit after upgrading one building
 
     return upgrade_durations

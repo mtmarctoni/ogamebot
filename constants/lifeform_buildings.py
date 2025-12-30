@@ -1,3 +1,6 @@
+from typing_extensions import Literal
+
+
 class HumanLifeformBuildingClass:
     Residential_Sector = 'residential_sector'
     Research_Center = 'research_center'
@@ -71,3 +74,7 @@ class HumanLifeformBuildingClass:
             cls.Biodome: 11112,
         }
         return mapping.get(building_name)
+
+HumanLifeformBuilding = Literal[
+    *[value for value in vars(HumanLifeformBuildingClass).values() if isinstance(value, str)]
+]

@@ -4,6 +4,8 @@
 Configuration for OGame bot: server, language, universe, and URLs.
 """
 
+from constants.lifeform_buildings import HumanLifeformBuildingClass
+
 SERVER_ID = "271"
 LANG = "en"
 DOMAIN = f"s{SERVER_ID}-{LANG}.ogame.gameforge.com"
@@ -49,5 +51,18 @@ DAY_MAX_SLEEP = 38
 DEFAULT_MIN_SLEEP = 45
 DEFAULT_MAX_SLEEP = 75
 
-# Set lifeform building priority
-
+# Priority configuration for HumanLifeformBuildings
+HUMAN_LIFEFORM_BUILDING_PRIORITY = [
+    HumanLifeformBuildingClass.Research_Center,
+    HumanLifeformBuildingClass.Academy,
+    HumanLifeformBuildingClass.Energy_Generator,
+    HumanLifeformBuildingClass.Residential_Sector,
+    HumanLifeformBuildingClass.Food_Processor,
+    HumanLifeformBuildingClass.Water_Treatment,
+    HumanLifeformBuildingClass.Communications_Array,
+    HumanLifeformBuildingClass.Planetary_Shield,
+    HumanLifeformBuildingClass.Spaceport,
+    HumanLifeformBuildingClass.Trade_Hub,
+    HumanLifeformBuildingClass.Defense_Grid,
+    HumanLifeformBuildingClass.Biodome,
+]

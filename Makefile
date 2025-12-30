@@ -14,6 +14,14 @@ PIP_GLOBAL      := $(shell which ${PIP})
 PYTHON_VENV     := $(VENV)/bin/${PYTHON}
 PIP_VENV        := $(VENV)/bin/${PIP}
 
+# Detect OS and set APPDATA dynamically
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+    APPDATA := $$HOME/Library/Application Support
+else
+    APPDATA := $$HOME/.config
+endif
+
 # Default goal
 .DEFAULT_GOAL := run
 
@@ -28,8 +36,8 @@ install: $(VENV)/bin/activate
 
 # 3. Run the app (depends on install)
 run: $(VENV)/bin/activate
-	export APPDATA="$$HOME/Library/Application Support"; \
-	$(PYTHON_VENV) main.py
+    export APPDATA="$(APPDATA)"; \
+    $(PYTHON_VENV) main.py
 
 clean-session:
 	rm -f $(FB_SESSION_FILE)

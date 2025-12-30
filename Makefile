@@ -22,6 +22,9 @@ else
     APPDATA_PATH := $(HOME)/.config
 endif
 
+# Declare PHONY targets
+.PHONY: install run clean-session clean-db nuke
+
 # Default goal
 .DEFAULT_GOAL := run
 

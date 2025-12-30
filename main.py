@@ -9,8 +9,9 @@ from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
 from core.upgrade.auto_storage import upgrade_full_storages
+from core.upgrade.lifeform_buildings import handle_lifeform_uildings_upgrade
 from core.utils.attack_detection import check_for_attack_alert
-from core.utils.sleep_utils import sleep_random_interval
+from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
 from core.upgrade.buildings import handle_resources_upgrades
 
@@ -71,16 +72,13 @@ def main() -> None:
                 # Always check and upgrade storages if needed (every loop)
                 storage_upgrade_durations = upgrade_full_storages(empire_data, game_page, notifier)
 
-                # Ensure return values are lists
-                storage_upgrade_durations = storage_upgrade_durations or []
-                resource_upgrade_durations = resource_upgrade_durations or []
-                upgrade_duration: int = max(storage_upgrade_durations + resource_upgrade_durations, default=0)
-                if upgrade_duration:
-                    # Directly use longest_duration in sleep logic
-                    sleep_random_interval(upgrade_duration, upgrade_duration + 10)
-                else:
-                    # If no upgrades, sleep for a random interval
-                    sleep_random_interval()
+                # Check and upgrade lifeform buildings if applicable
+                lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(empire_data, game_page, notifier)
+
+                sleep_for_minimum_duration(
+                    storage_upgrade_durations + resource_upgrade_durations + lifeform_upgrade_durations,
+                    notifier
+                )
         except KeyboardInterrupt:
             print("\nBot stopped by user.")
             if notifier:

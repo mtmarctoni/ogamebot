@@ -2,6 +2,8 @@ import re
 import isodate # type: ignore
 from datetime import timedelta
 
+from constants.general import COMPONENTS
+
 def extract_minutes_from_text(duration_text: str) -> int:
     """
     Extract minutes from a duration text (e.g., '5m 30s' or '300s').
@@ -35,4 +37,29 @@ def parse_duration(duration_attr: str, duration_text: str) -> int:
     # Fallback: Parse text-based duration
     return extract_minutes_from_text(duration_text)
 
-# Note: Consider installing the `isodate` library stub for type checking.
+
+def get_countdown_selector(section: COMPONENTS) -> str:
+    """
+    Get the appropriate countdown selector based on the section.
+
+    This function determines the correct CSS selector for the countdown timer
+    element based on the provided section. Different sections of the game
+    (e.g., resources, lifeform buildings, research) use different countdown timer IDs.
+
+    Args:
+        section (COMPONENTS): The section to determine the selector for.
+
+    Returns:
+        str: The CSS selector for the countdown element.
+
+    Raises:
+        ValueError: If no selector is defined for the given section.
+    """
+    if section == COMPONENTS.SUPPLIES:
+        return 'time#countdownbuildingDetails'
+    elif section == COMPONENTS.LFBUILDINGS:
+        return 'time#countdownlfbuildingDetails'
+    elif section == COMPONENTS.RESEARCH:
+        return 'time#countdownresearchDetails'
+    else:
+        return 'time'  # Default selector as a last resort

@@ -11,7 +11,7 @@ def navigate_to_section(page: Page, planet_id: PlanetId, section: COMPONENTS) ->
     Args:
         page (Page): The Playwright page instance.
         planet_id (str): The ID of the planet to navigate to.
-        section (str): The section to navigate to (e.g., "resources", "lifeform").
+        section (COMPONENTS): The section to navigate to (e.g., COMPONENTS.SUPPLIES, COMPONENTS.LFBUILDINGS).
 
     Returns:
         None
@@ -36,7 +36,7 @@ def navigate_to_resources_page(page: Page, planet_id: str | int) -> None:
     if not planet_id.isdigit():
         raise ValueError(f"Invalid planet_id: {planet_id}. It must be a numeric string or integer.")
 
-    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.SUPPLIES, planet_id=planet_id)
+    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.SUPPLIES.value, planet_id=planet_id)
     if not url.startswith("http"):
         raise ValueError(f"Generated URL is invalid: {url}")
 
@@ -84,7 +84,7 @@ def navigate_to_lifeform_page(page: Page, planet_id: str | int) -> None:
     if not planet_id.isdigit():
         raise ValueError(f"Invalid planet_id: {planet_id}. It must be a numeric string or integer.")
 
-    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.LFBUILDINGS, planet_id=planet_id)
+    url = COMPONENT_URL_TEMPLATE.format(component=COMPONENTS.LFBUILDINGS.value, planet_id=planet_id)
     if not url.startswith("http"):
         raise ValueError(f"Generated URL is invalid: {url}")
 

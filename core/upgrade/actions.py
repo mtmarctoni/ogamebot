@@ -2,7 +2,7 @@ from typing import Optional, TypedDict
 from config.types import PlanetId, TechId
 from constants.general import TechIdToSection
 from core.navigation.planet import navigate_to_section
-from core.utils.time_utils import parse_duration
+from core.utils.time_utils import get_countdown_selector, parse_duration
 from playwright.sync_api import Page
 
 from core.notifications.telegram_notifier import TelegramNotifier
@@ -29,11 +29,11 @@ def upgrade_tech(*, page: Page, planet_id: PlanetId, tech_id: TechId, notifier: 
     """
 
     # Extract the section based on tech_id
-    section = TechIdToSection.get_section(tech_id)  # Default to "overview" if not found
+    section = TechIdToSection.get_section(tech_id)  # Removed `.value` to use the COMPONENTS enum directly
 
     # Navigate directly to the planet and component using the extracted section
     navigate_to_section(page, planet_id, section)
-    print(f"[DEBUG] Navigated to planet ID {planet_id} for upgrading tech ID {tech_id} in section {section}.")
+    print(f"[DEBUG] Navigated to planet ID {planet_id} for upgrading tech ID {tech_id} in section {section.value}.")
 
     # Locate the upgrade button for the technology
     tech_li_selector = f'#technologies li.technology[data-technology="{tech_id}"] button.upgrade'
@@ -43,10 +43,12 @@ def upgrade_tech(*, page: Page, planet_id: PlanetId, tech_id: TechId, notifier: 
         button.click()
         print(f"[DEBUG] Clicked upgrade button for tech ID {tech_id} on planet ID {planet_id}.")
 
+        selector: str = get_countdown_selector(section)
+
         # Wait for the building state to update (e.g., countdown timer or level change)
         try:
-            page.wait_for_selector('time.buildingCountdown', state="visible", timeout=5000)  # Adjust timeout as needed
-            countdown = page.locator('time.buildingCountdown').first
+            page.wait_for_selector(selector, state="visible", timeout=5000)  # Adjust timeout as needed
+            countdown = page.locator(selector).first
             if countdown:
                 duration_attr = countdown.get_attribute('datetime') or ""
                 duration_text = countdown.inner_text() or ""

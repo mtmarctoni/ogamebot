@@ -154,7 +154,7 @@ class TechIdToSection:
         if tech_id not in cls.mapping:
             raise ValueError(f"Invalid tech_id: {tech_id}. No corresponding section found.")
         section = cls.mapping[tech_id]
-        if section not in vars(COMPONENTS).values():
+        if section not in COMPONENTS:
             raise TypeError(f"Return value {section} is not a valid Section.")
-        return section  # Explicitly return the section as a COMPONENTS value
+        return section  # Return the section as a COMPONENTS value
 

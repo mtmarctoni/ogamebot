@@ -1,4 +1,5 @@
-from config.constants import ENERGY_CONSUMPTION
+from constants.resources import ENERGY_CONSUMPTION
+
 
 def calculate_energy_needed(resource: str, level: int) -> int:
     """

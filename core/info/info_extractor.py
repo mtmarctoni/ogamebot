@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 from typing import Dict, Any, List, cast, Match
 from config.config import OGAME_BASE_URL
 
-from config.constants import ResourceClass, ResourceStorageClass
 from config.types import PlanetResources, PlanetStorage
+from constants.resources import ResourceClass, ResourceStorageClass
 
 
 def extract_empire_view_from_page(page: Page) -> Dict[str, List[Dict[str, Any]]]:

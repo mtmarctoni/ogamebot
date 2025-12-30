@@ -49,3 +49,5 @@ DAY_MAX_SLEEP = 38
 DEFAULT_MIN_SLEEP = 45
 DEFAULT_MAX_SLEEP = 75
 
+# Set lifeform building priority
+

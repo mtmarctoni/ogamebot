@@ -1,7 +1,8 @@
 from typing import List, Optional
-from config.constants import RESOURCE_TO_STORAGE, ResourceClass, buildings
 from config.config import STORAGE_WARNING_THRESHOLD, STORAGE_UPGRADE_THRESHOLD
 from config.types import EmpireSnapshotDict, PlanetResources, PlanetStorage
+from constants.buildings import buildings
+from constants.resources import RESOURCE_TO_STORAGE, ResourceClass
 from core.notifications.telegram_notifier import TelegramNotifier
 
 def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier]) -> None:

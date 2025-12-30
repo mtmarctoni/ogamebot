@@ -2,10 +2,11 @@ from typing import Optional, List
 from playwright.sync_api import Page
 
 from config.types import EmpireSnapshotDict, UpgradableBuilding
+from constants.buildings import buildings
+from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE
 from core.notifications.telegram_notifier import TelegramNotifier
 from typing import List, Optional
 from config.types import EmpireSnapshotDict, StorageUpgradeCandidate
-from config.constants import RESOURCE_TO_STORAGE, buildings, RESOURCE_UPGRADE_PREFERENCE  # Removed unused ENERGY_CONSUMPTION import
 from core.navigation.planet import navigate_to_resources_page
 from core.utils.calculate import calculate_energy_needed
 from core.utils.time_utils import parse_duration

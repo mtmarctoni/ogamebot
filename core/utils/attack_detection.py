@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from typing import Optional
 from playwright.sync_api import Page
 from config.config import COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
-from config.constants import COMPONENTS
+from constants.general import COMPONENTS
 from core.notifications.telegram_notifier import TelegramNotifier
 
 def detect_attack(html: str) -> Optional[str]:

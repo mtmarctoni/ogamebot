@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 
 from config.config import COMPONENT_URL_TEMPLATE
-from config.constants import COMPONENTS
+from constants.general import COMPONENTS
 
 def navigate_to_resources_page(page: Page, planet_id: str | int) -> None:
     """

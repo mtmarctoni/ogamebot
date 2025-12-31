@@ -3,8 +3,6 @@ from playwright.sync_api import sync_playwright
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
 from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
 
-from core.notifications.telegram_notifier import TelegramNotifier
-
 from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
@@ -12,15 +10,13 @@ from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
 from core.upgrade.handle_upgrades import handle_upgrades
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
 def main() -> None:
     notifier = None
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
         notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
-        try:
-            notifier.send_message("OGameBot is now ACTIVE.")
-        except Exception as e:
-            print(f"Failed to send startup notification: {e}")
+        safe_notify(notifier, "OGameBot is now ACTIVE.")
     else:
         print("Telegram notifications are disabled (missing TELEGRAM_TOKEN or TELEGRAM_CHAT_ID).")
     
@@ -55,7 +51,7 @@ def main() -> None:
                 print("\nChecking for attack alerts on Overview page...")
                 attack_info = check_for_attack_alert(game_page)
                 if attack_info and notifier:
-                    notifier.send_message(f"⚠️ ALERT: {attack_info}")
+                    safe_notify(notifier, f"⚠️ ALERT: {attack_info}")
 
                 # --- Get Empire Info ---
                 print("\nNavigating to Empire View page and extracting all planets data...")
@@ -73,7 +69,7 @@ def main() -> None:
         except KeyboardInterrupt:
             print("\nBot stopped by user.")
             if notifier:
-                notifier.send_message("OGameBot is now INACTIVE.")
+                safe_notify(notifier, "OGameBot is now INACTIVE.")
         finally:
             browser.close()
 

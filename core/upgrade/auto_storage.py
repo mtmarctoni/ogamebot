@@ -4,7 +4,7 @@ from typing import Optional, List, Tuple
 from playwright.sync_api import Page
 
 from config.types import PlanetDict, TechId
-from core.notifications.telegram_notifier import TelegramNotifier
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.buildings import find_storages_to_upgrade
 from core.navigation.planet import navigate_to_resources_page
 
@@ -84,12 +84,12 @@ def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[Tel
                 if duration is not None:
                     upgrade_durations.append(duration)
                 if notifier:
-                    notifier.send_message(f"✅ Upgrade triggered for {storage['resource'].title()} storage on {storage['planet_name']}.")
+                    safe_notify(notifier, f"✅ Upgrade triggered for {storage['resource'].title()} storage on {storage['planet_name']}.")
             else:
                 print(f"[WARN] Could not trigger upgrade for {storage['resource']} storage on {storage['planet_name']}.")
         except Exception as e:
             print(f"[ERROR] Failed to upgrade {storage['resource']} storage on {storage['planet_name']}: {e}")
             if notifier:
-                notifier.send_message(f"❌ Failed to upgrade {storage['resource'].title()} storage on {storage['planet_name']}: {e}")
+                safe_notify(notifier, f"❌ Failed to upgrade {storage['resource'].title()} storage on {storage['planet_name']}: {e}")
 
     return upgrade_durations

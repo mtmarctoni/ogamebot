@@ -4,8 +4,7 @@ from constants.general import TechIdToSection
 from core.navigation.planet import navigate_to_section
 from core.utils.time_utils import get_countdown_selector, parse_duration
 from playwright.sync_api import Page
-
-from core.notifications.telegram_notifier import TelegramNotifier
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
 class UpgradeTech(TypedDict):
     page: Page
@@ -58,4 +57,8 @@ def upgrade_tech(*, page: Page, planet_id: PlanetId, tech_id: TechId, notifier: 
             return 0
 
     print(f"[ERROR] Upgrade button not found for tech ID {tech_id} on planet ID {planet_id}.")
+    
+    # Handle notifier errors gracefully
+    safe_notify(notifier, f"[NOTIFICATION] Failed to upgrade tech ID {tech_id} on planet ID {planet_id}.")
+
     return 0

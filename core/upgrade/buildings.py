@@ -4,7 +4,7 @@ from playwright.sync_api import Page
 from config.types import Coordinates, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
 from constants.buildings import buildings
 from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE
-from core.notifications.telegram_notifier import TelegramNotifier
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from typing import List, Optional
 from config.types import StorageUpgradeCandidate
 from core.navigation.planet import navigate_to_resources_page
@@ -147,10 +147,7 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
 
     # Notify when there is a building to upgrade but not enough energy
     if notifier is not None:
-        notifier.send_message(
-            f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). "
-            f"Energy needed: {energy_needed}, Current energy: {current_energy}."
-        )
+        safe_notify(notifier, f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). Energy needed: {energy_needed}, Current energy: {current_energy}.")
     
     print(f"[DEBUG] Not enough energy to upgrade {resource} on {planet.get('name')} ({building['coordinates']}). Needed: {energy_needed}, Available: {current_energy}")
 
@@ -190,9 +187,7 @@ def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier:
 
     # Notify when a building has been successfully upgraded
     if notifier:
-        notifier.send_message(
-            f"[NOTIFICATION] Successfully upgraded {building['resource']} to level {building['level'] + 1} on {building['planet_name']} ({building['coordinates']})."
-        )
+        safe_notify(notifier, f"[NOTIFICATION] Successfully upgraded {building['resource']} to level {building['level'] + 1} on {building['planet_name']} ({building['coordinates']}).")
 
     return 0
 

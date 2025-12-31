@@ -2,7 +2,7 @@ from typing import List, Optional
 from config.types import PlanetDict, PlanetId, TechId
 from playwright.sync_api import Page
 from constants.research import Research, Researches
-from core.notifications.telegram_notifier import TelegramNotifier
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
 def handle_research_upgrades(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
@@ -33,11 +33,9 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, notifier: Optional[
 
             if duration > 0:
                 upgrade_durations.append(duration)
-                if notifier:
-                    notifier.send_message(f"Upgraded {research_name} on planet {planet.get('name')} ({planet.get('coords')}). Duration: {duration} seconds.")
+                safe_notify(notifier, f"Upgraded {research_name} on planet {planet.get('name')} ({planet.get('coords')}). Duration: {duration} seconds.")
             else:
-                if notifier:
-                    notifier.send_message(f"Failed to upgrade {research_name} on planet {planet.get('name')} ({planet.get('coords')}).")
+                safe_notify(notifier, f"Failed to upgrade {research_name} on planet {planet.get('name')} ({planet.get('coords')}).")
 
             break  # Exit after upgrading one research
 

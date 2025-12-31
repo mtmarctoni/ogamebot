@@ -4,7 +4,7 @@ from typing import List, Dict, Optional
 from config.types import PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, Coordinates, TechId, TechName, TechLevel
 from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY
 from constants.lifeform_buildings import HumanLifeformBuildingClass
-from core.notifications.telegram_notifier import TelegramNotifier
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
 
@@ -106,11 +106,9 @@ def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: O
 
         if duration > 0:
             upgrade_durations.append(duration)
-            if notifier:
-                notifier.send_message(f"✅ Successfully started upgrade for '{building_name}' on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
+            safe_notify(notifier, f"✅ Successfully started upgrade for '{building_name}' on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
         else:
-            if notifier:
-                notifier.send_message(f"⚠️ Failed to upgrade '{building_name}' on planet {planet.get('name', 'Unknown')}. Please check manually.")
+            safe_notify(notifier, f"⚠️ Failed to upgrade '{building_name}' on planet {planet.get('name', 'Unknown')}. Please check manually.")
 
         break  # Exit after upgrading one building
     return upgrade_durations

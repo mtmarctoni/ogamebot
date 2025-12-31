@@ -3,7 +3,7 @@ from config.types import PlanetDict, PlanetId, TechId
 from playwright.sync_api import Page
 
 from constants.energy import EnergyBuilding, EnergyBuildings
-from core.notifications.telegram_notifier import TelegramNotifier
+from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
 def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
@@ -36,10 +36,10 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, notifier: Op
             if duration > 0:
                 upgrade_durations.append(duration)
                 if notifier:
-                    notifier.send_message(f"Upgraded {building_name} on planet {planet.get('name')} ({planet.get('coords')}). Duration: {duration} seconds.")
+                    safe_notify(notifier, f"Upgraded {building_name} on planet {planet.get('name')} ({planet.get('coords')}). Duration: {duration} seconds.")
             else:
                 if notifier:
-                    notifier.send_message(f"Failed to upgrade {building_name} on planet {planet.get('name')} ({planet.get('coords')}).")
+                    safe_notify(notifier, f"Failed to upgrade {building_name} on planet {planet.get('name')} ({planet.get('coords')}).")
 
             break  # Exit after upgrading one building
     return upgrade_durations

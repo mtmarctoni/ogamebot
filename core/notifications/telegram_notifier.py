@@ -1,5 +1,5 @@
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 class TelegramNotifier:
@@ -29,3 +29,18 @@ class TelegramNotifier:
     def send_message(self, text: str):
         data = {"chat_id": self.chat_id, "text": text}
         return self._post("sendMessage", data)
+
+def safe_notify(notifier: Optional[TelegramNotifier], message: str) -> None:
+    """
+    Safely send a notification using the TelegramNotifier.
+    If the notifier fails, log the error and continue execution.
+
+    Args:
+        notifier (Optional[TelegramNotifier]): The notifier instance.
+        message (str): The message to send.
+    """
+    if notifier:
+        try:
+            notifier.send_message(message)
+        except Exception as e:
+            print(f"[ERROR] Notifier failed: {e}")

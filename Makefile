@@ -27,7 +27,7 @@ else
 endif
 
 # Declare PHONY targets
-.PHONY: install run clean-session clean-db nuke
+.PHONY: install run clean-session clean-db nuke deploy
 
 # 1. Create venv if it doesn't exist
 $(VENV)/bin/activate:
@@ -51,6 +51,12 @@ clean-session:
 clean-db:
 	cd $(DATA_DIR) && ls -t $(SNAPSHOT_PATTERN) | grep -v '^$(SNAPSHOT_LATEST)$$' | tail -n +2 | xargs -I {} rm -- {}
 
+# Deploy target to automate pulling, installing, and running
+deploy:
+	git pull
+	make install
+	make run
+	
 # Completely remove the environment
 nuke:
 	rm -rf $(VENV)

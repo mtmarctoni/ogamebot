@@ -1,15 +1,15 @@
 from enum import Enum
 
 class Research(Enum):
+    INTERGALACTIC_RESEARCH_NETWORK = "intergalacticResearchNetwork"
+    HYPERSPACE_TECHNOLOGY = "hyperspaceTechnology"
+    PLASMA_TECHNOLOGY = "plasmaTechnology"
+    ASTROPHYSICS = "astrophysics"
+    ESPIONAGE_TECHNOLOGY = "espionageTechnology"
     ENERGY_TECHNOLOGY = "energyTechnology"
     LASER_TECHNOLOGY = "laserTechnology"
     ION_TECHNOLOGY = "ionTechnology"
-    HYPERSPACE_TECHNOLOGY = "hyperspaceTechnology"
-    PLASMA_TECHNOLOGY = "plasmaTechnology"
-    ESPIONAGE_TECHNOLOGY = "espionageTechnology"
     COMPUTER_TECHNOLOGY = "computerTechnology"
-    ASTROPHYSICS = "astrophysics"
-    INTERGALACTIC_RESEARCH_NETWORK = "intergalacticResearchNetwork"
     GRAVITON_TECHNOLOGY = "gravitonTechnology"
     WEAPON_TECHNOLOGY = "weaponTechnology"
     SHIELDING_TECHNOLOGY = "shieldingTechnology"
@@ -22,15 +22,15 @@ class Researches:
     """
 
     _id_to_name_mapping = {
-        "113": Research.ENERGY_TECHNOLOGY,
-        "120": Research.LASER_TECHNOLOGY,
-        "121": Research.ION_TECHNOLOGY,
+        "123": Research.INTERGALACTIC_RESEARCH_NETWORK,
         "114": Research.HYPERSPACE_TECHNOLOGY,
         "122": Research.PLASMA_TECHNOLOGY,
-        "106": Research.ESPIONAGE_TECHNOLOGY,
-        "108": Research.COMPUTER_TECHNOLOGY,
         "124": Research.ASTROPHYSICS,
-        "123": Research.INTERGALACTIC_RESEARCH_NETWORK,
+        "113": Research.ENERGY_TECHNOLOGY,
+        "106": Research.ESPIONAGE_TECHNOLOGY,
+        "120": Research.LASER_TECHNOLOGY,
+        "121": Research.ION_TECHNOLOGY,
+        "108": Research.COMPUTER_TECHNOLOGY,
         "199": Research.GRAVITON_TECHNOLOGY,
         "109": Research.WEAPON_TECHNOLOGY,
         "110": Research.SHIELDING_TECHNOLOGY,

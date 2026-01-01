@@ -1,77 +1,22 @@
-import os
-from playwright.sync_api import sync_playwright
-from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
-from config.telegram_config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
-
-from core.auth.session_manager import save_session, load_session
-from core.navigation.universe import enter_universe
-from core.data.snapshot_manager import save_empire_snapshot
-from core.utils.attack_detection import check_for_attack_alert
-from core.utils.sleep_utils import sleep_for_minimum_duration
-from core.info.empire import extract_empire_info
-from core.upgrade.handle_upgrades import handle_upgrades
-from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
+from config.config import MAX_RESTART_ATTEMPTS, RESTART_DELAY
+from core.start.restart import handle_restart
+from core.start.run_bot_session import run_bot_session
+from core.notifications.telegram_notifier import create_notifier
 
 def main() -> None:
-    notifier = None
-    if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
-        notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
-        safe_notify(notifier, "OGameBot is now ACTIVE.")
-    else:
-        print("Telegram notifications are disabled (missing TELEGRAM_TOKEN or TELEGRAM_CHAT_ID).")
-    
-    with sync_playwright() as p:
-        session_exists = os.path.exists("fb_session.json")
-        browser, context = load_session(p)
-        page = context.new_page()
-        page.goto(LOBBY_URL)
-        if not session_exists:
-            print("No session found. Please log in with Facebook manually.")
-            input("Press Enter after you have logged in and see the lobby...")
-            save_session(context)
-            print("Session saved.")
-        else:
-            print("Session found. Logging in automatically.")
-        print("Navigating to main game...")
-        game_page = enter_universe(page)
-        # After entering, optionally go directly to overview using config
-        try:
-            url = COMPONENT_URL_TEMPLATE.format(planet_id=DEFAULT_PLANET_ID)
-            game_page.goto(url)
-            game_page.wait_for_selector('a.menubutton.selected span.textlabel', timeout=10000)
-            assert game_page.inner_text('a.menubutton.selected span.textlabel') == "Resources"
-        except Exception:
-            pass
+    notifier = create_notifier()
 
-        try:
-            while True:
-                print("Entered main game.")
+    restart_count = 0
 
-                # --- Attack detection (overview page) ---
-                print("\nChecking for attack alerts on Overview page...")
-                attack_info = check_for_attack_alert(game_page)
-                if attack_info and notifier:
-                    safe_notify(notifier, f"⚠️ ALERT: {attack_info}")
+    while restart_count < MAX_RESTART_ATTEMPTS:
+        should_restart = run_bot_session(notifier)
 
-                # --- Get Empire Info ---
-                print("\nNavigating to Empire View page and extracting all planets data...")
-                empire_data = extract_empire_info(game_page, notifier)
+        if not should_restart:
+            # User requested stop or clean exit
+            break
 
-                # Save the empire snapshot to a file
-                save_empire_snapshot(empire_data)
-
-                # Handle all upgrades for the empire
-                next_action_duration = handle_upgrades(empire_data, game_page, notifier)
-
-                # Sleep for the minimum duration across all planets
-                sleep_for_minimum_duration(next_action_duration, notifier)
-
-        except KeyboardInterrupt:
-            print("\nBot stopped by user.")
-            if notifier:
-                safe_notify(notifier, "OGameBot is now INACTIVE.")
-        finally:
-            browser.close()
+        restart_count += 1
+        handle_restart(notifier, restart_count, MAX_RESTART_ATTEMPTS, RESTART_DELAY)
 
 if __name__ == "__main__":
     main()

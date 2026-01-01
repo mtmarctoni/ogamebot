@@ -6,6 +6,12 @@ Configuration for OGame bot: server, language, universe, and URLs.
 
 from constants.lifeform_buildings import HumanLifeformBuildingClass
 
+# Maximum consecutive restart attempts before giving up
+MAX_RESTART_ATTEMPTS = 5
+# Delay between restart attempts (in seconds)
+RESTART_DELAY = 30
+
+# OGame server and universe configuration
 SERVER_ID = "271"
 LANG = "en"
 DOMAIN = f"s{SERVER_ID}-{LANG}.ogame.gameforge.com"

@@ -1,6 +1,7 @@
 import requests
 from typing import Dict, Any, Optional
 
+from config.telegram_config import TELEGRAM_CHAT_ID, TELEGRAM_TOKEN
 
 class TelegramNotifier:
     def __init__(self, token: str, chat_id: str, verbose: bool = False):
@@ -29,6 +30,22 @@ class TelegramNotifier:
     def send_message(self, text: str):
         data = {"chat_id": self.chat_id, "text": text}
         return self._post("sendMessage", data)
+
+def create_notifier() -> Optional[TelegramNotifier]:
+    """
+    Creates and returns a TelegramNotifier instance if the required tokens are available.
+    Sends an initial notification if created successfully.
+
+    Returns:
+        Optional[TelegramNotifier]: The notifier instance or None if tokens are missing.
+    """
+    if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
+        notifier = TelegramNotifier(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
+        safe_notify(notifier, "🤖 OGameBot is now ACTIVE.")
+        return notifier
+    else:
+        print("Telegram notifications are disabled (missing TELEGRAM_TOKEN or TELEGRAM_CHAT_ID).")
+        return None
 
 def safe_notify(notifier: Optional[TelegramNotifier], message: str) -> None:
     """

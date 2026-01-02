@@ -1,19 +1,22 @@
 from enum import Enum
 
 class Research(Enum):
-    INTERGALACTIC_RESEARCH_NETWORK = "intergalacticResearchNetwork"
-    HYPERSPACE_TECHNOLOGY = "hyperspaceTechnology"
-    PLASMA_TECHNOLOGY = "plasmaTechnology"
-    ASTROPHYSICS = "astrophysics"
-    ESPIONAGE_TECHNOLOGY = "espionageTechnology"
-    ENERGY_TECHNOLOGY = "energyTechnology"
-    LASER_TECHNOLOGY = "laserTechnology"
-    ION_TECHNOLOGY = "ionTechnology"
-    COMPUTER_TECHNOLOGY = "computerTechnology"
-    GRAVITON_TECHNOLOGY = "gravitonTechnology"
-    WEAPON_TECHNOLOGY = "weaponTechnology"
-    SHIELDING_TECHNOLOGY = "shieldingTechnology"
-    ARMOUR_TECHNOLOGY = "armourTechnology"
+    INTERGALACTIC_RESEARCH_NETWORK = "researchNetworkResearchNetwork"
+    HYPERSPACE = "hyperspaceTechnology"
+    IMPULSE_DRIVE = "impulseDriveTechnology"
+    COMBUSTION_DRIVE = "combustionDriveTechnology"
+    PLASMA = "plasma"
+    ASTROPHYSICS = "astrophysicsTechnology"
+    ESPIONAGE = "espionageTechnology"
+    ENERGY = "energyTechnology"
+    LASER = "laserTechnology"
+    ION = "ionTechnology"
+    COMPUTER = "computerTechnology"
+    GRAVITON = "gravitonTechnology"
+    WEAPONS = "weaponsTechnology"
+    SHIELDING = "shieldingTechnology"
+    ARMOR = "armorTechnology"
+
 
 class Researches:
     """
@@ -22,19 +25,22 @@ class Researches:
     """
 
     _id_to_name_mapping = {
+        "106": Research.ESPIONAGE,
+        "108": Research.COMPUTER,
+        "109": Research.WEAPONS,
+        "110": Research.SHIELDING,
+        "111": Research.ARMOR,
+        "113": Research.ENERGY,
+        "114": Research.HYPERSPACE,
+        "115": Research.COMBUSTION_DRIVE,
+        "117": Research.IMPULSE_DRIVE,
+        "118": Research.HYPERSPACE,
+        "120": Research.LASER,
+        "121": Research.ION,
+        "122": Research.PLASMA,
         "123": Research.INTERGALACTIC_RESEARCH_NETWORK,
-        "114": Research.HYPERSPACE_TECHNOLOGY,
-        "122": Research.PLASMA_TECHNOLOGY,
         "124": Research.ASTROPHYSICS,
-        "113": Research.ENERGY_TECHNOLOGY,
-        "106": Research.ESPIONAGE_TECHNOLOGY,
-        "120": Research.LASER_TECHNOLOGY,
-        "121": Research.ION_TECHNOLOGY,
-        "108": Research.COMPUTER_TECHNOLOGY,
-        "199": Research.GRAVITON_TECHNOLOGY,
-        "109": Research.WEAPON_TECHNOLOGY,
-        "110": Research.SHIELDING_TECHNOLOGY,
-        "111": Research.ARMOUR_TECHNOLOGY,
+        "199": Research.GRAVITON,
     }
 
     _name_to_id_mapping = {v: k for k, v in _id_to_name_mapping.items()}

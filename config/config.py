@@ -1,10 +1,10 @@
-
 # config.py
 """
 Configuration for OGame bot: server, language, universe, and URLs.
 """
 
 from constants.lifeform_buildings import HumanLifeformBuildingClass
+from constants.research import Research
 
 # Maximum consecutive restart attempts before giving up
 MAX_RESTART_ATTEMPTS = 5
@@ -71,4 +71,23 @@ HUMAN_LIFEFORM_BUILDING_PRIORITY = [
     HumanLifeformBuildingClass.Biotech_Lab,
     HumanLifeformBuildingClass.Metropolis,
     HumanLifeformBuildingClass.Planetary_Shield
+]
+
+# Priority configuration for Research
+RESEARCH_PRIORITY = [
+    Research.PLASMA,
+    Research.ASTROPHYSICS,
+    Research.COMPUTER,
+    Research.INTERGALACTIC_RESEARCH_NETWORK,
+    Research.COMBUSTION_DRIVE,
+    Research.IMPULSE_DRIVE,
+    Research.ENERGY,
+    Research.ESPIONAGE,
+    Research.WEAPONS,
+    Research.SHIELDING,
+    Research.ARMOR,
+    Research.HYPERSPACE,
+    Research.LASER,
+    Research.ION,
+    Research.GRAVITON,
 ]

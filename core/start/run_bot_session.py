@@ -59,7 +59,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 save_empire_snapshot(empire_data)
 
                 # Handle all upgrades for the empire
-                next_action_duration = handle_upgrades(empire_data, game_page, notifier)
+                next_action_duration = max(1, handle_upgrades(empire_data, game_page, notifier))
 
                 # Sleep for the minimum duration across all planets
                 sleep_for_minimum_duration(next_action_duration, notifier)

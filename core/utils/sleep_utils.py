@@ -39,6 +39,9 @@ def sleep_random_interval(min_minutes: int = 0, max_minutes: int = 0) -> None:
         min_minutes = default_min
         max_minutes = default_max
 
+    if min_minutes > max_minutes:
+        min_minutes, max_minutes = max_minutes, min_minutes  # Swap to ensure valid range
+
     minutes = random.randint(min_minutes, max_minutes)
     print(f"\nSleeping for {minutes} minutes before next check... (Ctrl+C to stop)")
     time.sleep(minutes * 60)

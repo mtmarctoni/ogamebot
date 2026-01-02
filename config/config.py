@@ -59,7 +59,16 @@ DEFAULT_MAX_SLEEP = 75
 
 # Priority configuration for HumanLifeformBuildings
 HUMAN_LIFEFORM_BUILDING_PRIORITY = [
-    HumanLifeformBuildingClass.Residential_Sector,
+    HumanLifeformBuildingClass.Research_Center,
+    HumanLifeformBuildingClass.Academy,
+    HumanLifeformBuildingClass.Neuro_Calibration_Center,
+    HumanLifeformBuildingClass.High_Energy_Smelting,
+    HumanLifeformBuildingClass.Skyscraper,
     HumanLifeformBuildingClass.Biosphere_Farm,
-    HumanLifeformBuildingClass.Research_Center
+    HumanLifeformBuildingClass.Residential_Sector,
+    HumanLifeformBuildingClass.Food_Silo,
+    HumanLifeformBuildingClass.Fusion_Powered_Production,
+    HumanLifeformBuildingClass.Biotech_Lab,
+    HumanLifeformBuildingClass.Metropolis,
+    HumanLifeformBuildingClass.Planetary_Shield
 ]

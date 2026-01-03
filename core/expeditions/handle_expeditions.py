@@ -13,13 +13,14 @@ from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 # Target coordinates for expeditions
 TARGET_COORDINATES = [2, 8, 16]
 
+
 def get_target_planet(empire_data: EmpireSnapshotDict) -> Optional[PlanetDict]:
     """
     Retrieves the planet object for 'Abyssal Nexus'.
     """
     planet_id = PlanetId(PLANET_IDS["default"])
     for planet in empire_data.get("planets", []):
-        if planet.get("id") == planet_id:
+        if str(planet.get("id")) == planet_id:
             return planet
     return None
 
@@ -77,6 +78,7 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
             ship_name = Ships.get_name_by_id(str(ship_id)).value
             ship_input = page.locator(f"input[name='{ship_name}']")
             if ship_input.is_visible():
+                ship_input.focus()  # Focus the input field before filling
                 ship_input.fill(str(count))
                 has_ships = True
             else:
@@ -87,29 +89,40 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
             print("No ships selected.")
             return None
 
-        # Click Continue to Fleet 2
-        page.locator("#continueToFleet2").click()
+        page.wait_for_timeout(1000)  # Small wait to ensure inputs are registered
+        # Press Enter after filling the ship inputs instead of clicking the button
+        page.keyboard.press("Enter")
         page.wait_for_selector("#fleet2", state="visible")
+        page.wait_for_timeout(1000)  # Small wait to ensure inputs are registered
+
 
         # 2. Set Coordinates
         galaxy, system, position = coordinates
-        page.locator("input#galaxy").fill(str(galaxy))
-        page.locator("input#system").fill(str(system))
-        page.locator("input#position").fill(str(position))
+        print(f"Filling coordinates: Galaxy={galaxy}, System={system}, Position={position}")
 
-        # 3. Select Mission (Expedition = 15)
+        # galaxy_input = page.locator("input#galaxy")
+        # system_input = page.locator("input#system")
+        position_input = page.locator("input#position")
+
+        # galaxy_input.focus()
+        # galaxy_input.fill(str(galaxy))
+
+        # system_input.focus()
+        # system_input.fill(str(system))
+
+        position_input.focus()
+        position_input.type(str(position))  # Use .type() to emulate typing the number
+
+        # Wait 1 second after typing the position
+        page.wait_for_timeout(1000)
+
+        # Click the mission button
         mission_button = page.locator("#missionButton15")
-        if not mission_button.is_visible():
-            print("Expedition mission not available.")
-            return None
-
         mission_button.click()
+        page.wait_for_timeout(1000)
 
-        # Validate Mission Selection
-        if not mission_button.is_checked():
-            mission_button.check()
 
-        # 4. Send Fleet
+        # Click the send fleet button
         send_button = page.locator("#sendFleet")
         send_button.click()
 
@@ -147,10 +160,11 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     available_slots = 0
     try:
         # Wait for slots info to be visible
+        slots_locator = page.locator("#slots", has_text="Expeditions:")
         page.wait_for_selector("#slots", timeout=5000)
-        
+
         # Get all text from the slots container
-        slots_text = page.locator("#slots").inner_text()
+        slots_text = slots_locator.inner_text()
         # Clean up newlines for easier regex
         slots_text_clean = slots_text.replace("\n", " ").replace("\r", "")
         
@@ -213,4 +227,3 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
             time.sleep(5)
         else:
             print("Failed to dispatch expedition.")
-            

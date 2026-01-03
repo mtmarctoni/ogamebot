@@ -55,7 +55,7 @@ def get_countdown_selector(section: COMPONENTS) -> str:
     Raises:
         ValueError: If no selector is defined for the given section.
     """
-    if section == COMPONENTS.SUPPLIES:
+    if section == COMPONENTS.SUPPLIES or section == COMPONENTS.FACILITIES:
         return 'time#countdownbuildingDetails'
     elif section == COMPONENTS.LFBUILDINGS:
         return 'time#countdownlfbuildingDetails'

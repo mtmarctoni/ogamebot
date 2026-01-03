@@ -5,21 +5,9 @@ from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from config.types import PlanetDict, PlanetId, TechId
 from constants.facilities import Facility, Facilities
 from core.upgrade.actions import UpgradeTech, upgrade_tech
+from core.utils.calculate import extract_free_fields
 
-def extract_free_fields(fields: str) -> int:
-    """
-    Extracts the number of free fields from the "fields" string.
-
-    Args:
-        fields (str): The "fields" string in the format "used/total".
-
-    Returns:
-        int: The number of free fields.
-    """
-    used, total = map(int, fields.split('/'))
-    return total - used
-
-def handle_facilities_building(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
+def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
     Handles the upgrade of facilities on a given planet.
     Dynamically prioritizes Terraformer based on free fields.

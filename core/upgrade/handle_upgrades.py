@@ -5,6 +5,7 @@ from config.types import EmpireSnapshotDict
 from core.notifications.telegram_notifier import TelegramNotifier
 from core.upgrade.auto_storage import upgrade_full_storages
 from core.upgrade.energy import handle_energy_buildings_upgrade
+from core.upgrade.facilities import handle_facilities_building_upgrades
 from core.upgrade.lifeform_buildings import handle_lifeform_uildings_upgrade
 from core.upgrade.buildings import handle_building_resources_upgrade
 from core.upgrade.research import handle_research_upgrades
@@ -33,6 +34,9 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, notifier: 
         #Check and upgrade eneergy buildings for the planet
         energy_upgrade_durations = handle_energy_buildings_upgrade(planet, game_page, notifier)
 
+        # Check und upgrade facilities for the planet
+        facility_upgrade_durations = handle_facilities_building_upgrades(planet, game_page, notifier)
+
         # Check and upgrade research technologies for the planet
         research_upgrade_durations = handle_research_upgrades(planet, game_page, notifier)
 
@@ -43,7 +47,7 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, game_page: Page, notifier: 
         lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(planet, game_page, notifier)
 
         # Combine durations for this planet and append to total_durations
-        planet_durations = resource_upgrade_durations + storage_upgrade_durations + lifeform_upgrade_durations + energy_upgrade_durations + research_upgrade_durations
+        planet_durations = resource_upgrade_durations + storage_upgrade_durations + lifeform_upgrade_durations + energy_upgrade_durations + research_upgrade_durations + facility_upgrade_durations
         total_durations.extend(planet_durations)
 
     all_durations: List[int] = [duration for duration in total_durations if duration > 0]

@@ -4,9 +4,10 @@ from typing import Optional, List, Tuple
 from playwright.sync_api import Page
 
 from config.types import PlanetDict, TechId
+from constants.general import COMPONENTS
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.buildings import find_storages_to_upgrade
-from core.navigation.planet import navigate_to_resources_page
+from core.navigation.planet import navigate_to_section
 
 def click_upgrade_button(page: Page, building_id: TechId) -> Tuple[bool, Optional[int]]:
     """
@@ -64,7 +65,7 @@ def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[Tel
     for storage in storages_to_upgrade:
         if current_planet_id != storage['planet_id']:
             print(f"[DEBUG] Navigating to planet ID {storage['planet_id']}.")
-            navigate_to_resources_page(page, storage['planet_id'])
+            navigate_to_section(page, storage['planet_id'], COMPONENTS.SUPPLIES)
             current_planet_id = storage['planet_id']
         else:
             print(f"[DEBUG] Already on planet ID {storage['planet_id']}, skipping navigation.")

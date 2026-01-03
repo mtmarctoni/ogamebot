@@ -1,5 +1,7 @@
 from typing import Callable
 
+from config.types import PlanetDict, TechLevel
+
 class ResourceClass:
     metal = 'metal'
     crystal = 'crystal'
@@ -18,6 +20,20 @@ class ResourceClass:
             cls.food,
             cls.population,
         ]
+    
+    @staticmethod
+    def get_levels(planet: PlanetDict) -> tuple[TechLevel, TechLevel, TechLevel]:
+        """
+        Get the current levels of metal, crystal, and deuterium on the planet.
+        Args:
+            planet (dict): The planet data containing resource information.
+        Returns:
+            tuple[int, int, int]: A tuple containing the levels of metal, crystal, and deuterium respectively.
+        """
+        metal = TechLevel(planet.get('buildings', {})["1"].get('level', 0))
+        crystal = TechLevel(planet.get('buildings', {})["2"].get('level', 0))
+        deut = TechLevel(planet.get('buildings', {})["3"].get('level', 0))
+        return metal, crystal, deut
 
 class ResourceStorageClass:
     metal_storage = 'metalStorage'

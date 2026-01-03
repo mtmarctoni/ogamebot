@@ -3,9 +3,11 @@
 Configuration for OGame bot: server, language, universe, and URLs.
 """
 
+from config.types import TechLevel
 from constants.facilities import Facility
 from constants.lifeform_buildings import HumanLifeformBuildingClass
 from constants.research import Research
+from constants.resources import ResourceClass
 
 # Maximum consecutive restart attempts before giving up
 MAX_RESTART_ATTEMPTS = 5
@@ -104,3 +106,10 @@ FACILITIES_PRIORITY = [
     Facility.ALLIANCE_DEPOT,
     Facility.SPACE_DOCK,
 ]
+
+# Soft caps for resource levels (can be tuned per account stage)
+SOFT_CAPS = {
+    ResourceClass.metal: TechLevel(28),
+    ResourceClass.crystal: TechLevel(25),
+    ResourceClass.deuterium: TechLevel(22)
+}

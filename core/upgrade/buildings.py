@@ -1,14 +1,16 @@
 from typing import Optional, List
 from playwright.sync_api import Page
 
+from config.config import SOFT_CAPS
 from config.types import Coordinates, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
 from constants.buildings import buildings
-from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE
+from constants.general import COMPONENTS
+from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE, ResourceClass
+from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from typing import List, Optional
 from config.types import StorageUpgradeCandidate
-from core.navigation.planet import navigate_to_resources_page
-from core.utils.calculate import calculate_energy_needed
+from core.utils.calculate import calculate_energy_needed, can_upgrade
 from core.utils.time_utils import parse_duration
 
 def is_upgrading(page: Page, building_id: int) -> bool:
@@ -122,35 +124,54 @@ def check_for_upgradable_resource_buildings(planet: PlanetDict) -> List[Upgradab
 def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: PlanetDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableResourceBuilding]:
     """
     Determine which building to upgrade based on custom logic.
-    Prioritize the lowest level building that has enough energy available on the planet.
+    Prioritize resource buildings (metal, crystal, deuterium) based on soft caps and relative levels.
     Notify if there is a building to upgrade but not enough energy.
+    
+    Args:
+        building: The building data to evaluate for upgrade.
+        planet: The planet dictionary containing resource and energy data.
+        notifier: Optional notifier for sending user notifications.
+
+    Returns:
+        The building to upgrade if criteria are met, otherwise None.
     """
     print(f"[DEBUG] Determining if building can be upgraded: {building}")
-    planet_id = building['planet_id']
+
     resource = building['resource']
     building_level = building['level']
-    if not planet:
-        print(f"[DEBUG] Planet with ID {planet_id} not found in empire data.")
-        return None
+
     # Get current energy on the planet
-    current_energy: int = 0
-    
-    # Handle energy as a string (e.g., '+328') and convert to integer
-    if isinstance(planet.get('energy'), str):
-        current_energy = int(planet.get('energy', '0').replace('+', ''))
+    current_energy = int(planet.get('energy', '0').replace('+', '')) if isinstance(planet.get('energy'), str) else 0
 
     # Calculate energy consumption after the upgrade
     energy_needed = calculate_energy_needed(resource, building_level)
 
-    if current_energy >= energy_needed:
+    # Check if there is enough energy for the upgrade
+    if current_energy < energy_needed:
+        if notifier:
+            safe_notify(
+                notifier,
+                f"[NOTIFICATION] Not enough energy to upgrade {resource} on {building['planet_name']} ({building['coordinates']}). "
+                f"Energy needed: {energy_needed}, Current energy: {current_energy}."
+            )
+        print(f"[DEBUG] Not enough energy to upgrade {resource} on {planet.get('name')} ({building['coordinates']}). Needed: {energy_needed}, Available: {current_energy}")
+        return None
+
+    # Retrieve resource levels
+    metal, crystal, deut = ResourceClass.get_levels(planet)
+
+    # Determine upgrade priority based on resource levels and soft caps
+    if resource == ResourceClass.crystal and can_upgrade(crystal, SOFT_CAPS[ResourceClass.crystal], crystal <= metal):
         return building
 
-    # Notify when there is a building to upgrade but not enough energy
-    if notifier is not None:
-        safe_notify(notifier, f"[NOTIFICATION] Not enough energy to upgrade {building['resource']} on {building['planet_name']} ({building['coordinates']}). Energy needed: {energy_needed}, Current energy: {current_energy}.")
-    
-    print(f"[DEBUG] Not enough energy to upgrade {resource} on {planet.get('name')} ({building['coordinates']}). Needed: {energy_needed}, Available: {current_energy}")
+    if resource == ResourceClass.metal and can_upgrade(metal, SOFT_CAPS[ResourceClass.metal], metal <= crystal + 2):
+        return building
 
+    if resource == ResourceClass.deuterium and can_upgrade(deut, SOFT_CAPS[ResourceClass.deuterium], deut < crystal - 3):
+        return building
+
+    # If no priority matches, return None
+    print(f"[DEBUG] No upgrade priority matched for {resource} on {building['planet_name']} ({building['coordinates']}).")
     return None
 
 def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
@@ -159,7 +180,7 @@ def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier:
     """
     # Navigate to the resources page of the planet
     print(f"[DEBUG] Upgrading building on planet ID {building['planet_id']}")
-    navigate_to_resources_page(page, building['planet_id'])
+    navigate_to_section(page, building['planet_id'], COMPONENTS.SUPPLIES)
     print(f"[DEBUG] Navigated to planet ID {building['planet_id']} for upgrading.")
 
     building_id = building['building_id']

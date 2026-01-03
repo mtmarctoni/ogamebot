@@ -1,3 +1,4 @@
+from config.types import TechLevel
 from constants.resources import ENERGY_CONSUMPTION
 
 
@@ -28,3 +29,18 @@ def extract_free_fields(fields: str) -> int:
     """
     used, total = map(int, fields.split('/'))
     return total - used
+
+# Helper function to check if a resource can be prioritized
+def can_upgrade(current: TechLevel, cap: TechLevel, condition: bool) -> bool:
+    """
+    Determines if a resource can be upgraded based on its current level, cap, and a custom condition.
+
+    Args:
+        current: The current level of the resource.
+        cap: The soft cap for the resource.
+        condition: A boolean condition specific to the resource.
+
+    Returns:
+        True if the resource can be upgraded, False otherwise.
+    """
+    return current < cap and condition

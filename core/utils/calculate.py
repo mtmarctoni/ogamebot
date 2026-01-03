@@ -44,3 +44,21 @@ def can_upgrade(current: TechLevel, cap: TechLevel, condition: bool) -> bool:
         True if the resource can be upgraded, False otherwise.
     """
     return current < cap and condition
+
+def energy_int(value: str | None) -> int:
+    """
+    Cleans and converts a string representing an OGame number into an integer.
+    Handles thousands separators (commas, periods) and optional '+' signs.
+
+    Args:
+        value: The value to clean and convert. Can be a string or None.
+
+    Returns:
+        An integer representation of the cleaned value, or 0 if the value is None.
+    """
+    if not isinstance(value, str):
+        return int(value) if value is not None else 0
+
+    # Remove common non-digit characters: +, commas, and periods
+    cleaned = value.replace('+', '').replace(',', '').replace('.', '')
+    return int(cleaned)

@@ -10,7 +10,7 @@ from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from typing import List, Optional
 from config.types import StorageUpgradeCandidate
-from core.utils.calculate import calculate_energy_needed, can_upgrade
+from core.utils.calculate import calculate_energy_needed, can_upgrade, energy_int
 from core.utils.time_utils import parse_duration
 
 def is_upgrading(page: Page, building_id: int) -> bool:
@@ -141,7 +141,7 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
     building_level = building['level']
 
     # Get current energy on the planet
-    current_energy = int(planet.get('energy', '0').replace('+', '')) if isinstance(planet.get('energy'), str) else 0
+    current_energy = energy_int(planet.get('energy', '0'))
 
     # Calculate energy consumption after the upgrade
     energy_needed = calculate_energy_needed(resource, building_level)

@@ -99,3 +99,8 @@ class UpgradableEnergyBuidling(TypedDict):
     building_id: TechId
     level: TechLevel
 
+class ShipToDispatch(TypedDict):
+    ship_id: TechId
+    count: int
+
+FleetToDispatch = List[ShipToDispatch]

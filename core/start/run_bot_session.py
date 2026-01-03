@@ -11,6 +11,7 @@ from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
 from core.upgrade.handle_upgrades import handle_upgrades
+from core.expeditions.handle_expeditions import handle_expeditions
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
 def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
@@ -59,7 +60,12 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 save_empire_snapshot(empire_data)
 
                 # Handle all upgrades for the empire
-                next_action_duration = max(1, handle_upgrades(empire_data, game_page, notifier))
+                upgrade_duration = handle_upgrades(empire_data, game_page, notifier)
+                
+                # Handle expeditions
+                handle_expeditions(game_page, empire_data, notifier)
+
+                next_action_duration = max(1, upgrade_duration)
 
                 # Sleep for the minimum duration across all planets
                 sleep_for_minimum_duration(next_action_duration, notifier)

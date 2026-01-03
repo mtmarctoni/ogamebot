@@ -85,6 +85,12 @@ def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: O
     upgrade_durations: List[int] = []
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
 
+    # Prioritize the upgradable buildings based on the defined priority
+    prioritized_buildings = prioritize_lifeform_buildings([b['building'] for b in upgradable_buildings])
+
+    # Filter the upgradable buildings to match the prioritized order
+    upgradable_buildings = [b for name in prioritized_buildings for b in upgradable_buildings if b['building'] == name]
+
     # Group buildings by planet
     grouped_buildings = group_upgradable_buildings_by_planet(upgradable_buildings)
 

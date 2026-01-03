@@ -3,7 +3,9 @@
 Configuration for OGame bot: server, language, universe, and URLs.
 """
 
+from typing import Dict
 from config.types import TechLevel
+from constants.energy import EnergyBuilding
 from constants.facilities import Facility
 from constants.lifeform_buildings import HumanLifeformBuildingClass
 from constants.research import Research
@@ -108,8 +110,10 @@ FACILITIES_PRIORITY = [
 ]
 
 # Soft caps for resource levels (can be tuned per account stage)
-SOFT_CAPS = {
+SOFT_CAPS: Dict[str | EnergyBuilding, TechLevel] = {
     ResourceClass.metal: TechLevel(28),
     ResourceClass.crystal: TechLevel(25),
-    ResourceClass.deuterium: TechLevel(22)
+    ResourceClass.deuterium: TechLevel(22),
+    EnergyBuilding.SOLAR_PLANT: TechLevel(20),
+    EnergyBuilding.FUSION_PLANT: TechLevel(15),
 }

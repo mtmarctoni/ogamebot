@@ -3,6 +3,7 @@
 Configuration for OGame bot: server, language, universe, and URLs.
 """
 
+from constants.facilities import Facility
 from constants.lifeform_buildings import HumanLifeformBuildingClass
 from constants.research import Research
 
@@ -90,4 +91,16 @@ RESEARCH_PRIORITY = [
     Research.LASER,
     Research.ION,
     Research.GRAVITON,
+]
+
+# Facilities upgrade priority
+FACILITIES_PRIORITY = [
+    Facility.NANITE_FACTORY,
+    Facility.ROBOTICS_FACTORY,
+    Facility.RESEARCH_LAB,
+    Facility.SHIPYARD,
+    Facility.TERRAFORMER,
+    Facility.MISSILE_SILO,
+    Facility.ALLIANCE_DEPOT,
+    Facility.SPACE_DOCK,
 ]

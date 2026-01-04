@@ -3,28 +3,18 @@ import re
 from typing import List, Optional
 from playwright.sync_api import Page
 
-from config.config import PLANET_IDS
+from config.config import EXPEDITION_PLANET_ID, TARGET_COORDINATES
 from config.types import EmpireSnapshotDict, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
 from constants.general import COMPONENTS
 from constants.ships import Ships
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
-# Target coordinates for expeditions
-TARGET_COORDINATES = [
-    [2, 8, 16],
-    [2, 7, 16],
-    [2, 9, 16],
-    [2, 10, 16],
-    [2, 6, 16]
-]
-
-
 def get_target_planet(empire_data: EmpireSnapshotDict) -> Optional[PlanetDict]:
     """
     Retrieves the planet object for 'Abyssal Nexus'.
     """
-    planet_id = PlanetId(PLANET_IDS["default"])
+    planet_id = PlanetId(EXPEDITION_PLANET_ID)
     for planet in empire_data.get("planets", []):
         if str(planet.get("id")) == planet_id:
             return planet

@@ -43,9 +43,24 @@ PLANET_IDS = {
     "colony1": "33629156",
     "colony2": "33630366",
     "colony3": "33632165",
+    "colony4": "33634157",
+    "colony5": "33646912",
+    "moon_default": "33645298",
 }
 
 DEFAULT_PLANET_ID = PLANET_IDS["default"]  # Main planet
+
+# Planet to use for expeditions
+EXPEDITION_PLANET_ID = PLANET_IDS["default"]
+
+# Target coordinates for expeditions
+TARGET_COORDINATES = [
+    [2, 8, 16],
+    [2, 7, 16],
+    [2, 9, 16],
+    [2, 10, 16],
+    [2, 6, 16]
+]
 
 # Lobby URL
 LOBBY_URL = f"https://lobby.ogame.gameforge.com/en_GB/hub"

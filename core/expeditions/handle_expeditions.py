@@ -202,6 +202,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     if not ships_to_send:
         print("No ships available for expedition.")
+        return 600 # Wait 10 mins
 
     # 6. Dispatch Expeditions
     target_index = 0  # Start with the first target coordinate

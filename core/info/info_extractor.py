@@ -131,25 +131,37 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
                 sel = f'.values.{group} {escape_class(id_)}'
                 tag = planet_div.select_one(sel)
                 if tag:
-                    # Level/count is in <span> or <a>
-                    level_tag = tag.find(['span', 'a'])
-                    if not level_tag:
-                        # Sometimes just text
+                    if group in ['ships', 'defence']:
+                        # For ships and defenses, always get the text directly from the parent div
                         val = tag.get_text(strip=True).replace(',', '')
                         try:
                             level = int(val)
                         except ValueError:
                             level = val
+
                         upgradable = False
                         upgrade_js = None
                     else:
-                        val = level_tag.get_text(strip=True).replace(',', '')
-                        try:
-                            level = int(val)
-                        except ValueError:
-                            level = val
-                        upgradable = (level_tag.name == 'a')
-                        upgrade_js = level_tag.get('onclick') if upgradable else None
+                        # For other groups (e.g., buildings), check for <span> or <a> tags
+                        level_tag = tag.find(['span', 'a'])
+                        if not level_tag:
+                            # Sometimes just text
+                            val = tag.get_text(strip=True).replace(',', '')
+                            try:
+                                level = int(val)
+                            except ValueError:
+                                level = val
+                            upgradable = False
+                            upgrade_js = None
+                        else:
+                            val = level_tag.get_text(strip=True).replace(',', '')
+                            try:
+                                level = int(val)
+                            except ValueError:
+                                level = val
+                            upgradable = (level_tag.name == 'a')
+                            upgrade_js = level_tag.get('onclick') if upgradable else None
+
                     result[str(id_)] = {
                         'level': level,
                         'upgradable': upgradable,

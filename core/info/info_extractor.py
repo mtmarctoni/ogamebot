@@ -134,6 +134,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
                     if group in ['ships', 'defence']:
                         # Extract only the first direct text node from the div
                         val = next((content.strip() for content in tag.contents if isinstance(content, str)), '')
+                        val = val.replace(',', '')  # Remove commas for proper integer conversion
                         try:
                             level = int(val)
                         except ValueError:

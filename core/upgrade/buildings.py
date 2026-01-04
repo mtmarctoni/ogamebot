@@ -164,10 +164,10 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
     if resource == ResourceClass.crystal and can_upgrade(crystal, SOFT_CAPS[ResourceClass.crystal], crystal <= metal):
         return building
 
-    if resource == ResourceClass.metal and can_upgrade(metal, SOFT_CAPS[ResourceClass.metal], metal <= crystal + 2):
+    if resource == ResourceClass.metal and can_upgrade(metal, SOFT_CAPS[ResourceClass.metal], metal <= crystal + 1):
         return building
 
-    if resource == ResourceClass.deuterium and can_upgrade(deut, SOFT_CAPS[ResourceClass.deuterium], deut < crystal - 3):
+    if resource == ResourceClass.deuterium and can_upgrade(deut, SOFT_CAPS[ResourceClass.deuterium], deut + 3 <= crystal):
         return building
 
     # If no priority matches, return None

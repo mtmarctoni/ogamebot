@@ -11,7 +11,13 @@ from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
 # Target coordinates for expeditions
-TARGET_COORDINATES = [2, 8, 16]
+TARGET_COORDINATES = [
+    [2, 8, 16],
+    [2, 7, 16],
+    [2, 9, 16],
+    [2, 10, 16],
+    [2, 6, 16]
+]
 
 
 def get_target_planet(empire_data: EmpireSnapshotDict) -> Optional[PlanetDict]:
@@ -100,21 +106,21 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
         galaxy, system, position = coordinates
         print(f"Filling coordinates: Galaxy={galaxy}, System={system}, Position={position}")
 
-        # galaxy_input = page.locator("input#galaxy")
-        # system_input = page.locator("input#system")
+        galaxy_input = page.locator("input#galaxy")
+        system_input = page.locator("input#system")
         position_input = page.locator("input#position")
 
-        # galaxy_input.focus()
-        # galaxy_input.fill(str(galaxy))
+        galaxy_input.focus()
+        galaxy_input.type(str(galaxy))
 
-        # system_input.focus()
-        # system_input.fill(str(system))
+        system_input.focus()
+        system_input.type(str(system))
 
         position_input.focus()
         position_input.type(str(position))  # Use .type() to emulate typing the number
 
         # Wait 1 second after typing the position
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(1500)
 
         # Click the mission button
         mission_button = page.locator("#missionButton15")
@@ -140,7 +146,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     Returns the time to wait until next check (in seconds).
     """
     print("Handling expeditions...")
-    
+
     # 1. Get Target Planet
     planet = get_target_planet(empire_data)
     if not planet:
@@ -167,7 +173,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         slots_text = slots_locator.inner_text()
         # Clean up newlines for easier regex
         slots_text_clean = slots_text.replace("\n", " ").replace("\r", "")
-        
+
         # Parse Expeditions: "Expeditions: 0/4"
         exp_match = re.search(r"Expeditions:\s*(\d+)/(\d+)", slots_text_clean)
         # Parse Fleets: "Fleets:0/11"
@@ -176,41 +182,42 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         if exp_match and fleet_match:
             current_exp = int(exp_match.group(1))
             max_exp = int(exp_match.group(2))
-            
+
             current_fleets = int(fleet_match.group(1))
             max_fleets = int(fleet_match.group(2))
-            
+
             avail_exp = max_exp - current_exp
             avail_fleets = max_fleets - current_fleets
-            
+
             # We are limited by whichever is smaller
             available_slots = min(avail_exp, avail_fleets)
             print(f"Slots Status - Expeditions: {current_exp}/{max_exp}, Fleets: {current_fleets}/{max_fleets}")
         else:
             print(f"Could not parse slots from text: '{slots_text_clean}'")
-            
+
     except Exception as e:
         print(f"Error checking slots: {e}")
-        
+
     print(f"Available expedition slots: {available_slots}")
-    
+
     if available_slots <= 0:
         print("No expedition slots available.")
         return 600 # Wait 10 mins
-        
+
     # 4. Get Available Ships
     available_ships = get_available_ships(planet)
-    
+
     # 5. Calculate Ships per Expedition
     ships_to_send = calculate_ships_per_expedition(available_ships, available_slots)
-    
+
     if not ships_to_send:
         print("No ships available for expedition.")
 
     # 6. Dispatch Expeditions
+    target_index = 0  # Start with the first target coordinate
     for i in range(available_slots):
         print(f"Dispatching expedition {i+1}/{available_slots}...")
-        
+
         # If this is not the first iteration, we need to navigate back to fleet dispatch
         if i > 0:
             try:
@@ -219,10 +226,14 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
                 print(f"Failed to navigate to fleet dispatch for subsequent expedition: {e}")
                 break
 
-        return_time = dispatch_expedition(page, ships_to_send, TARGET_COORDINATES)
-        
+        # Select the target coordinate in a round-robin manner
+        target_coordinates = TARGET_COORDINATES[target_index]
+        target_index = (target_index + 1) % len(TARGET_COORDINATES)  # Move to the next target
+
+        return_time = dispatch_expedition(page, ships_to_send, target_coordinates)
+
         if return_time:
-            safe_notify(notifier, f"Expedition dispatched to {TARGET_COORDINATES}. Ships: {ships_to_send}")
+            safe_notify(notifier, f"Expedition dispatched to {target_coordinates}. Ships: {ships_to_send}")
             # Wait a bit between dispatches
             time.sleep(5)
         else:

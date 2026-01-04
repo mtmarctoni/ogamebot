@@ -132,8 +132,8 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
                 tag = planet_div.select_one(sel)
                 if tag:
                     if group in ['ships', 'defence']:
-                        # For ships and defenses, always get the text directly from the parent div
-                        val = tag.get_text(strip=True).replace(',', '')
+                        # Extract only the first direct text node from the div
+                        val = next((content.strip() for content in tag.contents if isinstance(content, str)), '')
                         try:
                             level = int(val)
                         except ValueError:

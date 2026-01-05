@@ -145,4 +145,5 @@ UPGRADE_CONFIG = {
     "enable_research_upgrades": os.getenv("ENABLE_RESEARCH_UPGRADES", "true").lower() == "true",
     "enable_storage_upgrades": os.getenv("ENABLE_STORAGE_UPGRADES", "true").lower() == "true",
     "enable_lifeform_upgrades": os.getenv("ENABLE_LIFEFORM_UPGRADES", "true").lower() == "true",
+    "enable_expeditions": os.getenv("ENABLE_EXPEDITIONS", "true").lower() == "true",
 }

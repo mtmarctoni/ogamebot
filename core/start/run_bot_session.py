@@ -3,7 +3,7 @@ import traceback
 from typing import Optional
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
-from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID
+from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID, UPGRADE_CONFIG as upgrade_config  
 from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
@@ -63,7 +63,10 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier)
                 
                 # Handle expeditions
-                handle_expeditions(game_page, empire_data, notifier)
+                if upgrade_config.get("enable_expeditions", True):
+                    handle_expeditions(game_page, empire_data, notifier)
+                else:
+                    print("Expeditions are disabled in the configuration.")
 
                 next_action_duration = max(1, upgrade_duration)
 

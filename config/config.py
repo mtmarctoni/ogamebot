@@ -97,13 +97,13 @@ HUMAN_LIFEFORM_BUILDING_PRIORITY = [
 
 # Priority configuration for Research
 RESEARCH_PRIORITY = [
-    Research.PLASMA,
+    Research.ENERGY,
     Research.ASTROPHYSICS,
     Research.COMPUTER,
     Research.INTERGALACTIC_RESEARCH_NETWORK,
+    Research.PLASMA,
     Research.COMBUSTION_DRIVE,
     Research.IMPULSE_DRIVE,
-    Research.ENERGY,
     Research.ESPIONAGE,
     Research.WEAPONS,
     Research.SHIELDING,

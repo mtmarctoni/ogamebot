@@ -1,8 +1,7 @@
 from typing import List, Optional
 from playwright.sync_api import Page
 
-from config.types import EmpireSnapshotDict
-from config.config import UPGRADE_CONFIG as upgrade_config
+from config.types import ConfigType, EmpireSnapshotDict
 from core.notifications.telegram_notifier import TelegramNotifier
 from core.upgrade.auto_storage import upgrade_full_storages
 from core.upgrade.energy import handle_energy_buildings_upgrade
@@ -11,7 +10,7 @@ from core.upgrade.lifeform_buildings import handle_lifeform_uildings_upgrade
 from core.upgrade.buildings import handle_building_resources_upgrade
 from core.upgrade.research import handle_research_upgrades
 
-def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier]) -> int:
+def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optional[TelegramNotifier], config: ConfigType) -> int:
     """
     Handles upgrades for all planets in the empire data.
 
@@ -20,6 +19,7 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
         page: Playwright page object for interacting with the game.
         notifier: TelegramNotifier instance for sending notifications.
     """
+
     # Initialize total_durations to ensure it is always defined
     total_durations: List[int] = []
 
@@ -30,37 +30,37 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
         print(f"\nProcessing upgrades for planet: {planet_name} (ID: {planet_id})")
 
         # Check and upgrade facilities for the planet
-        if upgrade_config.get("enable_facility_upgrades", True):
+        if config.get("enable_facility_upgrades", True):
             facility_upgrade_durations = handle_facilities_building_upgrades(planet, page, notifier)
         else:
             facility_upgrade_durations = []
 
         # Check and upgrade resources (metal, crystal, deuterium) for the planet
-        if upgrade_config.get("enable_resource_upgrades", True):
+        if config.get("enable_resource_upgrades", True):
             resource_upgrade_durations = handle_building_resources_upgrade(planet, page, notifier)
         else:
             resource_upgrade_durations = []
 
         # Check and upgrade energy buildings for the planet
-        if upgrade_config.get("enable_energy_upgrades", True):
+        if config.get("enable_energy_upgrades", True):
             energy_upgrade_durations = handle_energy_buildings_upgrade(planet, page, notifier)
         else:
             energy_upgrade_durations = []
 
         # Check and upgrade research technologies for the planet
-        if upgrade_config.get("enable_research_upgrades", True):
+        if config.get("enable_research_upgrades", True):
             research_upgrade_durations = handle_research_upgrades(planet, page, notifier)
         else:
             research_upgrade_durations = []
 
         # Check and upgrade lifeform buildings for the planet
-        if upgrade_config.get("enable_lifeform_upgrades", True):
+        if config.get("enable_lifeform_upgrades", True):
             lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(planet, page, notifier)
         else:
             lifeform_upgrade_durations = []
 
         # Check and upgrade storages for the planet
-        if upgrade_config.get("enable_storage_upgrades", True):
+        if config.get("enable_storage_upgrades", True):
             storage_upgrade_durations = upgrade_full_storages(planet, page, notifier)
         else:
             storage_upgrade_durations = []

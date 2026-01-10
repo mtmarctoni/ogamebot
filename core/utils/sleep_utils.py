@@ -46,7 +46,7 @@ def sleep_random_interval(min_minutes: int = 0, max_minutes: int = 0) -> None:
     print(f"\nSleeping for {minutes} minutes before next check... (Ctrl+C to stop)")
     time.sleep(minutes * 60)
 
-def sleep_for_minimum_duration(duration: int, notifier: Optional[TelegramNotifier]) -> None:
+def sleep_for_minimum_duration(duration: int, notifier: Optional[TelegramNotifier], max_check: Optional[int]) -> None:
     """
     Sleep for the given duration, ensuring it does not exceed the default maximum sleep time
     for the current time of day. Falls back to a random interval if duration is 0.
@@ -55,7 +55,10 @@ def sleep_for_minimum_duration(duration: int, notifier: Optional[TelegramNotifie
         duration (int): The duration to sleep in minutes.
         notifier (Optional[TelegramNotifier]): The notifier instance for sending notifications.
     """
-    default_max = get_default_sleep_times()[1]
+    if max_check is not None and max_check > 0:
+        default_max = max_check
+    else:
+        default_max = get_default_sleep_times()[1]
 
     # Adjust duration if it exceeds the default maximum
     if duration > default_max:

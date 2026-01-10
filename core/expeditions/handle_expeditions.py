@@ -4,17 +4,16 @@ from typing import List, Optional
 from playwright.sync_api import Page
 
 from config.config import EXPEDITION_PLANET_ID, TARGET_COORDINATES
-from config.types import EmpireSnapshotDict, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
+from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
 from constants.general import COMPONENTS
 from constants.ships import Ships
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
-def get_target_planet(empire_data: EmpireSnapshotDict) -> Optional[PlanetDict]:
+def get_target_planet(empire_data: EmpireSnapshotDict, planet_id: PlanetId) -> Optional[PlanetDict]:
     """
     Retrieves the planet object for 'Abyssal Nexus'.
     """
-    planet_id = PlanetId(EXPEDITION_PLANET_ID)
     for planet in empire_data.get("planets", []):
         if str(planet.get("id")) == planet_id:
             return planet
@@ -130,7 +129,7 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
         print(f"Error dispatching expedition: {e}")
         return None
 
-def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier]) -> Optional[int]:
+def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier], config: Optional[ExpeditionConfig]) -> Optional[int]:
     """
     Main handler for expeditions.
     Returns the time to wait until next check (in seconds).
@@ -138,7 +137,17 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     print("Handling expeditions...")
 
     # 1. Get Target Planet
-    planet = get_target_planet(empire_data)
+    if config and config.get("target_ids"):
+        target_ids = config.get("target_ids") or []
+        planet = None
+
+        # for now just get the first planet on the list
+        planet_id = PlanetId(target_ids[0])
+    else:
+        print("No target planet IDs provided in config. Using default Moon.")
+        planet_id = PlanetId(EXPEDITION_PLANET_ID)
+
+    planet = get_target_planet(empire_data, planet_id)
     if not planet:
         print(f"Planet not found.")
         return 0

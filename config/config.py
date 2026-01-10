@@ -10,8 +10,10 @@ from constants.facilities import Facility
 from constants.lifeform_buildings import HumanLifeformBuildingClass
 from constants.research import Research
 from constants.resources import ResourceClass
-import os
 from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Maximum consecutive restart attempts before giving up
 MAX_RESTART_ATTEMPTS = 5
@@ -53,7 +55,7 @@ PLANET_IDS = {
 DEFAULT_PLANET_ID = PLANET_IDS["default"]  # Main planet
 
 # Planet to use for expeditions
-EXPEDITION_PLANET_ID = PLANET_IDS["default"]
+EXPEDITION_PLANET_ID = PLANET_IDS["moon_default"]
 
 # Target coordinates for expeditions
 TARGET_COORDINATES = [
@@ -133,17 +135,4 @@ SOFT_CAPS: Dict[str | EnergyBuilding, TechLevel] = {
     ResourceClass.deuterium: TechLevel(22),
     EnergyBuilding.SOLAR_PLANT: TechLevel(20),
     EnergyBuilding.FUSION_PLANT: TechLevel(15),
-}
-
-# Load environment variables from .env file
-load_dotenv()
-
-UPGRADE_CONFIG = {
-    "enable_resource_upgrades": os.getenv("ENABLE_RESOURCE_UPGRADES", "true").lower() == "true",
-    "enable_energy_upgrades": os.getenv("ENABLE_ENERGY_UPGRADES", "true").lower() == "true",
-    "enable_facility_upgrades": os.getenv("ENABLE_FACILITY_UPGRADES", "true").lower() == "true",
-    "enable_research_upgrades": os.getenv("ENABLE_RESEARCH_UPGRADES", "true").lower() == "true",
-    "enable_storage_upgrades": os.getenv("ENABLE_STORAGE_UPGRADES", "true").lower() == "true",
-    "enable_lifeform_upgrades": os.getenv("ENABLE_LIFEFORM_UPGRADES", "true").lower() == "true",
-    "enable_expeditions": os.getenv("ENABLE_EXPEDITIONS", "true").lower() == "true",
 }

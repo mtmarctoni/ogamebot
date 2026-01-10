@@ -7,6 +7,18 @@ TechName = NewType('TechName', str)
 TechLevel = NewType('TechLevel', int)
 Coordinates = NewType('Coordinates', str)
 
+# COnfig types
+class ConfigType(TypedDict, total=False):
+    check_interval: int
+    enable_resource_upgrades: bool
+    enable_energy_upgrades: bool
+    enable_facility_upgrades: bool
+    enable_research_upgrades: bool
+    enable_storage_upgrades: bool
+    enable_lifeform_upgrades: bool
+    enable_expeditions: bool
+    expedition_planet_ids: Optional[List[PlanetId]]
+
 # Explicit resource and storage types for planets
 class PlanetResources(TypedDict, total=False):
     metal: int
@@ -104,3 +116,6 @@ class ShipToDispatch(TypedDict):
     count: int
 
 FleetToDispatch = List[ShipToDispatch]
+
+class ExpeditionConfig(TypedDict, total=False):
+    target_ids: Optional[List[PlanetId]]

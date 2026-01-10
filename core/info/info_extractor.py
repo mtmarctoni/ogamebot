@@ -1,27 +1,14 @@
-from playwright.sync_api import Page
 import re
 from bs4 import BeautifulSoup
 
 from typing import Dict, Any, List, cast, Match
-from config.config import OGAME_BASE_URL
 
-from config.types import PlanetResources, PlanetStorage
+from config.types import PlanetResources, PlanetStorage, PlanetDict
 from constants.resources import ResourceClass, ResourceStorageClass
 
 
-def extract_empire_view_from_page(page: Page) -> Dict[str, List[Dict[str, Any]]]:
-    """
-    Navigates to the Empire View page and extracts planet data.
-    """
-    empire_url = f"{OGAME_BASE_URL}/game/index.php?page=standalone&component=empire"
-    page.goto(empire_url)
-    page.wait_for_selector("div.planet")  # Wait for at least one planet to load
-    html = page.content()
-    return extract_empire_view(html)
-
-
 # --- Empire View Extraction ---
-def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
+def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
     """
     Extracts all relevant planet data from the OGame Empire View page HTML.
     Returns a dict with all planets and their info.
@@ -33,7 +20,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
         data = extract_empire_view_from_page(page)
     """
     soup = BeautifulSoup(html, 'html.parser')
-    planets: List[Dict[str, Any]] = []
+    planets: List[PlanetDict] = []
     for planet_div in soup.select('div.planet'):
         # Defensive: get('class') can be None or list[str]
         planet_classes = planet_div.get('class')
@@ -187,7 +174,7 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
         lifeform_buildings = extract_group('lifeform1buildings', lifeform_building_ids)
         lifeform_research = extract_group('lifeform1research', lifeform_research_ids)
 
-        planets.append({
+        plante_to_append: PlanetDict = cast(PlanetDict, {
             'id': planet_id,
             'name': name,
             'coords': coords,
@@ -204,5 +191,9 @@ def extract_empire_view(html: str) -> Dict[str, List[Dict[str, Any]]]:
             'lifeform_buildings': lifeform_buildings,
             'lifeform_research': lifeform_research
         })
+        
+        planets.append(plante_to_append)
 
-    return {'planets': planets}
+    planets_data: Dict[str, List[PlanetDict]] = {'planets': planets}
+
+    return planets_data

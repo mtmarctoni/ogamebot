@@ -133,3 +133,6 @@ fb_session.json
 *.sqlite3
 database/*.json
 !.gitkeep
+
+# Added config.json to ignore runtime configuration
+config.json

@@ -6,6 +6,7 @@ requests
 playwright
 beautifulsoup4
 isodate
+flask
 
 # Standard library modules (no need to install):
 # typing, os, datetime, time, json, re

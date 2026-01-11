@@ -6,7 +6,7 @@ from core.notifications.telegram_notifier import TelegramNotifier
 from core.upgrade.auto_storage import upgrade_full_storages
 from core.upgrade.energy import handle_energy_buildings_upgrade
 from core.upgrade.facilities import handle_facilities_building_upgrades
-from core.upgrade.lifeform_buildings import handle_lifeform_uildings_upgrade
+from core.upgrade.lifeform_buildings import handle_lifeform_buildings_upgrade
 from core.upgrade.buildings import handle_building_resources_upgrade
 from core.upgrade.research import handle_research_upgrades
 
@@ -55,7 +55,7 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
 
         # Check and upgrade lifeform buildings for the planet
         if config.get("enable_lifeform_upgrades", True):
-            lifeform_upgrade_durations = handle_lifeform_uildings_upgrade(planet, page, notifier)
+            lifeform_upgrade_durations = handle_lifeform_buildings_upgrade(planet, page, notifier)
         else:
             lifeform_upgrade_durations = []
 

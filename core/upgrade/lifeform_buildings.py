@@ -72,15 +72,21 @@ def group_upgradable_buildings_by_planet(upgradable_buildings: List[UpgradableLi
 
     return grouped_buildings
 
-def handle_lifeform_uildings_upgrade(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
+def handle_lifeform_buildings_upgrade(
+    planet: PlanetDict, 
+    page: Page, 
+    notifier: Optional[TelegramNotifier], 
+) -> List[int]:
     """
-    Loops through all planets to upgrade the first lifeform building for each planet based on priority.
+    Generalized handler for upgrading lifeform buildings based on the specified lifeform.
 
     Args:
-        empire_data (Dict[str, Any]): The empire data containing planet information.
+        planet (PlanetDict): Planet data.
+        page (Page): Playwright page instance.
+        notifier (Optional[TelegramNotifier]): Notifier for sending messages.
 
     Returns:
-        List[Dict[str, Any]]: A list of upgraded buildings with planet ID and upgrade duration.
+        List[int]: List of upgrade durations.
     """
     upgrade_durations: List[int] = []
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)

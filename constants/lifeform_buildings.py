@@ -96,3 +96,91 @@ class HumanLifeformBuildingClass:
 HumanLifeformBuilding = Literal[
     *[value for value in vars(HumanLifeformBuildingClass).values() if isinstance(value, str)]
 ]
+
+class KaeleshLifeformBuildingClass:
+    Sanctuary = 'sanctuary'
+    Antimatter_Condenser = 'antimatter_condenser'
+    Vortex_Chamber = 'vortex_chamber'
+    Halls_of_Realization = 'halls_of_realization'
+    Forum_of_Transcendence = 'forum_of_transcendence'
+    Antimatter_Convector = 'antimatter_convector'
+    Cloning_Laboratory = 'cloning_laboratory'
+    Chrysalis_Accelerator = 'chrysalis_accelerator'
+    Bio_Modifier = 'bio_modifier'
+    Psionic_Modulator = 'psionic_modulator'
+    Ship_Manufacturing_Hall = 'ship_manufacturing_hall'
+    Supra_Refractor = 'supra_refractor'
+
+    @classmethod
+    def allBuildings(cls) -> list[str]:
+        return [
+            cls.Sanctuary,
+            cls.Antimatter_Condenser,
+            cls.Vortex_Chamber,
+            cls.Halls_of_Realization,
+            cls.Forum_of_Transcendence,
+            cls.Antimatter_Convector,
+            cls.Cloning_Laboratory,
+            cls.Chrysalis_Accelerator,
+            cls.Bio_Modifier,
+            cls.Psionic_Modulator,
+            cls.Ship_Manufacturing_Hall,
+            cls.Supra_Refractor
+        ]
+
+    @classmethod
+    def getBuildingById(cls, building_id: str) -> str:
+        """
+        Returns the building name corresponding to the given building ID.
+        """
+        mapping = {
+            '14101': cls.Sanctuary,
+            '14102': cls.Antimatter_Condenser,
+            '14103': cls.Vortex_Chamber,
+            '14104': cls.Halls_of_Realization,
+            '14105': cls.Forum_of_Transcendence,
+            '14106': cls.Antimatter_Convector,
+            '14107': cls.Cloning_Laboratory,
+            '14108': cls.Chrysalis_Accelerator,
+            '14109': cls.Bio_Modifier,
+            '14110': cls.Psionic_Modulator,
+            '14111': cls.Ship_Manufacturing_Hall,
+            '14112': cls.Supra_Refractor
+        }
+        return mapping.get(building_id, "Unknown Building")
+
+    @classmethod
+    def getBuildingId(cls, building_name: str) -> str:
+        """
+        Returns the building ID corresponding to the given building name.
+        """
+        mapping = {
+            cls.Sanctuary: '14101',
+            cls.Antimatter_Condenser: '14102',
+            cls.Vortex_Chamber: '14103',
+            cls.Halls_of_Realization: '14104',
+            cls.Forum_of_Transcendence: '14105',
+            cls.Antimatter_Convector: '14106',
+            cls.Cloning_Laboratory: '14107',
+            cls.Chrysalis_Accelerator: '14108',
+            cls.Bio_Modifier: '14109',
+            cls.Psionic_Modulator: '14110',
+            cls.Ship_Manufacturing_Hall: '14111',
+            cls.Supra_Refractor: '14112'
+        }
+        return mapping.get(building_name, "Unknown ID")
+
+    @classmethod
+    def is_kaelesh(cls, building_id: str) -> bool:
+        """
+        Checks if the given building ID belongs to the Kaelesh lifeform.
+        """
+        kaelesh_building_ids = {
+            '14101', '14102', '14103', '14104', '14105', '14106',
+            '14107', '14108', '14109', '14110', '14111', '14112'
+        }
+        return building_id in kaelesh_building_ids
+    
+KaeleshLifeformBuilding = Literal[
+    *[value for value in vars(KaeleshLifeformBuildingClass).values() if isinstance(value, str)]
+]

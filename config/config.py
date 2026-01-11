@@ -7,7 +7,7 @@ from typing import Dict
 from config.types import TechLevel
 from constants.energy import EnergyBuilding
 from constants.facilities import Facility
-from constants.lifeform_buildings import HumanLifeformBuildingClass
+from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 from constants.research import Research
 from constants.resources import ResourceClass
 from dotenv import load_dotenv
@@ -95,6 +95,22 @@ HUMAN_LIFEFORM_BUILDING_PRIORITY = [
     HumanLifeformBuildingClass.Biotech_Lab,
     HumanLifeformBuildingClass.Metropolis,
     HumanLifeformBuildingClass.Planetary_Shield
+]
+
+# Priority configuration for KaeleshLifeformBuildings
+KALESH_LIFEFORM_BUILDING_PRIORITY = [
+    KaeleshLifeformBuildingClass.Sanctuary,
+    KaeleshLifeformBuildingClass.Antimatter_Condenser,
+    KaeleshLifeformBuildingClass.Vortex_Chamber,
+    KaeleshLifeformBuildingClass.Halls_of_Realization,
+    KaeleshLifeformBuildingClass.Forum_of_Transcendence,
+    KaeleshLifeformBuildingClass.Antimatter_Convector,
+    KaeleshLifeformBuildingClass.Cloning_Laboratory,
+    KaeleshLifeformBuildingClass.Chrysalis_Accelerator,
+    KaeleshLifeformBuildingClass.Bio_Modifier,
+    KaeleshLifeformBuildingClass.Psionic_Modulator,
+    KaeleshLifeformBuildingClass.Ship_Manufacturing_Hall,
+    KaeleshLifeformBuildingClass.Supra_Refractor
 ]
 
 # Priority configuration for Research

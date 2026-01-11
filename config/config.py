@@ -81,6 +81,12 @@ DAY_MAX_SLEEP = 19
 DEFAULT_MIN_SLEEP = 27
 DEFAULT_MAX_SLEEP = 39
 
+# Lifeforms species
+LIFEFORM_SPECIES = {
+    'Human': '11',
+    'Kaelesh': '14'
+}
+
 # Priority configuration for HumanLifeformBuildings
 HUMAN_LIFEFORM_BUILDING_PRIORITY = [
     HumanLifeformBuildingClass.Research_Center,

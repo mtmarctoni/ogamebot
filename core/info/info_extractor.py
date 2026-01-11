@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 
 from typing import Dict, Any, List, cast, Match
 
+from config.config import LIFEFORM_SPECIES
 from config.types import PlanetResources, PlanetStorage, PlanetDict
 from constants.resources import ResourceClass, ResourceStorageClass
 
@@ -163,14 +164,24 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
         defense_ids = ['401', '402', '403', '404', '405', '406', '407', '408', '502', '503']
         ship_ids = ['204', '205', '206', '207', '215', '211', '213', '214', '218', '219', '202', '203', '208', '209', '210', '212', '217']
         research_ids = ['113', '120', '121', '114', '122', '106', '108', '124', '123', '199', '115', '117', '118', '109', '110', '111']
-        lifeform_building_ids = [str(11101 + i) for i in range(18)]
-        lifeform_research_ids = [str(11201 + i) for i in range(18)]
+
+        # Generate lifeform building and research IDs dynamically for all species
+        lifeform_building_ids = [f'{prefix}{101 + i}' for prefix in LIFEFORM_SPECIES.values() for i in range(18)]
+        lifeform_research_ids = [f'{prefix}{201 + i}' for prefix in LIFEFORM_SPECIES.values() for i in range(18)]
+
+        # Extract specie based on lifeform prefix
+        specie = None
+        for species_name, prefix in LIFEFORM_SPECIES.items():
+            if any(planet_div.select_one(f'.values.lifeform1buildings .{id_}') for id_ in lifeform_building_ids if id_.startswith(prefix)):
+                specie = species_name
+                break
 
         buildings = extract_group('supply', supply_ids)
         station = extract_group('station', station_ids)
         defense = extract_group('defence', defense_ids)
         ships = extract_group('ships', ship_ids)
         research = extract_group('research', research_ids)
+        # Extract lifeform buildings and research dynamically
         lifeform_buildings = extract_group('lifeform1buildings', lifeform_building_ids)
         lifeform_research = extract_group('lifeform1research', lifeform_research_ids)
 
@@ -180,6 +191,7 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
             'coords': coords,
             'fields': fields,
             'temperature': temp,
+            'specie': specie,
             'energy': energy,
             'resources': resources,
             'storage': storage,

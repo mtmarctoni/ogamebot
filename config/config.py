@@ -41,6 +41,58 @@ COMPONENT_URL_TEMPLATE = f"{OGAME_GAME_URL}&component={{component}}&cp={{planet_
 # URL to get empire view
 EMPIRE_VIEW_URL = f'{OGAME_BASE_URL}/game/index.php?page=standalone&component=empire'
 
+# PLANETS
+PLANETS = {
+    "home_planet": {
+        "id": "33625285",
+        "name": "Abyssal Nexus",
+        "coords": "[2:8:12]",
+        "species": "Human",
+    },
+    "colony1": {
+        "id": "33629156",
+        "name": "Echoes of the Void",
+        "coords": "[2:21:8]",
+        "species": "Human",
+    },
+    "colony2": {
+        "id": "33630366",
+        "name": "Halo of the Nexus",
+        "coords": "[2:8:9]",
+        "species": "Human",
+    },
+    "colony3": {
+        "id": "33632165",
+        "name": "Nexus Sentinel",
+        "coords": "[2:18:7]",
+        "species": "Human",
+    },
+    "colony4": {
+        "id": "33634157",
+        "name": "Voidwatch Haven",
+        "coords": "[1:413:9]",
+        "species": "Human",
+    },
+    "colony5": {
+        "id": "33646912",
+        "name": "Haven s Veil",
+        "coords": "[1:413:8]",
+        "species": "Kaelesh",
+    },
+    "colony6": {
+        "id": "33652874",
+        "name": "Void Nexus",
+        "coords": "[2:16:8]",
+        "species": "Kaelesh",
+    },
+    "moon_default": {
+        "id": "33645298",
+        "name": "Moon",
+        "coords": "[2:16:8]",
+        "species": "Human",
+    }
+}
+
 # Default planet ids
 PLANET_IDS = {
     "default": "33625285",
@@ -83,8 +135,8 @@ DEFAULT_MAX_SLEEP = 39
 
 # Lifeforms species
 LIFEFORM_SPECIES = {
-    'Human': '11',
-    'Kaelesh': '14'
+    'Human': '1',
+    'Kaelesh': '4'
 }
 
 # Priority configuration for HumanLifeformBuildings

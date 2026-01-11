@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 from typing import Dict, Any, List, cast, Match
 
-from config.config import LIFEFORM_SPECIES
+from config.config import LIFEFORM_SPECIES, PLANETS
 from config.types import PlanetResources, PlanetStorage, PlanetDict
 from constants.resources import ResourceClass, ResourceStorageClass
 
@@ -72,6 +72,18 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
         energy_tag = planet_div.select_one('.planetDataTop ul li.coords.textRight .undermark')
         if energy_tag:
             energy = energy_tag.get_text(strip=True)
+
+        # Specie
+        specie = {
+            'id': '0',
+            'name': 'Unknown'
+        }
+        # use PLANETS config to get specie info
+        for _, planet_info in PLANETS.items():
+            if str(planet_info.get('id')) == str(planet_id):
+                specie['id'] = LIFEFORM_SPECIES.get(planet_info.get('species', 'Human'), '1')
+                specie['name'] = planet_info.get('species', 'Human')
+                break   
 
         # Resources
         resources: PlanetResources = {}
@@ -166,15 +178,9 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
         research_ids = ['113', '120', '121', '114', '122', '106', '108', '124', '123', '199', '115', '117', '118', '109', '110', '111']
 
         # Generate lifeform building and research IDs dynamically for all species
-        lifeform_building_ids = [f'{prefix}{101 + i}' for prefix in LIFEFORM_SPECIES.values() for i in range(18)]
-        lifeform_research_ids = [f'{prefix}{201 + i}' for prefix in LIFEFORM_SPECIES.values() for i in range(18)]
+        lifeform_building_ids = [str((int('1' + specie.get("id", "") + '101') + i)) for i in range(12)]
+        lifeform_research_ids = [str((int('1' + specie.get("id", "") + '201') + i)) for i in range(18)]
 
-        # Extract specie based on lifeform prefix
-        specie = None
-        for species_name, prefix in LIFEFORM_SPECIES.items():
-            if any(planet_div.select_one(f'.values.lifeform1buildings .{id_}') for id_ in lifeform_building_ids if id_.startswith(prefix)):
-                specie = species_name
-                break
 
         buildings = extract_group('supply', supply_ids)
         station = extract_group('station', station_ids)
@@ -182,8 +188,8 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
         ships = extract_group('ships', ship_ids)
         research = extract_group('research', research_ids)
         # Extract lifeform buildings and research dynamically
-        lifeform_buildings = extract_group('lifeform1buildings', lifeform_building_ids)
-        lifeform_research = extract_group('lifeform1research', lifeform_research_ids)
+        lifeform_buildings = extract_group(f'lifeform{specie.get("id", "")}buildings', lifeform_building_ids)
+        lifeform_research = extract_group(f'lifeform{specie.get("id", "")}research', lifeform_research_ids)
 
         plante_to_append: PlanetDict = cast(PlanetDict, {
             'id': planet_id,
@@ -191,8 +197,8 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
             'coords': coords,
             'fields': fields,
             'temperature': temp,
-            'specie': specie,
             'energy': energy,
+            'specie': specie.get("name", "Unknown"),
             'resources': resources,
             'storage': storage,
             'buildings': buildings,

@@ -67,6 +67,12 @@ class PlanetDict(TypedDict, total=False):
     lifeform_research: Dict[str, BuildingInfoDict]
     queue: List[QueueItemDict]
 
+class PlanetBase(TypedDict):
+    id: PlanetId
+    name: PlanetName
+    coords: Coordinates
+    specie: str
+
 class PlayerDict(TypedDict):
     name: str
     id: Optional[str]

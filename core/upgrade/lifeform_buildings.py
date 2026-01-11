@@ -88,6 +88,7 @@ def handle_lifeform_buildings_upgrade(
     Returns:
         List[int]: List of upgrade durations.
     """
+
     upgrade_durations: List[int] = []
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
 

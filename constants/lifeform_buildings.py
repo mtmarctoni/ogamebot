@@ -129,46 +129,46 @@ class KaeleshLifeformBuildingClass:
         ]
 
     @classmethod
-    def getBuildingById(cls, building_id: str) -> str:
+    def get_name_by_id(cls, building_id: int) -> str | None:
         """
         Returns the building name corresponding to the given building ID.
         """
         mapping = {
-            '14101': cls.Sanctuary,
-            '14102': cls.Antimatter_Condenser,
-            '14103': cls.Vortex_Chamber,
-            '14104': cls.Halls_of_Realization,
-            '14105': cls.Forum_of_Transcendence,
-            '14106': cls.Antimatter_Convector,
-            '14107': cls.Cloning_Laboratory,
-            '14108': cls.Chrysalis_Accelerator,
-            '14109': cls.Bio_Modifier,
-            '14110': cls.Psionic_Modulator,
-            '14111': cls.Ship_Manufacturing_Hall,
-            '14112': cls.Supra_Refractor
+            14101: cls.Sanctuary,
+            14102: cls.Antimatter_Condenser,
+            14103: cls.Vortex_Chamber,
+            14104: cls.Halls_of_Realization,
+            14105: cls.Forum_of_Transcendence,
+            14106: cls.Antimatter_Convector,
+            14107: cls.Cloning_Laboratory,
+            14108: cls.Chrysalis_Accelerator,
+            14109: cls.Bio_Modifier,
+            14110: cls.Psionic_Modulator,
+            14111: cls.Ship_Manufacturing_Hall,
+            14112: cls.Supra_Refractor
         }
-        return mapping.get(building_id, "Unknown Building")
+        return mapping.get(building_id)
 
     @classmethod
-    def getBuildingId(cls, building_name: str) -> str:
+    def get_id_by_name(cls, building_name: str) -> int | None:
         """
         Returns the building ID corresponding to the given building name.
         """
         mapping = {
-            cls.Sanctuary: '14101',
-            cls.Antimatter_Condenser: '14102',
-            cls.Vortex_Chamber: '14103',
-            cls.Halls_of_Realization: '14104',
-            cls.Forum_of_Transcendence: '14105',
-            cls.Antimatter_Convector: '14106',
-            cls.Cloning_Laboratory: '14107',
-            cls.Chrysalis_Accelerator: '14108',
-            cls.Bio_Modifier: '14109',
-            cls.Psionic_Modulator: '14110',
-            cls.Ship_Manufacturing_Hall: '14111',
-            cls.Supra_Refractor: '14112'
+            cls.Sanctuary: 14101,
+            cls.Antimatter_Condenser: 14102,
+            cls.Vortex_Chamber: 14103,
+            cls.Halls_of_Realization: 14104,
+            cls.Forum_of_Transcendence: 14105,
+            cls.Antimatter_Convector: 14106,
+            cls.Cloning_Laboratory: 14107,
+            cls.Chrysalis_Accelerator: 14108,
+            cls.Bio_Modifier: 14109,
+            cls.Psionic_Modulator: 14110,
+            cls.Ship_Manufacturing_Hall: 14111,
+            cls.Supra_Refractor: 14112
         }
-        return mapping.get(building_name, "Unknown ID")
+        return mapping.get(building_name)
 
     @classmethod
     def is_kaelesh(cls, building_id: str) -> bool:
@@ -180,7 +180,7 @@ class KaeleshLifeformBuildingClass:
             '14107', '14108', '14109', '14110', '14111', '14112'
         }
         return building_id in kaelesh_building_ids
-    
+
 KaeleshLifeformBuilding = Literal[
     *[value for value in vars(KaeleshLifeformBuildingClass).values() if isinstance(value, str)]
 ]

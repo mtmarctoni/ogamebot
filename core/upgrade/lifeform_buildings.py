@@ -2,23 +2,28 @@ from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
 from config.types import PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, Coordinates, TechId, TechName, TechLevel
-from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY
-from constants.lifeform_buildings import HumanLifeformBuildingClass
+from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY, KALESH_LIFEFORM_BUILDING_PRIORITY   
+from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
 
-def prioritize_lifeform_buildings(buildings: list[str]) -> list[str]:
+def prioritize_lifeform_buildings(buildings: list[str], specie: str) -> list[str]:
     """
     Sorts the given list of lifeform buildings based on the priority defined in the configuration.
 
     Args:
         buildings (list[str]): List of building names to prioritize.
+        specie (str): The specie of the planet (e.g., 'human', 'kaelesh').
 
     Returns:
         list[str]: Sorted list of buildings based on priority.
     """
-    priority_map = {name: index for index, name in enumerate(HUMAN_LIFEFORM_BUILDING_PRIORITY)}
+    if specie == 'kaelesh':
+        priority_map = {name: index for index, name in enumerate(KALESH_LIFEFORM_BUILDING_PRIORITY)}
+    else:  # Default to Human
+        priority_map = {name: index for index, name in enumerate(HUMAN_LIFEFORM_BUILDING_PRIORITY)}
+
     return sorted(buildings, key=lambda b: priority_map.get(b, float('inf')))
 
 def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLifeformBuilding]:
@@ -26,7 +31,7 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
     Finds upgradable lifeform buildings across all planets in the empire data.
 
     Args:
-        empire_data (Dict[str, Any): The empire data containing planet information.
+        planet (PlanetDict): The planet data containing lifeform information.
 
     Returns:
         List[UpgradableLifeformBuilding]: A list of upgradable buildings with planet ID and details.
@@ -38,8 +43,15 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
     coords = planet.get('coords') or "?"
     lifeform_buildings_data = planet.get('lifeform_buildings', {})
 
+    # Determine the lifeform class based on the 'specie' field
+    specie = planet.get('specie', '').lower()
+    if specie == 'kaelesh':
+        lifeform_class = KaeleshLifeformBuildingClass
+    else:  # Default to Human
+        lifeform_class = HumanLifeformBuildingClass
+
     for building_id, building_info in lifeform_buildings_data.items():
-        building_name = HumanLifeformBuildingClass.get_name_by_id(int(building_id)) or "Not a lifeform building"
+        building_name = lifeform_class.get_name_by_id(int(building_id)) or "Not a lifeform building"
         if building_info.get('upgradable'):
             upgradable_buildings.append({
                 'planet_id': PlanetId(str(planet_id)),
@@ -93,7 +105,7 @@ def handle_lifeform_buildings_upgrade(
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
 
     # Prioritize the upgradable buildings based on the defined priority
-    prioritized_buildings = prioritize_lifeform_buildings([b['building'] for b in upgradable_buildings])
+    prioritized_buildings = prioritize_lifeform_buildings([b['building'] for b in upgradable_buildings], planet.get('specie', 'Human').lower())
 
     # Filter the upgradable buildings to match the prioritized order
     upgradable_buildings = [b for name in prioritized_buildings for b in upgradable_buildings if b['building'] == name]

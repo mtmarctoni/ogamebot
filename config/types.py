@@ -53,6 +53,7 @@ class PlanetDict(TypedDict, total=False):
     coords: Coordinates
     coordinates: str
     type: str  # planet or moon
+    specie: str
     fields: str
     temperature: str
     energy: str

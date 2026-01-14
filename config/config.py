@@ -107,7 +107,7 @@ PLANET_IDS = {
 DEFAULT_PLANET_ID = PLANET_IDS["default"]  # Main planet
 
 # Planet to use for expeditions
-EXPEDITION_PLANET_ID = PLANET_IDS["moon_default"]
+EXPEDITION_PLANET_ID = PLANET_IDS["colony3"]
 
 # Target coordinates for expeditions
 TARGET_COORDINATES = [

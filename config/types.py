@@ -1,4 +1,4 @@
-from typing import NewType, TypedDict, List, Dict, Optional
+from typing import Literal, NewType, TypedDict, List, Dict, Optional
 
 TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)
@@ -6,6 +6,23 @@ PlanetName = NewType('PlanetName', str)
 TechName = NewType('TechName', str)
 TechLevel = NewType('TechLevel', int)
 Coordinates = NewType('Coordinates', str)
+
+UpgradeCategory = Literal[
+    "facilities",
+    "resources",
+    "energy",
+    "research",
+    "lifeforms",
+    "storage"
+]
+
+class UpgradeTogglesType(TypedDict, total=False):
+    facilities: bool
+    resources: bool
+    energy: bool
+    research: bool
+    lifeforms: bool
+    storage: bool
 
 # Config types
 class ConfigType(TypedDict, total=False):
@@ -18,6 +35,8 @@ class ConfigType(TypedDict, total=False):
     enable_lifeform_upgrades: bool
     enable_expeditions: bool
     expedition_planet_id: str
+    upgrade_order: List[UpgradeCategory]
+    upgrade_toggles: UpgradeTogglesType
 
 # Explicit resource and storage types for planets
 class PlanetResources(TypedDict, total=False):

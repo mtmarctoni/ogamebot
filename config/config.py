@@ -85,7 +85,7 @@ PLANETS = {
         "coords": "[2:16:8]",
         "species": "Kaelesh",
     },
-    "moon_default": {
+    "moon_home": {
         "id": "33645298",
         "name": "Moon",
         "coords": "[2:16:8]",
@@ -93,21 +93,10 @@ PLANETS = {
     }
 }
 
-# Default planet ids
-PLANET_IDS = {
-    "default": "33625285",
-    "colony1": "33629156",
-    "colony2": "33630366",
-    "colony3": "33632165",
-    "colony4": "33634157",
-    "colony5": "33646912",
-    "moon_default": "33645298",
-}
-
-DEFAULT_PLANET_ID = PLANET_IDS["default"]  # Main planet
+DEFAULT_PLANET_ID = PLANETS["home_planet"]["id"]
 
 # Planet to use for expeditions
-EXPEDITION_PLANET_ID = PLANET_IDS["colony3"]
+DEFAULT_EXPEDITION_PLANET_ID = PLANETS["home_planet"]["id"]
 
 # Target coordinates for expeditions
 TARGET_COORDINATES = [

@@ -3,7 +3,7 @@ import re
 from typing import List, Optional
 from playwright.sync_api import Page
 
-from config.config import EXPEDITION_PLANET_ID, TARGET_COORDINATES
+from config.config import DEFAULT_EXPEDITION_PLANET_ID, TARGET_COORDINATES
 from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
 from constants.general import COMPONENTS
 from constants.ships import Ships
@@ -137,15 +137,15 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     print("Handling expeditions...")
 
     # 1. Get Target Planet
-    if config and config.get("target_ids"):
-        target_ids = config.get("target_ids") or []
+    if config and config.get("target_id"):
+        target_id = config.get("target_id") or ""
         planet = None
 
         # for now just get the first planet on the list
-        planet_id = PlanetId(target_ids[0])
+        planet_id = PlanetId(target_id)
     else:
         print("No target planet IDs provided in config. Using default Moon.")
-        planet_id = PlanetId(EXPEDITION_PLANET_ID)
+        planet_id = PlanetId(DEFAULT_EXPEDITION_PLANET_ID)
 
     planet = get_target_planet(empire_data, planet_id)
     if not planet:

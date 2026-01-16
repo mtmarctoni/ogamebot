@@ -68,7 +68,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle expeditions based on dynamic config
                 if config.get("enable_expeditions", True):
-                    handle_expeditions(game_page, empire_data, notifier, {"target_ids": config.get("expedition_planet_ids", [])})
+                    handle_expeditions(game_page, empire_data, notifier, {"target_id": config.get("expedition_planet_id", "")})
                 else:
                     print("Expeditions are disabled in the configuration.")
 

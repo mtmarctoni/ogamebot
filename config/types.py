@@ -1,4 +1,12 @@
 from typing import NewType, TypedDict, List, Dict, Optional
+from config.config import PLANETS
+from enum import Enum
+
+# Dynamically generate an Enum with all planet names
+PlanetNameEnum = Enum(
+    "PlanetNameEnum",
+    {name.replace(" ", "_").replace("'", "").upper(): name for name in [v["name"] for v in PLANETS.values()]}
+)
 
 TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)
@@ -7,7 +15,7 @@ TechName = NewType('TechName', str)
 TechLevel = NewType('TechLevel', int)
 Coordinates = NewType('Coordinates', str)
 
-# COnfig types
+# Config types
 class ConfigType(TypedDict, total=False):
     check_interval: int
     enable_resource_upgrades: bool
@@ -17,7 +25,7 @@ class ConfigType(TypedDict, total=False):
     enable_storage_upgrades: bool
     enable_lifeform_upgrades: bool
     enable_expeditions: bool
-    expedition_planet_ids: Optional[List[PlanetId]]
+    expedition_planet_id: str
 
 # Explicit resource and storage types for planets
 class PlanetResources(TypedDict, total=False):
@@ -125,4 +133,4 @@ class ShipToDispatch(TypedDict):
 FleetToDispatch = List[ShipToDispatch]
 
 class ExpeditionConfig(TypedDict, total=False):
-    target_ids: Optional[List[PlanetId]]
+    target_id: str

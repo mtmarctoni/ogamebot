@@ -12,5 +12,6 @@ DEFAULT_CONFIG: ConfigType = {
     "enable_research_upgrades": True,
     "enable_storage_upgrades": True,
     "enable_lifeform_upgrades": True,
-    "enable_expeditions": True
+    "enable_expeditions": True,
+    "expedition_planet_id": "33632165" # Nexus Sentinel
 }

@@ -1,12 +1,4 @@
 from typing import NewType, TypedDict, List, Dict, Optional
-from config.config import PLANETS
-from enum import Enum
-
-# Dynamically generate an Enum with all planet names
-PlanetNameEnum = Enum(
-    "PlanetNameEnum",
-    {name.replace(" ", "_").replace("'", "").upper(): name for name in [v["name"] for v in PLANETS.values()]}
-)
 
 TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)

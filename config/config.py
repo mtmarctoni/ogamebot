@@ -100,11 +100,11 @@ DEFAULT_EXPEDITION_PLANET_ID = PLANETS["colony3"]["id"]
 
 # Target coordinates for expeditions
 TARGET_COORDINATES = [
-    [2, 8, 16],
-    [2, 7, 16],
-    [2, 9, 16],
-    [2, 10, 16],
-    [2, 6, 16]
+    [1, 413, 16],
+    [1, 411, 16],
+    [1, 414, 16],
+    [1, 415, 16],
+    [1, 412, 16]
 ]
 
 # Lobby URL

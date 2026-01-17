@@ -79,7 +79,7 @@ class PlanetDict(TypedDict, total=False):
     resources: PlanetResources
     storage: PlanetStorage
     buildings: Dict[str, BuildingInfoDict]
-    station: Dict[str, BuildingInfoDict]
+    facilities: Dict[str, BuildingInfoDict]
     defense: Dict[str, BuildingInfoDict]
     ships: Dict[str, BuildingInfoDict]
     research: Dict[str, BuildingInfoDict]

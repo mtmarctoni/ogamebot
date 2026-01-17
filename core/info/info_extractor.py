@@ -202,7 +202,7 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
             'resources': resources,
             'storage': storage,
             'buildings': buildings,
-            'station': station,
+            'facilities': station,
             'defense': defense,
             'ships': ships,
             'research': research,

@@ -44,7 +44,7 @@ def create_notifier() -> Optional[TelegramNotifier]:
         safe_notify(notifier, "🤖 OGameBot is now ACTIVE.")
         return notifier
     else:
-        print("Telegram notifications are disabled (missing TELEGRAM_TOKEN or TELEGRAM_CHAT_ID).")
+        print("[WARN] Telegram notifications are disabled (missing TELEGRAM_TOKEN or TELEGRAM_CHAT_ID).")
         return None
 
 def safe_notify(notifier: Optional[TelegramNotifier], message: str) -> None:
@@ -60,4 +60,4 @@ def safe_notify(notifier: Optional[TelegramNotifier], message: str) -> None:
         try:
             notifier.send_message(message)
         except Exception as e:
-            print(f"[ERROR] Notifier failed: {e}")
+            print(f"[ERROR] TelegramNotifier send_message failed: {e}")

@@ -25,11 +25,11 @@ def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: 
     soft_cap = SOFT_CAPS.get(building_name, 0)
 
     if current_level >= soft_cap:
-        print(f"[DEBUG] {building_name} on {planet.get('name')} ({planet.get('coords')}) is at or above the soft cap ({soft_cap}).")
+        print(f"[WARN] {building_name} on {planet.get('name')} ({planet.get('coords')}) is already at soft cap ({soft_cap}).")
         return None
 
     if not building_info.get('upgradable', False):
-        print(f"[DEBUG] {building_name} on {planet.get('name')} ({planet.get('coords')}) is not upgradable.")
+        # [INFO] {building_name} on {planet.get('name')} ({planet.get('coords')}) is not upgradable.
         return None
 
     return building_name
@@ -61,7 +61,7 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, notifier: Op
         }
 
         # Upgrade the building
-        print(f"[DEBUG] Upgrading {building_to_upgrade} on planet {planet.get('name')} ({planet.get('coords')})")
+        print(f"[INFO] Upgrading {building_to_upgrade} on planet {planet.get('name')} ({planet.get('coords')})")
         duration = upgrade_tech(**params)
 
         if duration > 0:

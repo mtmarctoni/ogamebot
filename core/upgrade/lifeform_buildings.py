@@ -135,8 +135,10 @@ def handle_lifeform_buildings_upgrade(
 
         if duration > 0:
             upgrade_durations.append(duration)
+            print(f"[INFO] Lifeform upgrade: '{building_name}' started on planet {planet.get('name', 'Unknown')} (duration: {duration}s)")
             safe_notify(notifier, f"✅ Successfully started upgrade for '{building_name}' on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
         else:
+            print(f"[ERROR] Lifeform upgrade failed: '{building_name}' on planet {planet.get('name', 'Unknown')}")
             safe_notify(notifier, f"⚠️ Failed to upgrade '{building_name}' on planet {planet.get('name', 'Unknown')}. Please check manually.")
 
         break  # Exit after upgrading one building

@@ -42,7 +42,7 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
     for planet in empire_data["planets"]:
         planet_name = planet.get('name', 'Unknown')
         planet_id = planet.get('id', 'Unknown')
-        print(f"\nProcessing upgrades for planet: {planet_name} (ID: {planet_id})")
+        print(f"\n[INFO] Processing upgrades for: {planet_name} (ID: {planet_id})")
 
         planet_durations: List[int] = []
         for upgrade in upgrade_order:

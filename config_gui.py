@@ -52,11 +52,11 @@ def apply_runtime_config():
 
 
     bot_runtime_config = config
-    print("\n[Bot] Current Configuration:")
-    print("[Bot] =============================")
+    print("\n[INFO] Current Bot Configuration:")
+    print("[INFO] ==================================")
     for key, value in bot_runtime_config.items():
-        print(f"[Bot] {key}: {value}")
-    print("[Bot] =============================\n")
+        print(f"[INFO] {key}: {value}")
+    print("[INFO] ==================================\n")
 
 @app.route('/config', methods=['GET'])
 def get_config():

@@ -64,7 +64,7 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
     try:
         # 1. Select Ships
         # We assume we are already on the fleet dispatch page (Fleet 1)
-        print(f"Selecting ships: {ships}")
+        print(f"[INFO] Preparing ships for expedition: {ships}")
         has_ships = False
         for ship in ships:
             ship_id = ship['ship_id']
@@ -81,7 +81,7 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
                 pass
 
         if not has_ships:
-            print("No ships selected.")
+            print("[WARN] Could not select any ships for expedition.")
             return None
 
         page.wait_for_timeout(1000)  # Small wait to ensure inputs are registered
@@ -93,7 +93,7 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
 
         # 2. Set Coordinates
         galaxy, system, position = coordinates
-        print(f"Filling coordinates: Galaxy={galaxy}, System={system}, Position={position}")
+        print(f"[INFO] Filling coordinates for expedition: Galaxy={galaxy}, System={system}, Position={position}")
 
         galaxy_input = page.locator("input#galaxy")
         system_input = page.locator("input#system")
@@ -123,10 +123,10 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
 
         # 5. Get Return Time
         page.wait_for_selector("form#shipsChosen", timeout=10000)  # Wait for the main fleet dispatch page
-        print("Expedition dispatched successfully.")
+        print("[INFO] Expedition dispatched successfully.")
 
     except Exception as e:
-        print(f"Error dispatching expedition: {e}")
+        print(f"[ERROR] Expedition dispatch failed: {e}")
         return None
 
 def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier], config: Optional[ExpeditionConfig]) -> Optional[int]:
@@ -134,7 +134,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     Main handler for expeditions.
     Returns the time to wait until next check (in seconds).
     """
-    print("Handling expeditions...")
+    print("[INFO] Handling expeditions batch...")
 
     # 1. Get Target Planet
     if config and config.get("target_id"):
@@ -144,12 +144,12 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         # for now just get the first planet on the list
         planet_id = PlanetId(target_id)
     else:
-        print("No target planet IDs provided in config. Using default Moon.")
+        print("[INFO] No target planet IDs in config. Using default Moon.")
         planet_id = PlanetId(DEFAULT_EXPEDITION_PLANET_ID)
 
     planet = get_target_planet(empire_data, planet_id)
     if not planet:
-        print(f"Planet not found.")
+        print(f"[ERROR] Target planet not found for expedition.")
         return 0
 
     planet_id = PlanetId(str(planet.get("id")))
@@ -158,7 +158,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     try:
         navigate_to_section(page, planet_id, COMPONENTS.FLEET_DISPATCH)
     except Exception as e:
-        print(f"Failed to navigate to fleet dispatch: {e}")
+        print(f"[ERROR] Expedition fleet dispatch navigation failed: {e}")
         return 600
 
     # 3. Check Available Slots
@@ -190,17 +190,17 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
             # We are limited by whichever is smaller
             available_slots = min(avail_exp, avail_fleets)
-            print(f"Slots Status - Expeditions: {current_exp}/{max_exp}, Fleets: {current_fleets}/{max_fleets}")
+            print(f"[INFO] Available slots - Expeditions: {current_exp}/{max_exp}, Fleets: {current_fleets}/{max_fleets}")
         else:
-            print(f"Could not parse slots from text: '{slots_text_clean}'")
+            print(f"[WARN] Could not parse slots info: '{slots_text_clean}'")
 
     except Exception as e:
-        print(f"Error checking slots: {e}")
+        print(f"[ERROR] Checking slots failed: {e}")
 
-    print(f"Available expedition slots: {available_slots}")
+    print(f"[INFO] Expedition slots available: {available_slots}")
 
     if available_slots <= 0:
-        print("No expedition slots available.")
+        print("[INFO] No expedition slots available.")
         return 600 # Wait 10 mins
 
     # 4. Get Available Ships
@@ -210,20 +210,20 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     ships_to_send = calculate_ships_per_expedition(available_ships, available_slots)
 
     if not ships_to_send:
-        print("No ships available for expedition.")
+        print("[WARN] No ships available for expedition.")
         return 600 # Wait 10 mins
 
     # 6. Dispatch Expeditions
     target_index = 0  # Start with the first target coordinate
     for i in range(available_slots):
-        print(f"Dispatching expedition {i+1}/{available_slots}...")
+        print(f"[INFO] Dispatching expedition {i+1}/{available_slots}...")
 
         # If this is not the first iteration, we need to navigate back to fleet dispatch
         if i > 0:
             try:
                 navigate_to_section(page, planet_id, COMPONENTS.FLEET_DISPATCH)
             except Exception as e:
-                print(f"Failed to navigate to fleet dispatch for subsequent expedition: {e}")
+                print(f"[ERROR] Failed to navigate to fleet dispatch for subsequent expedition: {e}")
                 break
 
         # Select the target coordinate in a round-robin manner
@@ -237,4 +237,4 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
             # Wait a bit between dispatches
             time.sleep(5)
         else:
-            print("Failed to dispatch expedition.")
+            print("[ERROR] Expedition dispatch failed.")

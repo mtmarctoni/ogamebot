@@ -6,7 +6,7 @@ from constants.resources import RESOURCE_TO_STORAGE, ResourceClass
 from core.notifications.telegram_notifier import TelegramNotifier
 
 def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier]) -> None:
-    print("\n\033[1;36mEmpire View Planets:\033[0m")
+    print("\n[INFO] Empire View summary:")
     summary_lines: List[str] = []
     for planet in empire_data.get('planets', []):
         name = planet.get('name', 'Unknown')

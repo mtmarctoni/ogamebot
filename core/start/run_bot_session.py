@@ -29,13 +29,13 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
             page = context.new_page()
             page.goto(LOBBY_URL)
             if not session_exists:
-                print("No session found. Please log in with Facebook manually.")
+                print("[INFO] No session found. Please log in with Facebook manually.")
                 input("Press Enter after you have logged in and see the lobby...")
                 save_session(context)
-                print("Session saved.")
+                print("[INFO] FB session saved.")
             else:
-                print("Session found. Logging in automatically.")
-            print("Navigating to main game...")
+                 print("[INFO] Existing FB session found. Logging in automatically.")
+            print("[INFO] Navigating to main game universe...")
             game_page = enter_universe(page)
             # After entering, optionally go directly to overview using config
             try:
@@ -51,16 +51,16 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 config: ConfigType = reload_config()
                 safe_config = SafeTypedConfig(config)
 
-                print("Entered main game.")
+                print("[INFO] Entered main game.")
 
                 # --- Attack detection (overview page) ---
-                print("\nChecking for attack alerts on Overview page...")
+                print("[INFO] Checking for attack alerts on Overview page...")
                 attack_info = check_for_attack_alert(game_page)
                 if attack_info and notifier:
                     safe_notify(notifier, f"⚠️ ALERT: {attack_info}")
 
                 # --- Get Empire Info ---
-                print("\nNavigating to Empire View page and extracting all planets data...")
+                print("[INFO] Navigating to Empire View and extracting all planet and moon data...")
                 empire_data = extract_empire_info(game_page, notifier)
 
                 # Save the empire snapshot to a file
@@ -72,7 +72,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 if safe_config.get_enable_expeditions():
                     handle_expeditions(game_page, empire_data, notifier, {"target_id": safe_config.get_expedition_planet_id()})
                 else:
-                    print("Expeditions are disabled in the configuration.")
+                     print("[INFO] Expeditions are disabled in the configuration.")
                 next_action_duration = max(1, upgrade_duration)
                 # Sleep for the minimum duration across all planets
                 check_interval = safe_config.get_check_interval()
@@ -83,7 +83,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
 
     except KeyboardInterrupt:
-        print("\nBot stopped by user.")
+        print("[WARN] Bot stopped by user.")
         if notifier:
             safe_notify(notifier, "OGameBot is now INACTIVE.")
         return False  # Don't restart on user interrupt
@@ -105,7 +105,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
         if browser:
             try:
                 browser.close()
-                print("Browser closed.")
+                print("[INFO] Browser closed.")
             except Exception:
                 pass  # Ignore errors when closing browser
 

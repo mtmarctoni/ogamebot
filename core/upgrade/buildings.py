@@ -50,21 +50,21 @@ def find_storages_to_upgrade(
     storage = planet.get('storage', {})
     resources = planet.get('resources', {})
     buildings_data = planet.get('buildings', {})
-    print(f"[DEBUG] Planet: {planet_name} ({coords})")
+    # [INFO] Working on planet: {planet_name} ({coords})
     for resource, building_id in resource_to_building.items():
         current = resources.get(resource)
         max_cap = storage.get(RESOURCE_TO_STORAGE[resource])
-        print(f"    [DEBUG] Resource: {resource}, Current: {current}, Max: {max_cap}")
+        # [DEBUG] Resource: {resource}, Current: {current}, Max: {max_cap} (enable by DEBUG flag if needed)
         if current is None or max_cap is None or max_cap == 0:
-            print(f"      [SKIP] Missing or zero max_cap for {resource}")
+            # [WARN] Missing or zero max_cap for {resource}
             continue
         percent = current / max_cap
         building_info = buildings_data.get(str(building_id), {})
         upgradable = building_info.get('upgradable', False)
         level = building_info.get('level', '?')
-        print(f"      [DEBUG] Percent: {percent:.2f}, Upgradable: {upgradable}, Level: {level}")
+        # [DEBUG] Percent: {percent:.2f}, Upgradable: {upgradable}, Level: {level}
         if percent >= threshold and upgradable:
-            print(f"      [ADD] Storage upgrade candidate for {resource}")
+            # [INFO] Storage upgrade candidate found for {resource}
             results.append({
                 'planet_id': PlanetId(str(planet_id)),
                     'planet_name': PlanetName(str(planet_name)),
@@ -77,8 +77,7 @@ def find_storages_to_upgrade(
                 'building_level': TechLevel(int(level)) if isinstance(level, int) or (hasattr(level, 'isdigit') and level.isdigit()) else TechLevel(int((level))),
                 'upgradable': bool(upgradable)
             })
-        else:
-            print(f"      [NO ADD] Not over threshold or not upgradable")
+
     return results
 
 
@@ -135,7 +134,7 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
     Returns:
         The building to upgrade if criteria are met, otherwise None.
     """
-    print(f"[DEBUG] Determining if building can be upgraded: {building}")
+    # [DEBUG] Examining candidate for upgrade: {building}
 
     resource = building['resource']
     building_level = building['level']
@@ -154,7 +153,7 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
                 f"[NOTIFICATION] Not enough energy to upgrade {resource} on {building['planet_name']} ({building['coordinates']}). "
                 f"Energy needed: {energy_needed}, Current energy: {current_energy}."
             )
-        print(f"[DEBUG] Not enough energy to upgrade {resource} on {planet.get('name')} ({building['coordinates']}). Needed: {energy_needed}, Available: {current_energy}")
+        print(f"[WARN] Not enough energy for {resource} upgrade on {planet.get('name')} ({building['coordinates']}). Needed: {energy_needed}, Available: {current_energy}")
         return None
 
     # Retrieve resource levels
@@ -171,7 +170,7 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
         return building
 
     # If no priority matches, return None
-    print(f"[DEBUG] No upgrade priority matched for {resource} on {building['planet_name']} ({building['coordinates']}).")
+    # [INFO] No upgrade match for {resource} on {building['planet_name']} ({building['coordinates']})
     return None
 
 def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
@@ -179,9 +178,9 @@ def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier:
     Perform the upgrade for the given building and return the upgrade duration.
     """
     # Navigate to the resources page of the planet
-    print(f"[DEBUG] Upgrading building on planet ID {building['planet_id']}")
+    print(f"[INFO] Upgrading {building['resource']} on {building['planet_name']} ({building['coordinates']}) at level {building['level']}")
     navigate_to_section(page, building['planet_id'], COMPONENTS.SUPPLIES)
-    print(f"[DEBUG] Navigated to planet ID {building['planet_id']} for upgrading.")
+    # [INFO] Arrived at planet ID {building['planet_id']} for upgrade
 
     building_id = building['building_id']
     tech_li_selector = f'#technologies li.technology[data-technology="{building_id}"] button.upgrade'
@@ -189,12 +188,12 @@ def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier:
 
     if button:
         button.click()
-        print(f"Clicked to open upgrade details for {building['resource']} on {building['planet_name']} ({building['coordinates']})")
+        # [INFO] Clicked upgrade details for {building['resource']} on {building['planet_name']} ({building['coordinates']})
 
         # Wait for the building state to update (e.g., countdown timer or level change)
         try:
             page.wait_for_selector('time.buildingCountdown', state="visible", timeout=5000)  # Adjust timeout as needed
-            print(f"[DEBUG] Upgrade started for {building['resource']} on {building['planet_name']} ({building['coordinates']})")
+            print(f"[INFO] Upgrade started: {building['resource']} level {building['level']+1} on {building['planet_name']} ({building['coordinates']})")
             # Extract the upgrade duration from the countdown timer
             countdown = page.locator('time.buildingCountdown').first
             if countdown:
@@ -202,7 +201,7 @@ def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier:
                 duration_text = countdown.inner_text() or ""
                 return parse_duration(duration_attr, duration_text)
         except Exception as e:
-            print(f"[ERROR] Upgrade did not start for {building['resource']} on {building['planet_name']} ({building['coordinates']}): {e}")
+            print(f"[ERROR] Failed to trigger upgrade for {building['resource']} on {building['planet_name']} ({building['coordinates']}): {e}")
             return 0
 
 
@@ -233,11 +232,11 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, notif
     # Sort the upgradable buildings list before determining which one to upgrade
     upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level']))
 
-    print(f"[DEBUG] Found {upgradable_buildings} upgradable buildings.")
+    print(f"[INFO] Upgradable building candidates found: {len(upgradable_buildings)}")
 
     for building in upgradable_buildings:
         building_to_upgrade = determine_building_to_upgrade(building, planet, notifier)
-        print(f"[DEBUG] Determined building to upgrade: {building_to_upgrade}")
+        # [DEBUG] Chosen upgrade: {building_to_upgrade} (enable by DEBUG flag if needed)
         if not building_to_upgrade:
             continue
 

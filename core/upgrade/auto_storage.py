@@ -59,7 +59,7 @@ def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[Tel
         return []
     storages_to_upgrade = find_storages_to_upgrade(planet)
     if not storages_to_upgrade:
-        print("No storages need upgrading.")
+        print("[INFO] No storages need upgrading on this planet.")
         return []
 
     upgrade_durations: List[int] = []
@@ -67,32 +67,32 @@ def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[Tel
 
     for storage in storages_to_upgrade:
         if current_planet_id != storage['planet_id']:
-            print(f"[DEBUG] Navigating to planet ID {storage['planet_id']}.")
+            print(f"[INFO] Switching to planet {storage['planet_name']} ({storage['coordinates']}) for storage upgrade.")
             navigate_to_section(page, storage['planet_id'], COMPONENTS.SUPPLIES)
             current_planet_id = storage['planet_id']
         else:
-            print(f"[DEBUG] Already on planet ID {storage['planet_id']}, skipping navigation.")
+            # [INFO] Already on target planet, skipping navigation.
 
-        print(f"[UPGRADE] {storage['planet_name']} {storage['coordinates']}: {storage['resource']} is {storage['percent']*100:.1f}% full (level {storage['building_level']}). Should upgrade building ID {storage['building_id']}.")
+        print(f"[INFO] {storage['planet_name']} [{storage['coordinates']}]: {storage['resource'].title()} storage {storage['percent']*100:.1f}% full (level {storage['building_level']}) - upgrade candidate.")
         if notifier:
             try:
                 notifier.send_message(
                     f"⚠️ STORAGE ALERT: {storage['planet_name']} {storage['coordinates']}: {storage['resource'].title()} storage at {int(storage['percent']*100)}% (Level {storage['building_level']}, {storage['current']}/{storage['max']}) needs upgrade."
                 )
             except Exception as e:
-                print(f"[TELEGRAM ERROR] Could not send storage alert: {e}")
+                print(f"[WARN] Telegram alert failed: {e}")
         try:
             upgraded, duration = click_upgrade_button(page, storage['building_id'])
             if upgraded:
-                print(f"[ACTION] Upgrade triggered for {storage['resource']} storage on {storage['planet_name']}.")
+                print(f"[INFO] Triggered upgrade for {storage['resource'].title()} storage on planet {storage['planet_name']}.")
                 if duration is not None:
                     upgrade_durations.append(duration)
                 if notifier:
                     safe_notify(notifier, f"✅ Upgrade triggered for {storage['resource'].title()} storage on {storage['planet_name']}.")
             else:
-                print(f"[WARN] Could not trigger upgrade for {storage['resource']} storage on {storage['planet_name']}.")
+                print(f"[WARN] Unable to trigger upgrade for {storage['resource'].title()} storage on {storage['planet_name']}.")
         except Exception as e:
-            print(f"[ERROR] Failed to upgrade {storage['resource']} storage on {storage['planet_name']}: {e}")
+            print(f"[ERROR] Failed to upgrade {storage['resource'].title()} storage on {storage['planet_name']}: {e}")
             if notifier:
                 safe_notify(notifier, f"❌ Failed to upgrade {storage['resource'].title()} storage on {storage['planet_name']}: {e}")
 

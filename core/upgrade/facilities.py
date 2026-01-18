@@ -55,13 +55,15 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, notifier
             }
 
             # Upgrade the facility
-            print(f"[DEBUG] Upgrading {facility_name} on planet {planet.get('name')} ({planet.get('coords')})")
+            print(f"[INFO] Upgrading {facility_name} on planet {planet.get('name')} ({planet.get('coords')})")
             duration = upgrade_tech(**params)
 
             if duration > 0:
                 upgrade_durations.append(duration)
+                print(f"[INFO] Completed upgrade: {facility_name} on planet {planet.get('name')} ({planet.get('coords')}) (duration: {duration}s)")
                 safe_notify(notifier, f"Upgraded {facility_name} on planet {planet.get('name')} ({planet.get('coords')}). Duration: {duration} seconds.")
             else:
+                print(f"[ERROR] Upgrade failed: {facility_name} on planet {planet.get('name')} ({planet.get('coords')})")
                 safe_notify(notifier, f"Failed to upgrade {facility_name} on planet {planet.get('name')} ({planet.get('coords')}).")
 
             break  # Exit after upgrading one facility

@@ -3,7 +3,7 @@ import json
 from threading import Thread
 from typing import cast
 
-from config.types import ConfigType
+from config.types import ConfigRawType, ConfigType
 from config.bot import CONFIG_FILE_PATH as config_file_path, DEFAULT_CONFIG
 
 app = Flask(__name__)
@@ -11,41 +11,51 @@ app = Flask(__name__)
 # Global variable to simulate bot runtime behavior
 bot_runtime_config: ConfigType = cast(ConfigType, {})
 
-def load_config() -> ConfigType:
+def load_config() -> ConfigRawType:
+    """Safely load the current config, guarantee all required keys."""
     try:
         with open(config_file_path, 'r') as file:
             config = json.load(file)
-            # print("[Debug] Loaded configuration:", config)  # Debug log
-            return config
-    except FileNotFoundError:
-        print("[Error] Config file not found. Creating a default configuration.")
-        default_config = DEFAULT_CONFIG
-        save_config(default_config)
-        return default_config
-    except json.JSONDecodeError:
-        print("[Error] Config file is invalid. Using default configuration.")
-        return {
-            "check_interval": 10,
-            "enable_resource_upgrades": True,
-            "enable_energy_upgrades": True,
-            "enable_facility_upgrades": True,
-            "enable_research_upgrades": True,
-            "enable_storage_upgrades": True,
-            "enable_lifeform_upgrades": True,
-            "enable_expeditions": True
-        }
+            # Fill missing fields from DEFAULT_CONFIG, but never remove extras
+            merged = deep_merge(DEFAULT_CONFIG, config)
+            return merged
+    except (FileNotFoundError, json.JSONDecodeError):
+        save_config(DEFAULT_CONFIG)
+        return DEFAULT_CONFIG
 
-def save_config(config: ConfigType):
+def save_config(config: ConfigRawType):
     with open(config_file_path, 'w') as file:
-        json.dump(config, file, indent=4)
+        json.dump(config, file, indent=4, ensure_ascii=False)
+
+def deep_merge(
+    base: ConfigRawType,
+    override: ConfigRawType
+) -> ConfigRawType:
+    """Recursively merges `override` into `base`, keeps all unknown/base keys."""
+    merged = dict(base)
+    for k, v in override.items():
+        if (
+            k in merged and
+            isinstance(merged[k], dict) and
+            isinstance(v, dict)
+        ):
+            merged[k] = deep_merge(merged[k], v)  # type: ignore
+        else:
+            merged[k] = v
+    return merged  # type: ignore
 
 def apply_runtime_config():
     global bot_runtime_config
-    bot_runtime_config = load_config()
+    raw_config = load_config()
+    # Convert raw_config (ConfigRawType) to ConfigType by mapping string IDs to enums/classes
+    config: ConfigType = cast(ConfigType, dict(raw_config))
+
+
+    bot_runtime_config = config
     print("\n[Bot] Current Configuration:")
     print("[Bot] =============================")
     for key, value in bot_runtime_config.items():
-         print(f"[Bot] {key}: {value}")
+        print(f"[Bot] {key}: {value}")
     print("[Bot] =============================\n")
 
 @app.route('/config', methods=['GET'])
@@ -58,15 +68,15 @@ def update_config():
     if not data:
         return jsonify({"error": "Invalid JSON payload."}), 400
 
-    config = load_config()
-    config.update(data)
-    save_config(config)
+    current = load_config()
+    # Deep merge so we don't lose keys
+    updated = deep_merge(current, data)
+    save_config(updated)
     apply_runtime_config()  # Apply changes to the bot runtime
     return jsonify({"message": "Configuration updated and applied successfully."})
 
 @app.route('/command', methods=['POST'])
 def execute_command():
-    """Endpoint to execute specific commands like disabling expeditions."""
     data = request.json
     if not data:
         return jsonify({"error": "Invalid JSON payload."}), 400
@@ -74,24 +84,24 @@ def execute_command():
     command = data.get("command")
 
     if command == "disable expeditions":
-        bot_runtime_config["enable_expeditions"] = False
-        save_config(bot_runtime_config)
+        current = load_config()
+        expeditions = current.get("expeditions", {})
+        expeditions["enable_expeditions"] = False
+        current["expeditions"] = expeditions
+        save_config(current)
         apply_runtime_config()
         return jsonify({"message": "Expeditions disabled successfully."})
+    return jsonify({"error": "Unknown command."}), 400
 
-    return jsonify({"error": "Unknown command."}, 400)
-
-# Simulate the bot's main loop
-
+# Simulate the bot's main loop (does nothing)
 def bot_main_loop():
     last_config = None
-
     while True:
         if bot_runtime_config != last_config:
             last_config = bot_runtime_config
+        # Could add a sleep or status check if needed
 
 if __name__ == '__main__':
-    apply_runtime_config()  # Load the configuration when the app starts
-    # Start the bot in a separate thread
+    apply_runtime_config()
     Thread(target=bot_main_loop, daemon=True).start()
     app.run(debug=True)

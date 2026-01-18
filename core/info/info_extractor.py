@@ -9,7 +9,7 @@ from constants.resources import ResourceClass, ResourceStorageClass
 
 
 # --- Empire View Extraction ---
-def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
+def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[PlanetDict]]:
     """
     Extracts all relevant planet data from the OGame Empire View page HTML.
     Returns a dict with all planets and their info.
@@ -198,6 +198,7 @@ def extract_empire_view(html: str) -> Dict[str, List[PlanetDict]]:
             'fields': fields,
             'temperature': temp,
             'energy': energy,
+            'type': 'moon' if is_moon else 'planet',
             'specie': specie.get("name", "Unknown"),
             'resources': resources,
             'storage': storage,

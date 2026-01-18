@@ -40,7 +40,10 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, notifier: Op
     Handles the upgrade of energy buildings (solar plant and fusion reactor) on a given planet.
     Checks if there is an upgradable solar plant or fusion reactor, and upgrades the first available one.
     Returns the upgrade duration if an upgrade is performed, otherwise None.
+    On moons (type=='moon'), skips all upgrades (moonbase logic handled in facilities handler).
     """
+    if planet.get('type') == 'moon':
+        return []
     upgrade_durations: List[int] = []
 
     # Define the energy buildings in priority order using constants from the buildings module

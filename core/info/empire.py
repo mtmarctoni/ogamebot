@@ -28,7 +28,7 @@ def extract_empire_info(page: Page, notifier: Optional[TelegramNotifier]) -> Emp
     # Extract planet data
     planets_html = empire_page.content()
     print("[Empire] Extracting planet data...")
-    planet_data = extract_empire_view(planets_html)
+    planet_data = extract_empire_view(planets_html, is_moon=False)
 
     # Click the moons tab to load moon data
     print("[Empire] Clicking the Moons tab to extract moon data...")
@@ -42,7 +42,7 @@ def extract_empire_info(page: Page, notifier: Optional[TelegramNotifier]) -> Emp
     # Extract moon data
     moons_html = empire_page.content()
     print("[Empire] Extracting moon data...")
-    moon_data = extract_empire_view(moons_html)
+    moon_data = extract_empire_view(moons_html, is_moon=True)
 
     # Combine planet and moon data
     empire_data: EmpireSnapshotDict = cast(EmpireSnapshotDict, planet_data)

@@ -216,7 +216,11 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, notif
     """
     Checks if resource buildings (metal, crystal, deuterium) are upgradable on any planet.
     Triggers the upgrade if possible and returns a list of upgrade durations.
+    On moons (type=='moon'), skips all upgrades (moonbase logic handled in facilities handler).
     """
+    if planet.get('type') == 'moon':
+        # Only Moonbase upgrades allowed on moons, handled by facilities upgrade logic.
+        return []
     # Initial check for upgradable resources buildings
     upgradable_buildings = check_for_upgradable_resource_buildings(planet)
     upgrade_durations: List[int] = []  # Explicitly define the type of the list

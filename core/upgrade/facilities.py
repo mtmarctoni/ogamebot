@@ -32,8 +32,16 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, notifier
         dynamic_priority.remove(Facility.TERRAFORMER)
         dynamic_priority.insert(0, Facility.TERRAFORMER)
 
+    if planet.get('type') == 'moon':
+        # Only allow moonbase (building_id=41) upgrades on moons.
+        allowed_facilities = ["41"]
+    else:
+        allowed_facilities = [Facilities.get_id_by_name(f) for f in dynamic_priority]
+
     for facility_name in dynamic_priority:  # Use dynamic priority
         facility_id = Facilities.get_id_by_name(facility_name)
+        if facility_id not in allowed_facilities:
+            continue
         facility_info = planet.get('facilities', {}).get(facility_id, {})
         if facility_info.get('upgradable', False):
             planet_id = PlanetId(planet.get('id', 'Unknown'))

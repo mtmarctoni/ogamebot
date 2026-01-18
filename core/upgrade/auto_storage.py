@@ -53,7 +53,10 @@ def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[Tel
     """
     Finds storages to upgrade and triggers the upgrade process using Playwright.
     Returns a list of upgrade durations (in seconds) for triggered upgrades.
+    On moons (type=='moon'), skips all upgrades (moonbase logic handled in facilities handler).
     """
+    if planet.get('type') == 'moon':
+        return []
     storages_to_upgrade = find_storages_to_upgrade(planet)
     if not storages_to_upgrade:
         print("No storages need upgrading.")

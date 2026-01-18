@@ -41,7 +41,6 @@ install: $(VENV)/bin/activate
 # 3. Run the app (depends on install)
 run: install
 	$(ACTIVATE_VENV) $(PYTHON_VENV) main.py &
-	$(ACTIVATE_VENV) $(PYTHON_VENV) config_gui.py
 
 clean-session:
 	rm -f $(FB_SESSION_FILE)

@@ -85,6 +85,12 @@ PLANETS = {
         "coords": "[2:16:8]",
         "species": "Kaelesh",
     },
+    "colony7": {
+        "id": "33664045",
+        "name": "Voidward Bastion",
+        "coords": "[4:268:8]",
+        "species": "Kaelesh",
+    },
     "moon_home": {
         "id": "33645298",
         "name": "Moon",

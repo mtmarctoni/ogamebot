@@ -92,7 +92,6 @@ def handle_lifeform_buildings_upgrade(
     """
     Generalized handler for upgrading lifeform buildings based on the specified lifeform.
     On moons (type=='moon'), skips all upgrades (moonbase logic handled in facilities handler).
-    """
     if planet.get('type') == 'moon':
         return []
 

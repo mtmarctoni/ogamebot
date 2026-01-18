@@ -72,6 +72,7 @@ def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[Tel
             current_planet_id = storage['planet_id']
         else:
             # [INFO] Already on target planet, skipping navigation.
+            pass
 
         print(f"[INFO] {storage['planet_name']} [{storage['coordinates']}]: {storage['resource'].title()} storage {storage['percent']*100:.1f}% full (level {storage['building_level']}) - upgrade candidate.")
         if notifier:

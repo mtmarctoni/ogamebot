@@ -1,4 +1,7 @@
 from typing import Literal, NewType, TypedDict, List, Dict, Optional
+from constants.facilities import Facility
+from constants.research import Research
+from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 
 TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)
@@ -16,7 +19,15 @@ UpgradeCategory = Literal[
     "storage"
 ]
 
-class UpgradeTogglesType(TypedDict, total=False):
+UpgradeGroup = Literal["facilities", "resources", "energy", "research", "lifeforms", "storage"]
+LifeformSpecies = Literal["Human", "Kaelesh"]  # Extend if more added
+
+# --- RAW CONFIG structure (from config.json) ---
+class ExpeditionsRawType(TypedDict):
+    enable_expeditions: bool
+    expedition_planet_id: str
+
+class UpgradeTogglesRawType(TypedDict):
     facilities: bool
     resources: bool
     energy: bool
@@ -24,19 +35,40 @@ class UpgradeTogglesType(TypedDict, total=False):
     lifeforms: bool
     storage: bool
 
-# Config types
-class ConfigType(TypedDict, total=False):
+class UpgradesPrioritiesRawType(TypedDict):
+    facilities: List[str]
+    research: List[str]
+    lifeform_buildings: Dict[LifeformSpecies, List[str]]
+
+class UpgradesRawType(TypedDict):
+    group_order: List[UpgradeGroup]
+    toggles: UpgradeTogglesRawType
+    priorities: UpgradesPrioritiesRawType
+
+class ConfigRawType(TypedDict):
     check_interval: int
-    enable_resource_upgrades: bool
-    enable_energy_upgrades: bool
-    enable_facility_upgrades: bool
-    enable_research_upgrades: bool
-    enable_storage_upgrades: bool
-    enable_lifeform_upgrades: bool
+    expeditions: ExpeditionsRawType
+    upgrades: UpgradesRawType
+
+class UpgradesPrioritiesType(TypedDict):
+    facilities: List[Facility]
+    research: List[Research]
+    lifeform_buildings: Dict[LifeformSpecies, List[HumanLifeformBuildingClass | KaeleshLifeformBuildingClass]]
+
+class UpgradesSectionType(TypedDict):
+    group_order: List[UpgradeGroup]
+    toggles: UpgradeTogglesRawType  # unchanged structure
+    priorities: UpgradesPrioritiesType
+
+class ExpeditionsType(TypedDict):
     enable_expeditions: bool
     expedition_planet_id: str
-    upgrade_order: List[UpgradeCategory]
-    upgrade_toggles: UpgradeTogglesType
+
+class ConfigType(TypedDict):
+    check_interval: int
+    expeditions: ExpeditionsType
+    upgrades: UpgradesSectionType
+
 
 # Explicit resource and storage types for planets
 class PlanetResources(TypedDict, total=False):

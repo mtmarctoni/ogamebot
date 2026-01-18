@@ -42,7 +42,8 @@ A sophisticated Python-based automation bot for the browser game OGame. This bot
     ```
 
 4.  **Configuration:**
-    - Edit `config/config.py` to set your server ID, language, and upgrade priorities.
+    - Edit `config.json` in the project root to set your upgrade groups, resource/facility/research/lifeform priorities, and bot timing.
+    - **Do NOT put any account credentials or secrets in `config.json`**—it does not contain any personal info and is safe to commit and share.
     - Edit `config/telegram_config.py` (create if missing) to add your Telegram Bot Token and Chat ID.
 
 ## ▶️ Usage

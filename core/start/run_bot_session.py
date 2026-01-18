@@ -4,6 +4,7 @@ from typing import Optional
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID  
+from config.types import ConfigType
 from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
@@ -14,6 +15,7 @@ from core.upgrade.handle_upgrades import handle_upgrades
 from core.expeditions.handle_expeditions import handle_expeditions
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from services.manage_config import reload_config
+from services.typed_config import SafeTypedConfig
 
 def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
     """
@@ -46,7 +48,8 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
             while True:
                 # Reload configuration dynamically
-                config = reload_config()
+                config: ConfigType = reload_config()
+                safe_config = SafeTypedConfig(config)
 
                 print("Entered main game.")
 
@@ -65,20 +68,19 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
-
                 # Handle expeditions based on dynamic config
-                if config.get("enable_expeditions", True):
-                    handle_expeditions(game_page, empire_data, notifier, {"target_id": config.get("expedition_planet_id", "")})
+                if safe_config.get_enable_expeditions():
+                    handle_expeditions(game_page, empire_data, notifier, {"target_id": safe_config.get_expedition_planet_id()})
                 else:
                     print("Expeditions are disabled in the configuration.")
-
                 next_action_duration = max(1, upgrade_duration)
-
                 # Sleep for the minimum duration across all planets
-                if config.get("check_interval", 0) > 0:
-                    sleep_for_minimum_duration(next_action_duration, notifier, config["check_interval"])
+                check_interval = safe_config.get_check_interval()
+                if check_interval > 0:
+                    sleep_for_minimum_duration(next_action_duration, notifier, check_interval)
                 else:
                     sleep_for_minimum_duration(next_action_duration, notifier, None)
+
 
     except KeyboardInterrupt:
         print("\nBot stopped by user.")

@@ -33,11 +33,11 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
     """
     total_durations: List[int] = []
 
-    # Get order and toggles from config, fallback to legacy keys
-    upgrade_order = config.get("upgrade_order", [
-        "facilities", "resources", "energy", "research", "lifeforms", "storage"
-    ])
-    upgrade_toggles = config.get("upgrade_toggles", {})
+    # Use new nested upgrades config layout
+    upgrades_section = config["upgrades"]
+    upgrade_order = upgrades_section["group_order"]
+    upgrade_toggles = upgrades_section["toggles"]
+
 
     for planet in empire_data["planets"]:
         planet_name = planet.get('name', 'Unknown')

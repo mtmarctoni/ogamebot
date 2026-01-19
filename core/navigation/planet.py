@@ -29,7 +29,11 @@ def navigate_to_section(page: Page, planet_id: PlanetId, section: COMPONENTS) ->
             page.goto(url, timeout=3000)
             print(f"[DEBUG] Current page URL after navigation: {page.url}")
 
-            page.wait_for_selector("#technologies", timeout=10000)
+            # Wait for the correct selector depending on section
+            if section == COMPONENTS.GALAXY:
+                page.wait_for_selector("#eventboxFilled", timeout=10000)
+            else:
+                page.wait_for_selector("#technologies", timeout=10000)
             print(f"[DEBUG] Page reload check passed for planet_id: {planet_id}")
 
             if not page.url.startswith(url):

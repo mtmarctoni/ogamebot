@@ -46,12 +46,18 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     
     # Get the coordinates
     coords = target_planet["coords"]
-    galaxy_str, system_str, _ = coords.split(":")
-    galaxy = int(galaxy_str)
-    system = int(system_str)
+    try:
+        galaxy_str, system_str, _ = coords.split(":")
+        galaxy = int(galaxy_str.strip())
+        system = int(system_str.strip())
+    except Exception as e:
+        print(f"[ERROR] Failed to parse coords '{coords}': {e}")
+        return
 
     # Get random system numbers within a range where system is the center
-    system_range = range(max(1, system - 10), min(499, system + 10))
+    min_system = max(1, system - 10)
+    max_system = min(499, system + 10)
+    system_range = range(min_system, max_system + 1)
     random_system = choice(list(system_range))
 
     # Navigate to the Galaxy page for the selected planet

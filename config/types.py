@@ -64,9 +64,14 @@ class ExpeditionsType(TypedDict):
     enable_expeditions: bool
     expedition_planet_id: str
 
+class DiscoveriesType(TypedDict):
+    enable_discoveries: bool
+    discovery_planet_id: str
+
 class ConfigType(TypedDict):
     check_interval: int
     expeditions: ExpeditionsType
+    discoveries: DiscoveriesType
     upgrades: UpgradesSectionType
 
 
@@ -176,4 +181,7 @@ class ShipToDispatch(TypedDict):
 FleetToDispatch = List[ShipToDispatch]
 
 class ExpeditionConfig(TypedDict, total=False):
+    target_id: str
+
+class DiscoveriesConfig(TypedDict, total=False):
     target_id: str

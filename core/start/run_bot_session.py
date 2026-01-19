@@ -14,6 +14,7 @@ from core.info.empire import extract_empire_info
 from core.upgrade.handle_upgrades import handle_upgrades
 from core.expeditions.handle_expeditions import handle_expeditions
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
+from core.discoveries.handle_discoveries import handle_discoveries
 from services.manage_config import reload_config
 from services.typed_config import SafeTypedConfig
 
@@ -68,11 +69,19 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
+
                 # Handle expeditions based on dynamic config
                 if safe_config.get_enable_expeditions():
                     handle_expeditions(game_page, empire_data, notifier, {"target_id": safe_config.get_expedition_planet_id()})
                 else:
                      print("[INFO] Expeditions are disabled in the configuration.")
+                
+                # Handle discoveries based on dynamic config
+                if safe_config.get_enable_discoveries():
+                    handle_discoveries(game_page, empire_data, notifier, {"target_id": safe_config.get_discovery_planet_id()})
+                else:
+                    print("[INFO] Discoveries are disabled in the configuration.")
+                
                 next_action_duration = max(1, upgrade_duration)
                 # Sleep for the minimum duration across all planets
                 check_interval = safe_config.get_check_interval()

@@ -45,6 +45,18 @@ class SafeTypedConfig:
         if "enable_expeditions" in expeditions:
             return expeditions["enable_expeditions"]
         return True
+    
+    def get_discovery_planet_id(self) -> str:
+        discoveries = self.get_typed("discoveries")
+        if "discovery_planet_id" in discoveries:
+            return discoveries["discovery_planet_id"]
+        return ""
+
+    def get_enable_discoveries(self) -> bool:
+        discoveries = self.get_typed("discoveries")
+        if "enable_discoveries" in discoveries:
+            return discoveries["enable_discoveries"]
+        return True
 
     def get_upgrade_toggles(self) -> Dict[str, bool]:
         upgrades = self.get_typed("upgrades")

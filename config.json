@@ -4,6 +4,10 @@
     "enable_expeditions": true,
     "expedition_planet_id": "33634167"
   },
+  "discoveries": {
+    "enable_discoveries": true,
+    "discovery_planet_id": "33634167"
+  },
   "upgrades": {
     "group_order": [
       "facilities",

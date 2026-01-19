@@ -47,7 +47,9 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     # Get the coordinates
     coords = target_planet["coords"]
     try:
-        galaxy_str, system_str, _ = coords.split(":")
+        # Remove brackets and whitespace
+        coords_clean = coords.strip().replace("[", "").replace("]", "")
+        galaxy_str, system_str, _ = coords_clean.split(":")
         galaxy = int(galaxy_str.strip())
         system = int(system_str.strip())
     except Exception as e:

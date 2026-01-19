@@ -46,7 +46,7 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     
     # Get the coordinates
     coords = target_planet["coords"]
-    galaxy, system = map(int, coords.split(":"))
+    galaxy, system, _ = map(int, coords.split(":"))
 
     # Get random system numbers within a range where system is the center
     system_range = range(max(1, system - 10), min(499, system + 10))

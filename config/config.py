@@ -131,6 +131,8 @@ DEFAULT_MAX_SLEEP = 39
 # Lifeforms species
 LIFEFORM_SPECIES = {
     'Human': '1',
+    'Rocktal': '2',
+    'Mechas': '3',
     'Kaelesh': '4'
 }
 

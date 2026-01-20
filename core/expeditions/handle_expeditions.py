@@ -161,6 +161,18 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         print(f"[ERROR] Expedition fleet dispatch navigation failed: {e}")
         return 600
 
+    # Check if there are ships available
+    # in the div element with id="warining" it has to be some inner text saying: "There are no ships available"
+    try:
+        warning_locator = page.locator("#warning")
+        if warning_locator.is_visible():
+            warning_text = warning_locator.inner_text()
+            if "There are no ships on this planet." in warning_text:
+                print("[INFO] No ships available for expeditions.")
+                return 600  # Wait 10 mins
+    except Exception as e:
+        print(f"[ERROR] Checking for available ships failed: {e}")
+
     # 3. Check Available Slots
     available_slots = 0
     try:

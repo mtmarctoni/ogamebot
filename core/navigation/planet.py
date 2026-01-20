@@ -32,6 +32,8 @@ def navigate_to_section(page: Page, planet_id: PlanetId, section: COMPONENTS) ->
             # Wait for the correct selector depending on section
             if section == COMPONENTS.GALAXY:
                 page.wait_for_selector("#eventboxFilled", timeout=10000)
+            elif section == COMPONENTS.FLEET_DISPATCH:
+                page.wait_for_selector("#fleet1", timeout=10000)
             else:
                 page.wait_for_selector("#technologies", timeout=10000)
             print(f"[DEBUG] Page reload check passed for planet_id: {planet_id}")

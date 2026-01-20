@@ -187,9 +187,20 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
         defense = extract_group('defence', defense_ids)
         ships = extract_group('ships', ship_ids)
         research = extract_group('research', research_ids)
-        # Extract lifeform buildings and research dynamically
+        # Extract lifeform buildings dynamically
         lifeform_buildings = extract_group(f'lifeform{specie.get("id", "")}buildings', lifeform_building_ids)
-        lifeform_research = extract_group(f'lifeform{specie.get("id", "")}research', lifeform_research_ids)
+
+        # Extract lifeform research for all species, ignoring moons
+        lifeform_research = {}
+        if not is_moon:
+            for species_id in LIFEFORM_SPECIES.values():
+                lifeform_research_ids = [str((int('1' + species_id + '201') + i)) for i in range(18)]
+                group_research = extract_group(f'lifeform{species_id}research', lifeform_research_ids)
+
+                # Add only upgradable entries to the consolidated dictionary
+                for research_id, research_data in group_research.items():
+                    if research_data.get('upgradable', False):
+                        lifeform_research[research_id] = research_data
 
         plante_to_append: PlanetDict = cast(PlanetDict, {
             'id': planet_id,

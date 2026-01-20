@@ -17,6 +17,7 @@ class Ship(Enum):
     BATTLECRUISER = "interceptor"
     REAPER = "reaper"
     PATHFINDER = "explorer"
+    CRAWLER = "resbuggy"
 
 
 class Ships:
@@ -41,6 +42,7 @@ class Ships:
         "214": Ship.DEATHSTAR,
         "215": Ship.BATTLECRUISER,
         "218": Ship.REAPER,
+        "217": Ship.CRAWLER,
         "219": Ship.PATHFINDER,
     }
 
@@ -70,5 +72,6 @@ unwanted_ships_for_expeditions = [
     Ship.ESPIONAGE_PROBE.value,
     Ship.RECYCLER.value,
     Ship.COLONY_SHIP.value,
-    Ship.DEATHSTAR.value
+    Ship.DEATHSTAR.value,
+    Ship.CRAWLER.value,
 ]

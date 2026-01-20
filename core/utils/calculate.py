@@ -1,5 +1,6 @@
-from config.types import TechLevel
+from config.types import PlanetDict, TechLevel
 from constants.resources import ENERGY_CONSUMPTION
+from core.utils.ships_utils import get_available_ships
 
 
 def calculate_energy_needed(resource: str, level: int) -> int:
@@ -62,3 +63,29 @@ def energy_int(value: str | None) -> int:
     # Remove common non-digit characters: +, commas, and periods
     cleaned = value.replace('+', '').replace(',', '').replace('.', '')
     return int(cleaned)
+
+def check_deuterium_level(planet: PlanetDict) -> bool:
+    """
+    Checks if the planet has enough deuterium to proceed with expeditions.
+
+    Args:
+        planet (PlanetDict): The planet data dictionary.
+        threshold (int): The minimum deuterium required.
+
+    Returns:
+        bool: True if there is enough deuterium, False otherwise.
+    """
+
+    available_ships = get_available_ships(planet)
+    total_ships = sum(ship['count'] for ship in available_ships)
+
+    # For each 1000 ships we need at least 10000 deuterium
+    threshold = (total_ships // 1000) * 10_000
+    
+    # Minimum threshold of 10000 deuterium
+    if threshold < 50_000:
+        threshold = 50_000
+
+    deuterium = int(planet.get('resources', {}).get('deuterium', 0))
+
+    return deuterium >= threshold

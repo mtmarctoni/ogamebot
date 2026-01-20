@@ -63,3 +63,14 @@ def get_countdown_selector(section: COMPONENTS) -> str:
         return 'time#countdownresearchDetails'
     else:
         return 'time'  # Default selector as a last resort
+    
+def wait_minutes(minutes: int) -> int:
+    """
+    Converts minutes to seconds for waiting purposes.
+
+    Args:
+        minutes (int): The number of minutes to wait.
+    Returns:
+        int: The equivalent number of seconds.
+    """
+    return minutes * 60

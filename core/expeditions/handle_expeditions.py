@@ -4,58 +4,16 @@ from typing import List, Optional
 from playwright.sync_api import Page
 
 from config.config import DEFAULT_EXPEDITION_PLANET_ID
-from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
+from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetId
 from constants.general import COMPONENTS
-from constants.ships import Ships, unwanted_ships_for_expeditions
+from constants.ships import Ships
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
+from core.utils.calculate import check_deuterium_level
 from core.utils.coords_utils import generate_target_coordinates_for_expedition, get_coords_from_planet
-
-def get_target_planet(empire_data: EmpireSnapshotDict, planet_id: PlanetId) -> Optional[PlanetDict]:
-    """
-    Retrieves the planet object for 'Abyssal Nexus'.
-    """
-    for planet in empire_data.get("planets", []):
-        if str(planet.get("id")) == planet_id:
-            return planet
-    return None
-
-def get_available_ships(planet: PlanetDict) -> FleetToDispatch:
-    """
-    Returns a dictionary of all ships on the planet with their counts.
-    """
-    available_ships: FleetToDispatch = []
-    if 'ships' in planet:
-        ships = planet.get("ships", {})
-        for ship_id, ship_info in ships.items():
-            count = int(ship_info.get('level', 0))
-            ship_to_dispatch: ShipToDispatch = {
-                'ship_id': TechId(ship_id),
-                'count': count
-            }
-            if count > 0:
-                available_ships.append(ship_to_dispatch)
-    return available_ships
-
-def calculate_ships_per_expedition(total_ships: FleetToDispatch, slots: int) -> FleetToDispatch:
-    """
-    Divides available ships by the number of slots.
-    Returns a list of ships to dispatch per expedition.
-    Handles decimals by taking the lesser integer value.
-    """
-    if slots == 0:
-        return []
-
-    ships_per_expedition: FleetToDispatch = []
-    for ship in total_ships:
-        per_slot = ship['count'] // (slots + 1)  # Divide by slots + 1 to leave some ships on the planet
-        if per_slot > 0:
-            ships_per_expedition.append({
-                'ship_id': ship['ship_id'],
-                'count': per_slot
-            })
-
-    return ships_per_expedition
+from core.utils.empire_utils import get_target_planet
+from core.utils.ships_utils import calculate_ships_per_expedition, get_available_ships
+from core.utils.time_utils import wait_minutes
 
 def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[int]) -> Optional[int]:
     """
@@ -72,10 +30,6 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
             count = ship['count']
             # Use the mapping from constants/ships.py
             ship_name = Ships.get_name_by_id(str(ship_id)).value
-
-            # Skip unwanted ships
-            if ship_name in unwanted_ships_for_expeditions:
-                continue
 
             ship_input = page.locator(f"input[name='{ship_name}']")
             if ship_input.is_visible():
@@ -160,22 +114,26 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     planet_id = PlanetId(str(planet.get("id")))
 
+    # Check Deuterium Level
+    if not check_deuterium_level(planet):
+        return wait_minutes(10)
+
     # 2. Switch to Target Planet and Go to Fleet Dispatch
     try:
         navigate_to_section(page, planet_id, COMPONENTS.FLEET_DISPATCH)
     except Exception as e:
         print(f"[ERROR] Expedition fleet dispatch navigation failed: {e}")
-        return 600
+        return wait_minutes(10)
 
     # Check if there are ships available
-    # in the div element with id="warining" it has to be some inner text saying: "There are no ships available"
+    # in the div element with id="warning" it has to be some inner text saying: "There are no ships available"
     try:
         warning_locator = page.locator("#warning")
         if warning_locator.is_visible():
             warning_text = warning_locator.inner_text()
             if "There are no ships on this planet." in warning_text:
                 print("[INFO] No ships available for expeditions.")
-                return 600  # Wait 10 mins
+                return wait_minutes(10)
     except Exception as e:
         print(f"[ERROR] Checking for available ships failed: {e}")
 
@@ -219,7 +177,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     if available_slots <= 0:
         print("[INFO] No expedition slots available.")
-        return 600 # Wait 10 mins
+        return wait_minutes(10)
 
     # 4. Get Available Ships
     available_ships = get_available_ships(planet)
@@ -229,7 +187,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     if not ships_to_send:
         print("[WARN] No ships available for expedition.")
-        return 600 # Wait 10 mins
+        return wait_minutes(10)
 
     # 6. Dispatch Expeditions
     for i in range(available_slots):

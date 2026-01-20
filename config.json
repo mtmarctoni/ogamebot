@@ -15,6 +15,7 @@
       "energy",
       "research",
       "lifeforms",
+      "lifeform_research",
       "storage"
     ],
     "toggles": {
@@ -23,7 +24,8 @@
       "energy": true,
       "research": true,
       "lifeforms": true,
-      "storage": true
+      "storage": true,
+      "lifeform_research": true
     },
     "priorities": {
       "facilities": [

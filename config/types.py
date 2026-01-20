@@ -173,6 +173,13 @@ class UpgradableEnergyBuidling(TypedDict):
     building_id: TechId
     level: TechLevel
 
+class UpgradableLifeformResearch(TypedDict):
+    planet_id: PlanetId
+    planet_name: PlanetName
+    coordinates: StringCoords
+    research_id: TechId
+    level: TechLevel
+
 class ShipToDispatch(TypedDict):
     ship_id: TechId
     count: int

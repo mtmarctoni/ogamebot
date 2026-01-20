@@ -8,6 +8,7 @@ from core.upgrade.auto_storage import upgrade_full_storages
 from core.upgrade.energy import handle_energy_buildings_upgrade
 from core.upgrade.facilities import handle_facilities_building_upgrades
 from core.upgrade.lifeform_buildings import handle_lifeform_buildings_upgrade
+from core.upgrade.lifeform_research import handle_lifeform_research_upgrade
 from core.upgrade.buildings import handle_building_resources_upgrade
 from core.upgrade.research import handle_research_upgrades
 
@@ -18,7 +19,8 @@ UPGRADE_HANDLERS: UpgradeHandlersType= {
     "energy": handle_energy_buildings_upgrade,
     "research": handle_research_upgrades,
     "lifeforms": handle_lifeform_buildings_upgrade,
-    "storage": upgrade_full_storages
+    "storage": upgrade_full_storages,
+    "lifeform_research": handle_lifeform_research_upgrade
 }
 
 

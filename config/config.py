@@ -134,6 +134,11 @@ LIFEFORM_SPECIES = {
     'Kaelesh': '4'
 }
 
+# Constants in the Universe
+MAX_SYSTEM_NUMBER = 499
+MAX_GALAXY_NUMBER = 6
+MAX_SLOT_NUMBER = 16
+
 # Priority configuration for HumanLifeformBuildings
 HUMAN_LIFEFORM_BUILDING_PRIORITY = [
     HumanLifeformBuildingClass.Research_Center,

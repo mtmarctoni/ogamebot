@@ -1,5 +1,5 @@
 from typing import Optional
-from random import choice
+from utils.random_utils import get_random_galaxy, get_random_system
 from playwright.sync_api import Page
 
 from config.types import DiscoveriesConfig, EmpireSnapshotDict, PlanetId
@@ -29,38 +29,18 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     if config and "target_id" in config:
         planet_id = PlanetId(config["target_id"])
     else:
-        # Find a random planet that has an "id" key
+        # Get the first planet's ID as default
         valid_planets = [planet for planet in planets if "id" in planet]
         if not valid_planets:
             print("[ERROR] No planets with 'id' found for discoveries.")
             return
-        planet_id = PlanetId(choice(valid_planets)["id"])
+        planet_id = PlanetId(valid_planets[0]["id"])
 
     print(f"[INFO] Selected random planet ID: {planet_id}")
 
-    # Get the planet from planet_id
-    target_planet = next((planet for planet in planets if str(planet.get("id")) == planet_id), None)
-    if not target_planet or "coords" not in target_planet:
-        print(f"[ERROR] Target planet with ID {planet_id} not found or missing coordinates.")
-        return
-    
-    # Get the coordinates
-    coords = target_planet["coords"]
-    try:
-        # Remove brackets and whitespace
-        coords_clean = coords.strip().replace("[", "").replace("]", "")
-        galaxy_str, system_str, _ = coords_clean.split(":")
-        galaxy = int(galaxy_str.strip())
-        system = int(system_str.strip())
-    except Exception as e:
-        print(f"[ERROR] Failed to parse coords '{coords}': {e}")
-        return
-
-    # Get random system numbers within a range where system is the center
-    min_system = max(1, system - 10)
-    max_system = min(499, system + 10)
-    system_range = range(min_system, max_system + 1)
-    random_system = choice(list(system_range))
+    # Get random system and galaxy
+    random_galaxy = get_random_galaxy()
+    random_system = get_random_system()
 
     # Navigate to the Galaxy page for the selected planet
     try:
@@ -78,8 +58,11 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         galaxy_input = page.locator("input#galaxy_input")
         system_input = page.locator("input#system_input")
 
-        galaxy_input.type(str(galaxy))  # Focus is implicit
-        system_input.type(str(random_system))  # Focus is implicit
+        galaxy_input.focus()
+        galaxy_input.type(str(random_galaxy))
+
+        system_input.focus()
+        system_input.type(str(random_system))
 
         # Wait 1 second after typing the position
         page.wait_for_timeout(1500)

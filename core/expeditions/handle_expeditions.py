@@ -6,7 +6,7 @@ from playwright.sync_api import Page
 from config.config import DEFAULT_EXPEDITION_PLANET_ID, TARGET_COORDINATES
 from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
 from constants.general import COMPONENTS
-from constants.ships import Ships
+from constants.ships import Ships, unwanted_ships_for_expditions
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
@@ -47,7 +47,7 @@ def calculate_ships_per_expedition(total_ships: FleetToDispatch, slots: int) -> 
 
     ships_per_expedition: FleetToDispatch = []
     for ship in total_ships:
-        per_slot = ship['count'] // slots  # Integer division ensures we take the lesser value
+        per_slot = ship['count'] // (slots + 1)  # Divide by slots + 1 to leave some ships on the planet
         if per_slot > 0:
             ships_per_expedition.append({
                 'ship_id': ship['ship_id'],
@@ -71,6 +71,11 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
             count = ship['count']
             # Use the mapping from constants/ships.py
             ship_name = Ships.get_name_by_id(str(ship_id)).value
+
+            # Skip unwanted ships
+            if ship_name in unwanted_ships_for_expditions:
+                continue
+ 
             ship_input = page.locator(f"input[name='{ship_name}']")
             if ship_input.is_visible():
                 ship_input.focus()  # Focus the input field before filling

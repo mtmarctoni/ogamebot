@@ -32,7 +32,11 @@ def get_available_ships(planet: PlanetDict) -> FleetToDispatch:
         for ship_id, ship_info in ships.items():
             count = int(ship_info.get('level', 0))
 
-            ship_name = Ships.get_name_by_id(str(ship_id)).value
+            try:
+                ship_name = Ships.get_name_by_id(str(ship_id)).value
+            except ValueError:
+                print(f"[WARN] Invalid ship ID {ship_id} encountered. Skipping.")
+                continue  # Skip invalid ship IDs
 
             # Skip unwanted ships for expeditions
             if ship_name in unwanted_ships_for_expeditions:

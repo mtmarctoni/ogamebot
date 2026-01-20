@@ -69,7 +69,7 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
         # Click the Galaxy confirmation button within the header region
         try:
-            galaxy_header = page.locator("#galaxyHeader .btn_blue")
+            galaxy_header = page.locator("#galaxyHeader .btn_blue", has_text="Go!")
             galaxy_header.click()
             page.wait_for_timeout(1000)  # Wait 1 second before the next action
         except Exception as e:

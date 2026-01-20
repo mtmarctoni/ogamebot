@@ -67,6 +67,14 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         # Wait 1 second after typing the position
         page.wait_for_timeout(1500)
 
+        # Click the Galaxy confirmation button within the header region
+        try:
+            galaxy_header = page.locator("#galaxyHeader .btn_blue")
+            galaxy_header.click()
+            page.wait_for_timeout(1000)  # Wait 1 second before the next action
+        except Exception as e:
+            print(f"[ERROR] Failed to click the Galaxy confirmation button: {e}")
+
         # Click the Discovery button
         mission_button = page.locator("#discoverSystemBtn")
         mission_button.click()

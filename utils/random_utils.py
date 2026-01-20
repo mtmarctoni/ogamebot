@@ -22,7 +22,7 @@ def get_random_galaxy() -> int:
     Returns:
         int: Random galaxy number (1-6).
     """
-    return generate_random_number(1, MAX_SYSTEM_NUMBER)
+    return generate_random_number(1, MAX_GALAXY_NUMBER)
 
 def get_random_system() -> int:
     """
@@ -31,4 +31,4 @@ def get_random_system() -> int:
     Returns:
         int: Random system number (1-499).
     """
-    return generate_random_number(1, MAX_GALAXY_NUMBER)
+    return generate_random_number(1, MAX_SYSTEM_NUMBER)

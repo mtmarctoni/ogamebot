@@ -116,6 +116,8 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     # Check Deuterium Level
     if not check_deuterium_level(planet):
+        print(f"[WARN] Not enough deuterium on planet {planet.get('name', 'Unknown')} for expeditions.")
+        safe_notify(notifier, f"⚠️ Not enough deuterium on planet {planet.get('name', 'Unknown')} for expeditions. Skipping expedition dispatch.")
         return wait_minutes(10)
 
     # 2. Switch to Target Planet and Go to Fleet Dispatch

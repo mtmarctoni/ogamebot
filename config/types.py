@@ -8,7 +8,7 @@ PlanetId = NewType('PlanetId', str)
 PlanetName = NewType('PlanetName', str)
 TechName = NewType('TechName', str)
 TechLevel = NewType('TechLevel', int)
-Coordinates = NewType('Coordinates', str)
+StringCoords = NewType('StringCoords', str)
 
 UpgradeCategory = Literal[
     "facilities",
@@ -106,8 +106,7 @@ class BuildingInfoDict(TypedDict, total=False):
 class PlanetDict(TypedDict, total=False):
     id: PlanetId
     name: PlanetName
-    coords: Coordinates
-    coordinates: str
+    coords: StringCoords
     type: str  # planet or moon
     specie: str
     fields: str
@@ -127,7 +126,7 @@ class PlanetDict(TypedDict, total=False):
 class PlanetBase(TypedDict):
     id: PlanetId
     name: PlanetName
-    coords: Coordinates
+    coords: StringCoords
     specie: str
 
 class PlayerDict(TypedDict):
@@ -141,7 +140,7 @@ class EmpireSnapshotDict(TypedDict):
 class StorageUpgradeCandidate(TypedDict):
     planet_id: PlanetId
     planet_name: PlanetName
-    coordinates: Coordinates
+    coordinates: StringCoords
     resource: TechName
     current: int
     max: int
@@ -153,7 +152,7 @@ class StorageUpgradeCandidate(TypedDict):
 class UpgradableResourceBuilding(TypedDict):
     planet_id: PlanetId
     planet_name: PlanetName
-    coordinates: Coordinates
+    coordinates: StringCoords
     resource: TechName
     building_id: TechId
     level: TechLevel
@@ -161,7 +160,7 @@ class UpgradableResourceBuilding(TypedDict):
 class UpgradableLifeformBuilding(TypedDict):
     planet_id: PlanetId
     planet_name: PlanetName
-    coordinates: Coordinates
+    coordinates: StringCoords
     building_id: TechId
     building: TechName
     level: TechLevel
@@ -169,7 +168,7 @@ class UpgradableLifeformBuilding(TypedDict):
 class UpgradableEnergyBuidling(TypedDict):
     planet_id: PlanetId
     planet_name: PlanetName
-    coordinates: Coordinates
+    coordinates: StringCoords
     resource: TechName
     building_id: TechId
     level: TechLevel
@@ -179,6 +178,7 @@ class ShipToDispatch(TypedDict):
     count: int
 
 FleetToDispatch = List[ShipToDispatch]
+Coordinates = List[int]  # [galaxy, system, slot]
 
 class ExpeditionConfig(TypedDict, total=False):
     target_id: str

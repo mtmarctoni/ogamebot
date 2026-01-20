@@ -4,7 +4,7 @@ from typing import Optional
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID  
-from config.types import ConfigType
+from config.types import ConfigType, ExpeditionConfig, DiscoveriesConfig
 from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
@@ -72,13 +72,13 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle expeditions based on dynamic config
                 if safe_config.get_enable_expeditions():
-                    handle_expeditions(game_page, empire_data, notifier, {"target_id": safe_config.get_expedition_planet_id()})
+                    handle_expeditions(game_page, empire_data, notifier, ExpeditionConfig(target_id=safe_config.get_expedition_planet_id()))
                 else:
                      print("[INFO] Expeditions are disabled in the configuration.")
                 
                 # Handle discoveries based on dynamic config
                 if safe_config.get_enable_discoveries():
-                    handle_discoveries(game_page, empire_data, notifier, {"target_id": safe_config.get_discovery_planet_id()})
+                    handle_discoveries(game_page, empire_data, notifier, DiscoveriesConfig(target_id=safe_config.get_discovery_planet_id()))
                 else:
                     print("[INFO] Discoveries are disabled in the configuration.")
                 

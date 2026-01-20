@@ -66,7 +66,7 @@ class Ships:
             raise ValueError(f"Invalid Ship: {ship_name}. No corresponding ID found.")
         return cls._name_to_id_mapping[ship_name]
 
-unwanted_ships_for_expditions = [
+unwanted_ships_for_expeditions = [
     Ship.ESPIONAGE_PROBE.value,
     Ship.RECYCLER.value,
     Ship.COLONY_SHIP.value,

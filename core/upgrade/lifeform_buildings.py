@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
-from config.types import PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, Coordinates, TechId, TechName, TechLevel
+from config.types import PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel
 from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY, KALESH_LIFEFORM_BUILDING_PRIORITY   
 from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
@@ -56,7 +56,7 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
             upgradable_buildings.append({
                 'planet_id': PlanetId(str(planet_id)),
                 'planet_name': PlanetName(planet_name),
-                'coordinates': Coordinates(coords),
+                'coordinates': StringCoords(coords),
                 'building': TechName(building_name),
                 'building_id': TechId(building_id),
                 'level': TechLevel(building_info.get('level', 0)),

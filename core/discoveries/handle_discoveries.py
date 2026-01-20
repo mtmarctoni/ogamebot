@@ -1,5 +1,5 @@
 from typing import Optional
-from utils.random_utils import get_random_galaxy, get_random_system
+from core.utils.random_utils import get_random_galaxy, get_random_system
 from playwright.sync_api import Page
 
 from config.types import DiscoveriesConfig, EmpireSnapshotDict, PlanetId

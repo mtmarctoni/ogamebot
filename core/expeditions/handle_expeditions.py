@@ -3,12 +3,13 @@ import re
 from typing import List, Optional
 from playwright.sync_api import Page
 
-from config.config import DEFAULT_EXPEDITION_PLANET_ID, TARGET_COORDINATES
+from config.config import DEFAULT_EXPEDITION_PLANET_ID
 from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetDict, PlanetId, ShipToDispatch, TechId
 from constants.general import COMPONENTS
-from constants.ships import Ships, unwanted_ships_for_expditions
+from constants.ships import Ships, unwanted_ships_for_expeditions
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
+from core.utils.coords_utils import generate_target_coordinates_for_expedition, get_coords_from_planet
 
 def get_target_planet(empire_data: EmpireSnapshotDict, planet_id: PlanetId) -> Optional[PlanetDict]:
     """
@@ -73,9 +74,9 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
             ship_name = Ships.get_name_by_id(str(ship_id)).value
 
             # Skip unwanted ships
-            if ship_name in unwanted_ships_for_expditions:
+            if ship_name in unwanted_ships_for_expeditions:
                 continue
- 
+
             ship_input = page.locator(f"input[name='{ship_name}']")
             if ship_input.is_visible():
                 ship_input.focus()  # Focus the input field before filling
@@ -231,7 +232,6 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         return 600 # Wait 10 mins
 
     # 6. Dispatch Expeditions
-    target_index = 0  # Start with the first target coordinate
     for i in range(available_slots):
         print(f"[INFO] Dispatching expedition {i+1}/{available_slots}...")
 
@@ -243,9 +243,9 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
                 print(f"[ERROR] Failed to navigate to fleet dispatch for subsequent expedition: {e}")
                 break
 
-        # Select the target coordinate in a round-robin manner
-        target_coordinates = TARGET_COORDINATES[target_index]
-        target_index = (target_index + 1) % len(TARGET_COORDINATES)  # Move to the next target
+        # Fetch dynamic target coordinates based on the dispatching planet's system
+        galaxy, system, _ = get_coords_from_planet(planet)
+        target_coordinates = generate_target_coordinates_for_expedition(galaxy, system)
 
         return_time = dispatch_expedition(page, ships_to_send, target_coordinates)
 

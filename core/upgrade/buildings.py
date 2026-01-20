@@ -2,7 +2,7 @@ from typing import Optional, List
 from playwright.sync_api import Page
 
 from config.config import SOFT_CAPS
-from config.types import Coordinates, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
+from config.types import StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
 from constants.buildings import buildings
 from constants.general import COMPONENTS
 from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE, ResourceClass
@@ -68,7 +68,7 @@ def find_storages_to_upgrade(
             results.append({
                 'planet_id': PlanetId(str(planet_id)),
                     'planet_name': PlanetName(str(planet_name)),
-                'coordinates': Coordinates(str(coords)),
+                'coordinates': StringCoords(str(coords)),
                 'resource': TechName(str(resource)),
                 'current': int(current),
                 'max': int(max_cap),
@@ -112,7 +112,7 @@ def check_for_upgradable_resource_buildings(planet: PlanetDict) -> List[Upgradab
             upgradable_buildings.append({
                 'planet_id': PlanetId(str(planet_id)),  # Convert to PlanetId
                 'planet_name': PlanetName(str(planet_name)),  # Convert to PlanetName
-                'coordinates': Coordinates(str(coords)),  # Convert to Coordinates
+                'coordinates': StringCoords(str(coords)),  # Convert to Coordinates
                 'resource': TechName(str(resource)),  # Convert to TechName
                 'building_id': TechId(str(building_id)),  # Convert to TechId
                 'level': TechLevel(building_info.get('level', 0)),  # Convert to TechLevel

@@ -200,7 +200,6 @@ FACILITIES_PRIORITY = [
     Facility.SHIPYARD,
     Facility.TERRAFORMER,
     Facility.MISSILE_SILO,
-    Facility.ALLIANCE_DEPOT,
     Facility.SPACE_DOCK,
 ]
 

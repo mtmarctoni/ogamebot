@@ -43,6 +43,16 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, notifier
         if facility_id not in allowed_facilities:
             continue
         facility_info = planet.get('facilities', {}).get(facility_id, {})
+        # Facility upgrade filtering rules
+        ALLIANCE_DEPOT_ID = Facilities.get_id_by_name(Facility.ALLIANCE_DEPOT)
+        SPACE_DOCK_ID = Facilities.get_id_by_name(Facility.SPACE_DOCK)
+        MISSILE_SILO_ID = Facilities.get_id_by_name(Facility.MISSILE_SILO)
+        if facility_id == ALLIANCE_DEPOT_ID:
+            continue  # Never upgrade Alliance Depot
+        if facility_id == SPACE_DOCK_ID and facility_info.get('level', 0) >= 7:
+            continue  # Only upgrade Repair Dock if level < 7
+        if facility_id == MISSILE_SILO_ID and facility_info.get('level', 0) >= 5:
+            continue  # Only upgrade Missile Silo if level < 5
         if facility_info.get('upgradable', False):
             planet_id = PlanetId(planet.get('id', 'Unknown'))
             facility_id = TechId(facility_id)

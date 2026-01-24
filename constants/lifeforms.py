@@ -1,10 +1,10 @@
 from enum import Enum
 
 class Lifeforms(Enum):
-    HUMAN = 'Human'
-    ROCKTAL = 'Rocktal'
-    MECHA = 'Mecha'
-    KAELESH = 'Kaelesh' 
+    HUMAN = 'human'
+    ROCKTAL = 'rocktal'
+    MECHA = 'mecha'
+    KAELESH = 'kaelesh' 
     
 class LifeformClass:
     """

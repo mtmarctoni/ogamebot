@@ -2,7 +2,7 @@ from typing import Literal, NewType, TypedDict, List, Dict, Optional
 from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
 from constants.research import Research
-from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
+from constants.lifeform_buildings import HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding
 
 TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)
@@ -35,6 +35,8 @@ class UpgradeTogglesRawType(TypedDict):
     lifeforms: bool
     storage: bool
 
+type LifeformBuildingsType = HumanLifeformBuilding | KaeleshLifeformBuilding | MechaLifeformBuilding | RocktalLifeformBuilding
+
 class UpgradesPrioritiesRawType(TypedDict):
     facilities: List[str]
     research: List[str]
@@ -58,7 +60,7 @@ class ConfigRawType(TypedDict):
 class UpgradesPrioritiesType(TypedDict):
     facilities: List[Facility]
     research: List[Research]
-    lifeform_buildings: Dict[Lifeforms, List[HumanLifeformBuildingClass | KaeleshLifeformBuildingClass]]
+    lifeform_buildings: Dict[Lifeforms, List[LifeformBuildingsType]]
 
 class UpgradesSectionType(TypedDict):
     group_order: List[UpgradeGroup]

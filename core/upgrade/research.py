@@ -16,6 +16,7 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
 
     # Get config section for upgrades if needed in future enhancements
     upgrades_section = config["upgrades"]
+    print(f"[DEBUG] Upgrade section: {upgrades_section}")
 
     for research_name in RESEARCH_PRIORITY:  # Use priority from config
         research_id = Researches.get_id_by_name(research_name)

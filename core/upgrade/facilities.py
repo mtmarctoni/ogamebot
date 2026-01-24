@@ -16,6 +16,7 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
 
     # extract the config that might be needed in future enhancements
     upgrades_section = config["upgrades"]
+    print(f"[DEBUG] Upgrade section: {upgrades_section}")
 
     # Extract free fields from the "fields" string
     fields = planet.get('fields', "0/0")

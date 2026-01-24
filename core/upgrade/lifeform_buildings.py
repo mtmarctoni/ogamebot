@@ -1,14 +1,17 @@
+from typing import cast
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
-from config.types import ConfigType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel
-from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY, KALESH_LIFEFORM_BUILDING_PRIORITY   
-from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
+from config.types import ConfigType, LifeformBuildingsType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel
+from constants.lifeforms import LifeformClass, Lifeforms
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
 
-def prioritize_lifeform_buildings(buildings: list[str], specie: str) -> list[str]:
+def prioritize_lifeform_buildings(
+    buildings: List[TechName],
+    prioritized_lifeform_buildings: List[LifeformBuildingsType]
+) -> List[LifeformBuildingsType]:
     """
     Sorts the given list of lifeform buildings based on the priority defined in the configuration.
 
@@ -19,12 +22,14 @@ def prioritize_lifeform_buildings(buildings: list[str], specie: str) -> list[str
     Returns:
         list[str]: Sorted list of buildings based on priority.
     """
-    if specie == 'kaelesh':
-        priority_map = {name: index for index, name in enumerate(KALESH_LIFEFORM_BUILDING_PRIORITY)}
-    else:  # Default to Human
-        priority_map = {name: index for index, name in enumerate(HUMAN_LIFEFORM_BUILDING_PRIORITY)}
+    sorted_buildings: List[LifeformBuildingsType] = []
+    lifeform_buildings = cast(List[LifeformBuildingsType], buildings)
+    for priority_building in prioritized_lifeform_buildings:
+        for building in lifeform_buildings:
+            if building == priority_building:
+                sorted_buildings.append(building)
 
-    return sorted(buildings, key=lambda b: priority_map.get(b, float('inf')))
+    return sorted_buildings
 
 def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLifeformBuilding]:
     """
@@ -43,21 +48,14 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
     coords = planet.get('coords') or "?"
     lifeform_buildings_data = planet.get('lifeform_buildings', {})
 
-    # Determine the lifeform class based on the 'specie' field
-    specie = planet.get('specie', '').lower()
-    if specie == 'kaelesh':
-        lifeform_class = KaeleshLifeformBuildingClass
-    else:  # Default to Human
-        lifeform_class = HumanLifeformBuildingClass
-
     for building_id, building_info in lifeform_buildings_data.items():
-        building_name = lifeform_class.get_name_by_id(int(building_id)) or "Not a lifeform building"
+        building_name = LifeformClass.get_name_by_id(building_id) or "Not a lifeform building"
         if building_info.get('upgradable'):
             upgradable_buildings.append({
                 'planet_id': PlanetId(str(planet_id)),
                 'planet_name': PlanetName(planet_name),
                 'coordinates': StringCoords(coords),
-                'building': TechName(building_name),
+                'building': cast(TechName, building_name),
                 'building_id': TechId(building_id),
                 'level': TechLevel(building_info.get('level', 0)),
                 })
@@ -107,13 +105,25 @@ def handle_lifeform_buildings_upgrade(
     """
 
     upgrade_durations: List[int] = []
+    # Convert to Lifeforms enum
+    lifeform = planet.get("specie", "").lower()
+    try:
+        lifeform = Lifeforms(lifeform.capitalize())
+    except ValueError:
+        print(f"[ERROR] Unknown lifeform specie: {lifeform}. Skipping lifeform building upgrades.")
+        return upgrade_durations
+
+    # get prioritized upgradable lifeform buildings from config
+    prioritized_lifeform_buildings = config["upgrades"]['priorities']['lifeform_buildings'][lifeform]
+
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
+    building_list: List[TechName] =  [b['building'] for b in upgradable_buildings]
 
     # Prioritize the upgradable buildings based on the defined priority
-    prioritized_buildings = prioritize_lifeform_buildings([b['building'] for b in upgradable_buildings], planet.get('specie', 'Human').lower())
+    prioritized_upgradable_lifeform_buildings = prioritize_lifeform_buildings(building_list, prioritized_lifeform_buildings)
 
     # Filter the upgradable buildings to match the prioritized order
-    upgradable_buildings = [b for name in prioritized_buildings for b in upgradable_buildings if b['building'] == name]
+    upgradable_buildings = [b for name in prioritized_upgradable_lifeform_buildings for b in upgradable_buildings if b['building'] == name]
 
     # Group buildings by planet
     grouped_buildings = group_upgradable_buildings_by_planet(upgradable_buildings)

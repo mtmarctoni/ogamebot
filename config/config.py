@@ -141,38 +141,6 @@ MAX_SYSTEM_NUMBER = 499
 MAX_GALAXY_NUMBER = 6
 MAX_SLOT_NUMBER = 16
 
-# Priority configuration for HumanLifeformBuildings
-HUMAN_LIFEFORM_BUILDING_PRIORITY = [
-    HumanLifeformBuildingClass.Research_Center,
-    HumanLifeformBuildingClass.Academy,
-    HumanLifeformBuildingClass.Neuro_Calibration_Center,
-    HumanLifeformBuildingClass.High_Energy_Smelting,
-    HumanLifeformBuildingClass.Skyscraper,
-    HumanLifeformBuildingClass.Biosphere_Farm,
-    HumanLifeformBuildingClass.Residential_Sector,
-    HumanLifeformBuildingClass.Food_Silo,
-    HumanLifeformBuildingClass.Fusion_Powered_Production,
-    HumanLifeformBuildingClass.Biotech_Lab,
-    HumanLifeformBuildingClass.Metropolis,
-    HumanLifeformBuildingClass.Planetary_Shield
-]
-
-# Priority configuration for KaeleshLifeformBuildings
-KALESH_LIFEFORM_BUILDING_PRIORITY = [
-    KaeleshLifeformBuildingClass.Sanctuary,
-    KaeleshLifeformBuildingClass.Antimatter_Condenser,
-    KaeleshLifeformBuildingClass.Vortex_Chamber,
-    KaeleshLifeformBuildingClass.Halls_of_Realization,
-    KaeleshLifeformBuildingClass.Forum_of_Transcendence,
-    KaeleshLifeformBuildingClass.Antimatter_Convector,
-    KaeleshLifeformBuildingClass.Cloning_Laboratory,
-    KaeleshLifeformBuildingClass.Chrysalis_Accelerator,
-    KaeleshLifeformBuildingClass.Bio_Modifier,
-    KaeleshLifeformBuildingClass.Psionic_Modulator,
-    KaeleshLifeformBuildingClass.Ship_Manufacturing_Hall,
-    KaeleshLifeformBuildingClass.Supra_Refractor
-]
-
 # Priority configuration for Research
 RESEARCH_PRIORITY = [
     Research.ASTROPHYSICS,

@@ -22,17 +22,6 @@ class COMPONENTS(Enum):
     EMPIRE = "empire"
     MESSAGES = "messages"
 
-# Lifeform classes
-class LifeformClass:
-    human = 'human'
-    mecha = 'mecha'
-
-    @classmethod
-    def allLifeforms(cls) -> list[str]:
-        return [
-            cls.human,
-            cls.mecha,
-        ]
 
 # Mapping of technology IDs to their respective sections
 class TechIdToSection:

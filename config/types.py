@@ -1,5 +1,6 @@
 from typing import Literal, NewType, TypedDict, List, Dict, Optional
 from constants.facilities import Facility
+from constants.lifeforms import Lifeforms
 from constants.research import Research
 from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 
@@ -20,7 +21,6 @@ UpgradeCategory = Literal[
 ]
 
 UpgradeGroup = Literal["facilities", "resources", "energy", "research", "lifeforms", "storage"]
-LifeformSpecies = Literal["Human", "Kaelesh"]  # Extend if more added
 
 # --- RAW CONFIG structure (from config.json) ---
 class ExpeditionsRawType(TypedDict):
@@ -38,7 +38,7 @@ class UpgradeTogglesRawType(TypedDict):
 class UpgradesPrioritiesRawType(TypedDict):
     facilities: List[str]
     research: List[str]
-    lifeform_buildings: Dict[LifeformSpecies, List[str]]
+    lifeform_buildings: Dict[Lifeforms, List[str]]
 
 class UpgradesRawType(TypedDict):
     group_order: List[UpgradeGroup]
@@ -53,7 +53,7 @@ class ConfigRawType(TypedDict):
 class UpgradesPrioritiesType(TypedDict):
     facilities: List[Facility]
     research: List[Research]
-    lifeform_buildings: Dict[LifeformSpecies, List[HumanLifeformBuildingClass | KaeleshLifeformBuildingClass]]
+    lifeform_buildings: Dict[Lifeforms, List[HumanLifeformBuildingClass | KaeleshLifeformBuildingClass]]
 
 class UpgradesSectionType(TypedDict):
     group_order: List[UpgradeGroup]

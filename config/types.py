@@ -13,16 +13,15 @@ TechName = NewType('TechName', str)
 TechLevel = NewType('TechLevel', int)
 StringCoords = NewType('StringCoords', str)
 
-UpgradeCategory = Literal[
-    "facilities",
-    "resources",
-    "energy",
-    "research",
-    "lifeforms",
-    "storage"
-]
-
-UpgradeGroup = Literal["facilities", "resources", "energy", "research", "lifeforms", "storage"]
+UpgradeGroup = Literal[
+      "facilities",
+      "resources",
+      "energy",
+      "research",
+      "lifeforms",
+      "lifeform_research",
+      "storage"
+    ]
 
 # --- RAW CONFIG structure (from config.json) ---
 class ExpeditionsRawType(TypedDict):
@@ -35,19 +34,31 @@ class UpgradeTogglesRawType(TypedDict):
     energy: bool
     research: bool
     lifeforms: bool
+    lifeform_research: bool
     storage: bool
 
 type LifeformBuildingsType = HumanLifeformBuilding | KaeleshLifeformBuilding | MechaLifeformBuilding | RocktalLifeformBuilding
 
 class UpgradesPrioritiesRawType(TypedDict):
+    resources: List[str]
+    storage: List[str]
     facilities: List[str]
     research: List[str]
     lifeform_buildings: Dict[str, List[str]]
+
+class UpgradeSoftLevelCapsRawType(TypedDict):
+    energy: Dict[str, int]
+    resources: Dict[str, int]
+    storage: Dict[str, int]
+    facilities: Dict[str, int]
+    research: Dict[str, int]
+    lifeform_buildings: Dict[str, Dict[str, int]]
 
 class UpgradesRawType(TypedDict):
     group_order: List[UpgradeGroup]
     toggles: UpgradeTogglesRawType
     priorities: UpgradesPrioritiesRawType
+    soft_level_caps: UpgradeSoftLevelCapsRawType
 
 class DiscoveriesRawType(TypedDict):
     enable_discoveries: bool

@@ -1,4 +1,5 @@
 from typing import Literal, NewType, TypedDict, List, Dict, Optional
+from constants.energy import EnergyBuilding
 from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
 from constants.research import Research
@@ -66,6 +67,7 @@ class UpgradesPrioritiesType(TypedDict):
     lifeform_buildings: Dict[Lifeforms, List[LifeformBuildingsType]]
 
 class UpgradeSoftLevelCapsType(TypedDict):
+    energy: Dict[EnergyBuilding, TechLevel]
     resources: Dict[Resources, TechLevel]
     facilities: Dict[Facility, TechLevel]
     research: Dict[Research, TechLevel]

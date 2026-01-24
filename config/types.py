@@ -3,6 +3,7 @@ from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
 from constants.research import Research
 from constants.lifeform_buildings import HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding
+from constants.resources import ResourceStorage, Resources
 
 TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)
@@ -58,14 +59,23 @@ class ConfigRawType(TypedDict):
     upgrades: UpgradesRawType
 
 class UpgradesPrioritiesType(TypedDict):
+    resources: List[TechName]
+    storage: List[ResourceStorage]
     facilities: List[Facility]
     research: List[Research]
     lifeform_buildings: Dict[Lifeforms, List[LifeformBuildingsType]]
+
+class UpgradeSoftLevelCapsType(TypedDict):
+    resources: Dict[Resources, TechLevel]
+    facilities: Dict[Facility, TechLevel]
+    research: Dict[Research, TechLevel]
+    lifeform_buildings: Dict[Lifeforms, Dict[LifeformBuildingsType, TechLevel]]
 
 class UpgradesSectionType(TypedDict):
     group_order: List[UpgradeGroup]
     toggles: UpgradeTogglesRawType  # unchanged structure
     priorities: UpgradesPrioritiesType
+    soft_level_caps: UpgradeSoftLevelCapsType
 
 class ExpeditionsType(TypedDict):
     enable_expeditions: bool
@@ -83,7 +93,7 @@ class ConfigType(TypedDict):
 
 
 # Explicit resource and storage types for planets
-class PlanetResources(TypedDict, total=False):
+class PlanetResources(TypedDict, total=True):
     metal: int
     crystal: int
     deuterium: int
@@ -91,26 +101,26 @@ class PlanetResources(TypedDict, total=False):
     food: int
     population: int
 
-class PlanetStorage(TypedDict, total=False):
+class PlanetStorage(TypedDict, total=True):
     metalStorage: int
     crystalStorage: int
     deuteriumStorage: int
     foodStorage: int
     populationStorage: int
 
-class QueueItemDict(TypedDict, total=False):
+class QueueItemDict(TypedDict, total=True):
     type: str  # building, research, shipyard
     name: str
     level: Optional[int]
     count: Optional[int]
     finish_time: Optional[str]  # ISO8601
 
-class BuildingInfoDict(TypedDict, total=False):
+class BuildingInfoDict(TypedDict, total=True):
     level: int
     upgradable: bool
     upgrade_js: Optional[str]
 
-class PlanetDict(TypedDict, total=False):
+class PlanetDict(TypedDict, total=True):
     id: PlanetId
     name: PlanetName
     coords: StringCoords

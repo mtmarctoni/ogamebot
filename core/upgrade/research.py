@@ -4,7 +4,6 @@ from playwright.sync_api import Page
 from constants.research import Researches
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
-from config.config import RESEARCH_PRIORITY
 
 def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
@@ -15,10 +14,9 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
     upgrade_durations: List[int] = []
 
     # Get config section for upgrades if needed in future enhancements
-    upgrades_section = config["upgrades"]
-    print(f"[DEBUG] Upgrade section: {upgrades_section}")
+    prioritized_researches = config["upgrades"]['priorities']['research']
 
-    for research_name in RESEARCH_PRIORITY:  # Use priority from config
+    for research_name in prioritized_researches:
         research_id = Researches.get_id_by_name(research_name)
         research_info = planet.get('research', {}).get(research_id, {})
         if research_info.get('upgradable', False):

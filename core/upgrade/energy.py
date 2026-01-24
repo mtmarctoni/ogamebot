@@ -1,13 +1,12 @@
-from typing import List, Optional
-from config.config import SOFT_CAPS
-from config.types import ConfigType, PlanetDict, PlanetId, TechId
+from typing import Dict, List, Optional
+from config.types import ConfigType, PlanetDict, PlanetId, TechId, TechLevel
 from playwright.sync_api import Page
 
 from constants.energy import EnergyBuilding, EnergyBuildings
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
-def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: PlanetDict) -> Optional[EnergyBuilding]:
+def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: PlanetDict, soft_caps: Dict[EnergyBuilding, TechLevel]) -> Optional[EnergyBuilding]:
     """
     Determine which energy building to upgrade based on soft caps.
 
@@ -20,15 +19,14 @@ def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: 
         The energy building to upgrade if criteria are met, otherwise None.
     """
     building_id = EnergyBuildings.get_id_by_name(building_name)
-    building_info = planet.get('buildings', {}).get(building_id, {})
-    current_level = building_info.get('level', 0)
-    soft_cap = SOFT_CAPS.get(building_name, 0)
+    building_info = planet['buildings'].get(building_id, {})
+    current_level = building_info['level']
 
-    if current_level >= soft_cap:
-        print(f"[WARN] {building_name} on {planet.get('name')} ({planet.get('coords')}) is already at soft cap ({soft_cap}).")
+    if current_level >= soft_caps[building_name]:
+        print(f"[WARN] {building_name} on {planet['name']} ({planet['coords']}) is already at soft cap ({soft_caps}).")
         return None
 
-    if not building_info.get('upgradable', False):
+    if not building_info['upgradable']:
         # [INFO] {building_name} on {planet.get('name')} ({planet.get('coords')}) is not upgradable.
         return None
 
@@ -46,9 +44,11 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, config: Conf
         return []
     upgrade_durations: List[int] = []
 
+    soft_level_caps = config["upgrades"]["soft_level_caps"]['energy']
+
     # Define the energy buildings in priority order using constants from the buildings module
     for building_name in EnergyBuilding:
-        building_to_upgrade = determine_energy_building_to_upgrade(building_name, planet)
+        building_to_upgrade = determine_energy_building_to_upgrade(building_name, planet, soft_level_caps)
         if not building_to_upgrade:
             continue
 

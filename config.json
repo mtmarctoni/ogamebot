@@ -28,6 +28,8 @@
       "lifeform_research": true
     },
     "priorities": {
+      "resources": ["CRYSTAL_MINE", "DEUTERIUM_SYNTHESIZER", "METAL_MINE"],
+      "storage": ["METAL_STORAGE", "CRYSTAL_STORAGE", "DEUTERIUM_TANK"],
       "facilities": [
         "NANITE_FACTORY",
         "ROBOTICS_FACTORY",
@@ -112,6 +114,107 @@
           "MEGALITH",
           "FORUM_OF_TRANSCENDENCE"
         ]
+      }
+    },
+    "soft_level_caps": {
+      "energy": {
+        "SOLAR_PLANT": 50,
+        "FUSION_REACTOR": 30
+      },
+      "resources": {
+        "METAL_MINE": 50,
+        "CRYSTAL_MINE": 50,
+        "DEUTERIUM_SYNTHESIZER": 50
+      },
+      "storage": {
+        "METAL_STORAGE": 30,
+        "CRYSTAL_STORAGE": 30,
+        "DEUTERIUM_TANK": 30
+      },
+      "facilities": {
+        "NANITE_FACTORY": 20,
+        "ROBOTICS_FACTORY": 20,
+        "RESEARCH_LAB": 20,
+        "SHIPYARD": 20,
+        "TERRAFORMER": 10,
+        "MISSILE_SILO": 10,
+        "ALLIANCE_DEPOT": 10,
+        "SPACE_DOCK": 10
+      },
+      "research": {
+        "ASTROPHYSICS": 100,
+        "PLASMA": 100,
+        "COMBUSTION_DRIVE": 100,
+        "IMPULSE_DRIVE": 100,
+        "HYPERSPACE": 100,
+        "COMPUTER": 100,
+        "ENERGY": 100,
+        "ESPIONAGE": 100,
+        "WEAPONS": 100,
+        "SHIELDING": 100,
+        "ARMOR": 100,
+        "LASER": 100,
+        "ION": 100,
+        "INTERGALACTIC_RESEARCH_NETWORK": 5,
+        "GRAVITON": 1
+      },
+      "lifeform_buildings": {
+        "human": {
+          "RESEARCH_CENTER": 15,
+          "ACADEMY": 15,
+          "NEURO_CALIBRATION_CENTER": 15,
+          "HIGH_ENERGY_SMELTING": 15,
+          "SKYSCRAPER": 15,
+          "BIOSPHERE_FARM": 15,
+          "RESIDENTIAL_SECTOR": 15,
+          "FOOD_SILO": 15,
+          "FUSION_POWERED_PRODUCTION": 15,
+          "BIOTECH_LAB": 15,
+          "METROPOLIS": 10,
+          "PLANETARY_SHIELD": 10
+        },
+        "kaelesh": {
+          "SANCTUARY": 15,
+          "ANTIMATTER_CONDENSER": 15,
+          "VORTEX_CHAMBER": 15,
+          "HALLS_OF_REALIZATION": 15,
+          "FORUM_OF_TRANSCENDENCE": 10,
+          "ANTIMATTER_CONVECTOR": 15,
+          "CLONING_LABORATORY": 15,
+          "CHRYSALIS_ACCELERATOR": 15,
+          "BIO_MODIFIER": 15,
+          "PSIONIC_MODULATOR": 15,
+          "SHIP_MANUFACTURING_HALL": 10,
+          "SUPRA_REFRACTOR": 10
+        },
+        "mecha": {
+          "ASSEMBLY_LINE": 15,
+          "FUSION_CELL_FACTORY": 15,
+          "ROBOTICS_RESEARCH_CENTRE": 15,
+          "UPDATE_NETWORK": 15,
+          "QUANTUM_COMPUTER_CENTRE": 15,
+          "AUTOMATISED_ASSEMBLY_CENTRE": 15,
+          "HIGH_PERFORMANCE_TRANSFORMER": 15,
+          "MICROCHIP_ASSEMBLY_LINE": 15,
+          "PRODUCTION_ASSEMBLY_HALL": 15,
+          "HIGH_PERFORMANCE_SYNTHESISER": 15,
+          "CHIP_MASS_PRODUCTION": 15,
+          "NANO_REPAIR_BOTS": 10
+        },
+        "rocktal": {
+          "MEDITATION_ENCLAVE": 15,
+          "CRYSTAL_FARM": 15,
+          "RUNE_TECHNOLOGIUM": 15,
+          "ORIKTORIUM": 15,
+          "MAGMA_FORGE": 15,
+          "DISRUPTION_CHAMBER": 15,
+          "METROPOLIS": 10,
+          "ROCKTAL_COLLECTOR": 15,
+          "CRYSTAL_REFINERY": 15,
+          "DEUTERIUM_FURNACE": 15,
+          "MEGALITH": 10,
+          "FORUM_OF_TRANSCENDENCE": 10
+        }
       }
     }
   }

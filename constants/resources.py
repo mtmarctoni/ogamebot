@@ -1,26 +1,63 @@
-from typing import Callable
+from enum import Enum
+from typing import Callable, List
 
-from config.types import PlanetDict, TechLevel
+from config.types import PlanetDict, TechId, TechLevel
+
+class Resources(Enum):
+    METAL = 'metal'
+    CRYSTAL = 'crystal'
+    DEUTERIUM = 'deuterium'
+    ENERGY = 'energy'
+    FOOD = 'food'
+    POPULATION = 'population'
 
 class ResourceClass:
-    metal = 'metal'
-    crystal = 'crystal'
-    deuterium = 'deuterium'
-    energy = 'energy'
-    food = 'food'
-    population = 'population'
+
+    _id_to_name_mapping = {
+        "1": Resources.METAL,
+        "2": Resources.CRYSTAL,
+        "3": Resources.DEUTERIUM,
+        "E": Resources.ENERGY,
+        "F": Resources.FOOD,
+        "P": Resources.POPULATION,
+    }
+
+    _name_to_id_mapping = {v: k for k, v in _id_to_name_mapping.items()}
 
     @classmethod
-    def allResources(cls) -> list[str]:
-        return [
-            cls.metal,
-            cls.crystal,
-            cls.deuterium,
-            cls.energy,
-            cls.food,
-            cls.population,
-        ]
+    def get_name_by_id(cls, resource_id: TechId) -> Resources:
+        """
+        Get the Resource name by its ID.
+        Raises a ValueError if the ID is invalid.
+        """
+        if resource_id not in cls._id_to_name_mapping:
+            raise ValueError(f"Invalid Resource ID: {resource_id}. No corresponding Resource found.")
+        return cls._id_to_name_mapping[resource_id]
     
+    @classmethod
+    def get_id_by_name(cls, resource_name: Resources) -> TechId:
+        """
+        Get the Resource ID by its name.
+        Raises a ValueError if the name is invalid.
+        """
+        if resource_name not in cls._name_to_id_mapping:
+            raise ValueError(f"Invalid Resource Name: {resource_name}. No corresponding ID found.")
+        return TechId(cls._name_to_id_mapping[resource_name])
+    
+    @classmethod
+    def get_all_ids(cls) -> List[TechId]:
+        """
+        Get all the Resource IDs in a type-safe way.
+        """
+        return [TechId(k) for k in cls._id_to_name_mapping.keys()]
+    
+    @classmethod
+    def get_all_names(cls) -> List[Resources]:
+        """
+        Get all the Resource names in a type-safe way.
+        """
+        return list(cls._name_to_id_mapping.keys())
+
     @staticmethod
     def get_levels(planet: PlanetDict) -> tuple[TechLevel, TechLevel, TechLevel]:
         """
@@ -30,42 +67,94 @@ class ResourceClass:
         Returns:
             tuple[int, int, int]: A tuple containing the levels of metal, crystal, and deuterium respectively.
         """
-        metal = TechLevel(planet.get('buildings', {})["1"].get('level', 0))
-        crystal = TechLevel(planet.get('buildings', {})["2"].get('level', 0))
-        deut = TechLevel(planet.get('buildings', {})["3"].get('level', 0))
+        metal = TechLevel(planet["buildings"][Resources.METAL.value]["level"])
+        crystal = TechLevel(planet["buildings"][Resources.CRYSTAL.value]["level"])
+        deut = TechLevel(planet["buildings"][Resources.DEUTERIUM.value]["level"])
         return metal, crystal, deut
 
+
+class ResourceStorage(Enum):
+    METAL_STORAGE = 'metalStorage'
+    CRYSTAL_STORAGE = 'crystalStorage'
+    DEUTERIUM_TANK = 'deuteriumStorage'
+    FOOD_STORAGE = 'foodStorage'
+    POPULATION_STORAGE = 'populationStorage'
+
 class ResourceStorageClass:
-    metal_storage = 'metalStorage'
-    crystal_storage = 'crystalStorage'
-    deuterium_storage = 'deuteriumStorage'
-    food_storage = 'foodStorage'
-    population_storage = 'populationStorage'
+
+    _id_to_name_mapping = {
+        "22": ResourceStorage.METAL_STORAGE,
+        "23": ResourceStorage.CRYSTAL_STORAGE,
+        "24": ResourceStorage.DEUTERIUM_TANK,
+        "FS": ResourceStorage.FOOD_STORAGE,
+        "PS": ResourceStorage.POPULATION_STORAGE,
+    }
+
+    _name_to_id_mapping = {v: k for k, v in _id_to_name_mapping.items()}
 
     @classmethod
-    def allStorages(cls) -> list[str]:
-        return [
-            cls.metal_storage,
-            cls.crystal_storage,
-            cls.deuterium_storage,
-            cls.food_storage,
-            cls.population_storage,
-        ]
+    def get_name_by_id(cls, storage_id: str) -> ResourceStorage:
+        """
+        Get the Resource Storage name by its ID.
+        Raises a ValueError if the ID is invalid.
+        """
+        if storage_id not in cls._id_to_name_mapping:
+            raise ValueError(f"Invalid Resource Storage ID: {storage_id}. No corresponding Resource Storage found.")
+        return cls._id_to_name_mapping[storage_id]
+    
+    @classmethod
+    def get_id_by_name(cls, storage_name: ResourceStorage) -> str:
+        """
+        Get the Resource Storage ID by its name.
+        Raises a ValueError if the name is invalid.
+        """
+        if storage_name not in cls._name_to_id_mapping:
+            raise ValueError(f"Invalid Resource Storage Name: {storage_name}. No corresponding ID found.")
+        return cls._name_to_id_mapping[storage_name]
+    
+    @classmethod
+    def get_all_ids(cls) -> list[str]:
+        """
+        Get all the Resource Storage IDs in a type-safe way.
+        """
+        return list(cls._id_to_name_mapping.keys())
+    
+    @classmethod
+    def get_all_names(cls) -> list[ResourceStorage]:
+        """
+        Get all the Resource Storage names in a type-safe way.
+        """
+        return list(cls._name_to_id_mapping.keys())
+    
+    @classmethod
+    def get_levels(cls, planet: PlanetDict) -> tuple[TechLevel, TechLevel, TechLevel]:
+        """
+        Get the current levels of metal storage, crystal storage, deuterium tank,
+        food storage, and population storage on the planet.
+        Args:
+            planet (dict): The planet data containing storage information.
+        Returns:
+            tuple[int, int, int, int, int]: A tuple containing the levels of metal storage,
+            crystal storage, deuterium tank, food storage, and population storage respectively.
+        """
+        metal_storage = TechLevel(planet['buildings'][ResourceStorage.METAL_STORAGE.value]['level'])
+        crystal_storage = TechLevel(planet['buildings'][ResourceStorage.CRYSTAL_STORAGE.value]['level'])
+        deut_tank = TechLevel(planet['buildings'][ResourceStorage.DEUTERIUM_TANK.value]['level'])
+        return metal_storage, crystal_storage, deut_tank
+    
+
 
 RESOURCE_TO_STORAGE = {
-    ResourceClass.metal: ResourceStorageClass.metal_storage,
-    ResourceClass.crystal: ResourceStorageClass.crystal_storage,
-    ResourceClass.deuterium: ResourceStorageClass.deuterium_storage,
-    ResourceClass.food: ResourceStorageClass.food_storage,
-    ResourceClass.population: ResourceStorageClass.population_storage,
+    Resources.METAL.value: ResourceStorage.METAL_STORAGE.value,
+    Resources.CRYSTAL.value: ResourceStorage.CRYSTAL_STORAGE.value,
+    Resources.DEUTERIUM.value: ResourceStorage.DEUTERIUM_TANK.value,
+    Resources.FOOD.value: ResourceStorage.FOOD_STORAGE.value,
+    Resources.POPULATION.value: ResourceStorage.POPULATION_STORAGE.value,
 }
 
 # Energy consumption formulas for mines
 ENERGY_CONSUMPTION: dict[str, Callable[[int], int]] = {
-    ResourceClass.metal: lambda level: int(10 * level * (1.1 ** level)),
-    ResourceClass.crystal: lambda level: int(10 * level * (1.1 ** level)),
-    ResourceClass.deuterium: lambda level: int(20 * level * (1.1 ** level)),
+    Resources.METAL.value: lambda level: int(10 * level * (1.1 ** level)),
+    Resources.CRYSTAL.value: lambda level: int(10 * level * (1.1 ** level)),
+    Resources.DEUTERIUM.value: lambda level: int(20 * level * (1.1 ** level)),
 }
-
-# Resource upgrade preference
-RESOURCE_UPGRADE_PREFERENCE = [ResourceClass.crystal, ResourceClass.deuterium, ResourceClass.metal]

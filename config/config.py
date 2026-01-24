@@ -3,12 +3,6 @@
 Configuration for OGame bot: server, language, universe, and URLs.
 """
 
-from typing import Dict
-from config.types import TechLevel
-from constants.energy import EnergyBuilding
-from constants.facilities import Facility
-from constants.research import Research
-from constants.resources import ResourceClass
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -131,42 +125,3 @@ DEFAULT_MAX_SLEEP = 39
 MAX_SYSTEM_NUMBER = 499
 MAX_GALAXY_NUMBER = 6
 MAX_SLOT_NUMBER = 16
-
-# Priority configuration for Research
-RESEARCH_PRIORITY = [
-    Research.ASTROPHYSICS,
-    Research.PLASMA,
-    Research.COMBUSTION_DRIVE,
-    Research.IMPULSE_DRIVE,
-    Research.HYPERSPACE,
-    Research.COMPUTER,
-    Research.ENERGY,
-    Research.ESPIONAGE,
-    Research.WEAPONS,
-    Research.SHIELDING,
-    Research.ARMOR,
-    Research.LASER,
-    Research.ION,
-    Research.INTERGALACTIC_RESEARCH_NETWORK,
-    Research.GRAVITON,
-]
-
-# Facilities upgrade priority
-FACILITIES_PRIORITY = [
-    Facility.NANITE_FACTORY,
-    Facility.ROBOTICS_FACTORY,
-    Facility.RESEARCH_LAB,
-    Facility.SHIPYARD,
-    Facility.TERRAFORMER,
-    Facility.MISSILE_SILO,
-    Facility.SPACE_DOCK,
-]
-
-# Soft caps for resource levels (can be tuned per account stage)
-SOFT_CAPS: Dict[str | EnergyBuilding, TechLevel] = {
-    ResourceClass.metal: TechLevel(28),
-    ResourceClass.crystal: TechLevel(25),
-    ResourceClass.deuterium: TechLevel(22),
-    EnergyBuilding.SOLAR_PLANT: TechLevel(20),
-    EnergyBuilding.FUSION_PLANT: TechLevel(15),
-}

@@ -1,11 +1,10 @@
-from typing import Optional, List
+from typing import Dict, Optional, List
 from playwright.sync_api import Page
 
-from config.config import SOFT_CAPS
 from config.types import ConfigType, StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
 from constants.buildings import buildings
 from constants.general import COMPONENTS
-from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE, ResourceClass
+from constants.resources import RESOURCE_TO_STORAGE, ResourceClass, Resources
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from typing import List, Optional
@@ -120,7 +119,7 @@ def check_for_upgradable_resource_buildings(planet: PlanetDict) -> List[Upgradab
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: PlanetDict, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableResourceBuilding]:
+def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: PlanetDict, soft_caps: Dict[Resources, TechLevel] , notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableResourceBuilding]:
     """
     Determine which building to upgrade based on custom logic.
     Prioritize resource buildings (metal, crystal, deuterium) based on soft caps and relative levels.
@@ -160,13 +159,13 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
     metal, crystal, deut = ResourceClass.get_levels(planet)
 
     # Determine upgrade priority based on resource levels and soft caps
-    if resource == ResourceClass.crystal and can_upgrade(crystal, SOFT_CAPS[ResourceClass.crystal], crystal <= metal):
+    if resource == Resources.CRYSTAL and can_upgrade(crystal, soft_caps[Resources.CRYSTAL], crystal <= metal):
         return building
 
-    if resource == ResourceClass.metal and can_upgrade(metal, SOFT_CAPS[ResourceClass.metal], metal <= crystal + 1):
+    if resource == Resources.METAL and can_upgrade(metal, soft_caps[Resources.METAL], metal <= crystal + 1):
         return building
 
-    if resource == ResourceClass.deuterium and can_upgrade(deut, SOFT_CAPS[ResourceClass.deuterium], deut + 3 <= crystal):
+    if resource == Resources.DEUTERIUM and can_upgrade(deut, soft_caps[Resources.DEUTERIUM], deut + 3 <= crystal):
         return building
 
     # If no priority matches, return None
@@ -226,16 +225,19 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
 
     if not upgradable_buildings:
         # Check if solar plant or fusion reactor can be upgraded and add them to the list
-
         return upgrade_durations
+    
+    # Get config
+    resource_priorities = config["upgrades"]["priorities"]['resources']
+    soft_caps = config["upgrades"]['soft_level_caps']['resources']
 
     # Sort the upgradable buildings list before determining which one to upgrade
-    upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (RESOURCE_UPGRADE_PREFERENCE.index(b['resource']), b['level']))
+    upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (resource_priorities.index(b['resource']), b['level']))
 
     print(f"[INFO] Upgradable building candidates found: {len(upgradable_buildings)}")
 
     for building in upgradable_buildings:
-        building_to_upgrade = determine_building_to_upgrade(building, planet, notifier)
+        building_to_upgrade = determine_building_to_upgrade(building, planet, soft_caps, notifier)
         # [DEBUG] Chosen upgrade: {building_to_upgrade} (enable by DEBUG flag if needed)
         if not building_to_upgrade:
             continue

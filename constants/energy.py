@@ -1,6 +1,7 @@
 from enum import Enum
+from typing import List
 
-from config.types import TechId
+from config.types import PlanetDict, TechId, TechLevel
 
 class EnergyBuilding(Enum):
     SOLAR_PLANT = "solarPlant"
@@ -38,3 +39,36 @@ class EnergyBuildings:
         if building_name not in cls._name_to_id_mapping:
             raise ValueError(f"Invalid EnergyBuilding: {building_name}. No corresponding TechId found.")
         return TechId(cls._name_to_id_mapping[building_name])
+    
+    @classmethod
+    def get_all_ids(cls) -> List[TechId]:
+        """
+        Get all the EnergyBuilding TechIds in a type-safe way.
+        """
+        return [TechId(k) for k in cls._id_to_name_mapping.keys()]
+    
+    @classmethod
+    def get_all_names(cls) -> List[EnergyBuilding]:
+        """
+        Get all the EnergyBuilding names in a type-safe way.
+        """
+        return list(cls._name_to_id_mapping.keys())
+    
+    @classmethod
+    def get_levels(cls, planet: PlanetDict) -> tuple[TechLevel, TechLevel]:
+        """
+        Get the levels of all energy buildings on a planet.
+
+        Args:
+            planet (dict): The planet data containing building levels.
+
+        Returns:
+            tuple: A tuple containing levels of (solar_plant_level, fusion_plant_level).
+        """
+        solar_plant_id = cls.get_id_by_name(EnergyBuilding.SOLAR_PLANT)
+        fusion_plant_id = cls.get_id_by_name(EnergyBuilding.FUSION_PLANT)
+
+        solar_plant_level = TechLevel(planet["buildings"][solar_plant_id]["level"])
+        fusion_plant_level = TechLevel(planet["buildings"][fusion_plant_id]["level"])
+
+        return (solar_plant_level, fusion_plant_level)

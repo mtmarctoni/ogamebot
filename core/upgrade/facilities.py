@@ -1,6 +1,5 @@
 from playwright.sync_api import Page
 from typing import Optional, List
-from config.config import FACILITIES_PRIORITY
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from config.types import ConfigType, PlanetDict, PlanetId, TechId
 from constants.facilities import Facility, Facilities
@@ -15,15 +14,14 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
     upgrade_durations: List[int] = []
 
     # extract the config that might be needed in future enhancements
-    upgrades_section = config["upgrades"]
-    print(f"[DEBUG] Upgrade section: {upgrades_section}")
+    prioritized_facilities = config["upgrades"]["priorities"]['facilities']
 
     # Extract free fields from the "fields" string
     fields = planet.get('fields', "0/0")
     free_fields = extract_free_fields(fields)
 
     # Adjust priority dynamically based on free fields
-    dynamic_priority = FACILITIES_PRIORITY.copy()
+    dynamic_priority = prioritized_facilities.copy()
     if free_fields > 25:
         # Ignore Terraformer
         dynamic_priority.remove(Facility.TERRAFORMER)

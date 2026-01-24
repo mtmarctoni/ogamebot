@@ -7,7 +7,6 @@ from typing import Dict
 from config.types import TechLevel
 from constants.energy import EnergyBuilding
 from constants.facilities import Facility
-from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 from constants.research import Research
 from constants.resources import ResourceClass
 from dotenv import load_dotenv
@@ -127,14 +126,6 @@ DAY_MIN_SLEEP = 13
 DAY_MAX_SLEEP = 19     
 DEFAULT_MIN_SLEEP = 27
 DEFAULT_MAX_SLEEP = 39
-
-# Lifeforms species
-LIFEFORM_SPECIES = {
-    'Human': '1',
-    'Rocktal': '2',
-    'Mechas': '3',
-    'Kaelesh': '4'
-}
 
 # Constants in the Universe
 MAX_SYSTEM_NUMBER = 499

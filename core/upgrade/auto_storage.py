@@ -3,7 +3,7 @@ import isodate # type: ignore
 from typing import Optional, List, Tuple
 from playwright.sync_api import Page
 
-from config.types import PlanetDict, TechId
+from config.types import ConfigType, PlanetDict, TechId
 from constants.general import COMPONENTS
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.buildings import find_storages_to_upgrade
@@ -49,7 +49,7 @@ def click_upgrade_button(page: Page, building_id: TechId) -> Tuple[bool, Optiona
         pass
     return False, None
 
-def upgrade_full_storages(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
+def upgrade_full_storages(planet: PlanetDict, page: Page, config: ConfigType, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
     Finds storages to upgrade and triggers the upgrade process using Playwright.
     Returns a list of upgrade durations (in seconds) for triggered upgrades.

@@ -22,6 +22,14 @@ class LifeformClass:
     _name_to_id_mapping = {v: k for k, v in _id_to_name_mapping.items()}
 
     @classmethod
+    def get_all_ids(cls) -> list[str]:
+        """
+        Get all the Lifeform IDs in a type-safe way.
+        """
+        return list(cls._id_to_name_mapping.keys())
+
+
+    @classmethod
     def get_name_by_id(cls, lifeform_id: str) -> Lifeforms:
         """
         Get the Lifeform name by its ID.

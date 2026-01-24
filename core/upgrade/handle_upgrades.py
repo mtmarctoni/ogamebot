@@ -35,12 +35,10 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
     """
     total_durations: List[int] = []
 
-    # Use new nested upgrades config layout
+    # Use SafeTypedConfig utility for type-safe access
     upgrades_section = config["upgrades"]
     upgrade_order = upgrades_section["group_order"]
-    upgrade_toggles = upgrades_section["toggles"]
-
-
+    
     for planet in empire_data["planets"]:
         planet_name = planet.get('name', 'Unknown')
         planet_id = planet.get('id', 'Unknown')
@@ -48,13 +46,12 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
 
         planet_durations: List[int] = []
         for upgrade in upgrade_order:
-            # Legacy: fallback to old enable_X_upgrades keys if not set in upgrade_toggles
-            enabled = upgrade_toggles.get(upgrade, config.get(f"enable_{upgrade}_upgrades", True))
+            enabled = upgrades_section["toggles"][upgrade]
             if not enabled:
                 continue
             handler = UPGRADE_HANDLERS.get(upgrade)
             if handler:
-                durations = handler(planet, page, notifier)
+                durations = handler(planet, page, config, notifier)
                 planet_durations.extend(durations if durations else [])
         total_durations.extend([d for d in planet_durations if d > 0])
 

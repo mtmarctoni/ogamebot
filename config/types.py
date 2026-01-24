@@ -38,16 +38,21 @@ class UpgradeTogglesRawType(TypedDict):
 class UpgradesPrioritiesRawType(TypedDict):
     facilities: List[str]
     research: List[str]
-    lifeform_buildings: Dict[Lifeforms, List[str]]
+    lifeform_buildings: Dict[str, List[str]]
 
 class UpgradesRawType(TypedDict):
     group_order: List[UpgradeGroup]
     toggles: UpgradeTogglesRawType
     priorities: UpgradesPrioritiesRawType
 
+class DiscoveriesRawType(TypedDict):
+    enable_discoveries: bool
+    discovery_planet_id: str
+
 class ConfigRawType(TypedDict):
     check_interval: int
     expeditions: ExpeditionsRawType
+    discoveries: DiscoveriesRawType
     upgrades: UpgradesRawType
 
 class UpgradesPrioritiesType(TypedDict):

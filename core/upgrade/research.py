@@ -1,18 +1,21 @@
 from typing import List, Optional
-from config.types import PlanetDict, PlanetId, TechId
+from config.types import ConfigType, PlanetDict, PlanetId, TechId
 from playwright.sync_api import Page
 from constants.research import Researches
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 from config.config import RESEARCH_PRIORITY
 
-def handle_research_upgrades(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
+def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
     Handles the upgrade of research technologies on a given planet.
     Checks if there are upgradable research technologies and upgrades the first available one based on priority.
     Returns the upgrade duration if an upgrade is performed, otherwise an empty list.
     """
     upgrade_durations: List[int] = []
+
+    # Get config section for upgrades if needed in future enhancements
+    upgrades_section = config["upgrades"]
 
     for research_name in RESEARCH_PRIORITY:  # Use priority from config
         research_id = Researches.get_id_by_name(research_name)

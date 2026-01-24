@@ -1,7 +1,7 @@
 from typing import List, Optional
 from playwright.sync_api import Page
 
-from config.types import PlanetDict, PlanetId, PlanetName, StringCoords, TechId, TechLevel, UpgradableLifeformResearch
+from config.types import ConfigType, PlanetDict, PlanetId, PlanetName, StringCoords, TechId, TechLevel, UpgradableLifeformResearch
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
@@ -39,7 +39,8 @@ def find_upgradable_lifeform_research(planet: PlanetDict) -> List[UpgradableLife
 def handle_lifeform_research_upgrade(
     planet: PlanetDict, 
     page: Page, 
-    notifier: Optional[TelegramNotifier]
+    config: ConfigType,
+    notifier: Optional[TelegramNotifier],
 ) -> List[int]:
     """
     Handles the upgrades of upgradable lifeform-specific research technologies.

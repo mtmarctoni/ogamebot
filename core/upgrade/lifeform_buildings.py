@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
-from config.types import PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel
+from config.types import ConfigType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel
 from config.config import HUMAN_LIFEFORM_BUILDING_PRIORITY, KALESH_LIFEFORM_BUILDING_PRIORITY   
 from constants.lifeform_buildings import HumanLifeformBuildingClass, KaeleshLifeformBuildingClass
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
@@ -87,7 +87,8 @@ def group_upgradable_buildings_by_planet(upgradable_buildings: List[UpgradableLi
 def handle_lifeform_buildings_upgrade(
     planet: PlanetDict, 
     page: Page, 
-    notifier: Optional[TelegramNotifier], 
+    config: ConfigType,
+    notifier: Optional[TelegramNotifier]
 ) -> List[int]:
     """
     Generalized handler for upgrading lifeform buildings based on the specified lifeform.

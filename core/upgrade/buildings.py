@@ -2,7 +2,7 @@ from typing import Optional, List
 from playwright.sync_api import Page
 
 from config.config import SOFT_CAPS
-from config.types import StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
+from config.types import ConfigType, StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
 from constants.buildings import buildings
 from constants.general import COMPONENTS
 from constants.resources import RESOURCE_TO_STORAGE, RESOURCE_UPGRADE_PREFERENCE, ResourceClass
@@ -211,7 +211,7 @@ def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier:
 
     return 0
 
-def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, notifier: Optional[TelegramNotifier]) -> List[int]:
+def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, config: ConfigType, notifier: Optional[TelegramNotifier]) -> List[int]:
     """
     Checks if resource buildings (metal, crystal, deuterium) are upgradable on any planet.
     Triggers the upgrade if possible and returns a list of upgrade durations.

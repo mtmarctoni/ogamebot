@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 
 from typing import Dict, Any, List, cast, Match
 
-from config.config import LIFEFORM_SPECIES, PLANETS
+from config.config import PLANETS
+from constants.lifeforms import LifeformClass, Lifeforms
 from config.types import PlanetResources, PlanetStorage, PlanetDict
 from constants.resources import ResourceClass, ResourceStorageClass
 
@@ -20,6 +21,7 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
     Or:
         data = extract_empire_view_from_page(page)
     """
+
     soup = BeautifulSoup(html, 'html.parser')
     planets: List[PlanetDict] = []
     for planet_div in soup.select('div.planet'):
@@ -81,7 +83,7 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
         # use PLANETS config to get specie info
         for _, planet_info in PLANETS.items():
             if str(planet_info.get('id')) == str(planet_id):
-                specie['id'] = LIFEFORM_SPECIES.get(planet_info.get('species', 'Human'), '1')
+                specie['id'] = LifeformClass.get_id_by_name(Lifeforms(planet_info.get('species', 'Human')))
                 specie['name'] = planet_info.get('species', 'Human')
                 break   
 
@@ -193,7 +195,7 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
         # Extract lifeform research for all species, ignoring moons
         lifeform_research = {}
         if not is_moon:
-            for species_id in LIFEFORM_SPECIES.values():
+            for species_id in LifeformClass.get_all_ids():
                 lifeform_research_ids = [str((int('1' + species_id + '201') + i)) for i in range(18)]
                 group_research = extract_group(f'lifeform{species_id}research', lifeform_research_ids)
 

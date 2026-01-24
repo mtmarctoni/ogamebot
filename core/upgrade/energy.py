@@ -1,6 +1,6 @@
 from typing import List, Optional
 from config.config import SOFT_CAPS
-from config.types import PlanetDict, PlanetId, TechId
+from config.types import ConfigType, PlanetDict, PlanetId, TechId
 from playwright.sync_api import Page
 
 from constants.energy import EnergyBuilding, EnergyBuildings
@@ -35,7 +35,7 @@ def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: 
     return building_name
 
 
-def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, notifier: Optional[TelegramNotifier] = None) -> List[int]:
+def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, config: ConfigType, notifier: Optional[TelegramNotifier] = None) -> List[int]:
     """
     Handles the upgrade of energy buildings (solar plant and fusion reactor) on a given planet.
     Checks if there is an upgradable solar plant or fusion reactor, and upgrades the first available one.

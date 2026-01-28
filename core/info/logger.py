@@ -14,16 +14,17 @@ def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[Telegram
         resources: PlanetResources = planet.get('resources', {}) or {}
         storage: PlanetStorage = planet.get('storage', {}) or {}
         res_map = {'metal': '🪙', 'crystal': '💎', 'deuterium': '🧪', 'food': '🍖', 'population': '👥', 'energy': '⚡'}
-        resource_keys = ResourceClass.allResources()
+        resource_keys = ResourceClass.get_all_names()
         lines: List[str] = []
         for r in resource_keys:
-            if r == 'energy':
+            resource_name = r.value
+            if resource_name == 'energy':
                 energy_val = planet.get('energy', 0)
                 lines.append(f"⚡ {energy_val}")
                 continue
-            building_id: str = str(buildings.get_building_id(RESOURCE_TO_STORAGE[r]))
-            current = resources.get(r, 0)
-            max_cap = storage.get(RESOURCE_TO_STORAGE[r])
+            building_id: str = str(buildings.get_building_id(RESOURCE_TO_STORAGE[resource_name]))
+            current = resources.get(resource_name, 0)
+            max_cap = storage.get(RESOURCE_TO_STORAGE[resource_name])
             percent = (current / max_cap * 100) if max_cap else 0
             alert = ''
             upgradable = ''
@@ -38,7 +39,7 @@ def log_empire_view(empire_data: EmpireSnapshotDict, notifier: Optional[Telegram
             if building_info.get('upgradable', False):
                 upgradable = '⬆️'
 
-            lines.append(f"{res_map.get(r, r.title())} {current:,} - ({percent:.1f}%) {alert} {upgradable}")
+            lines.append(f"{res_map.get(resource_name, resource_name.title())} {current:,} - ({percent:.1f}%) {alert} {upgradable}")
         res_str = '\n'.join(lines)
         planet_summary = (
             f"★ {name} [{coords}]\n"

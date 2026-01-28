@@ -83,40 +83,56 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
         # use PLANETS config to get specie info
         for _, planet_info in PLANETS.items():
             if str(planet_info.get('id')) == str(planet_id):
-                specie['id'] = LifeformClass.get_id_by_name(Lifeforms(planet_info.get('species', 'Human')))
-                specie['name'] = planet_info.get('species', 'Human')
+                specie['id'] = LifeformClass.get_id_by_name(
+    Lifeforms(planet_info.get('species', 'human').lower())
+)
+                specie['name'] = planet_info.get('species', 'human').lower()
                 break   
 
         # Resources
-        resources: PlanetResources = {}
-        for res in ResourceClass.allResources():
-            tag = planet_div.select_one(f'.values.resources .{res} span')
+        resources: PlanetResources = {
+            "metal": 0,
+            "crystal": 0,
+            "deuterium": 0,
+            "energy": 0,
+            "food": 0,
+            "population": 0
+        }
+        for res in ResourceClass.get_all_names():
+            res_str = str(res)
+            tag = planet_div.select_one(f'.values.resources .{res_str} span')
             if tag:
                 val = tag.get_text(strip=True).replace(',', '')
                 try:
-                    resources[res] = int(val)
+                    resources[res_str] = int(val)
                 except ValueError:
-                    resources[res] = val
+                    resources[res_str] = val
             else:
                 # Sometimes no <span>
-                tag = planet_div.select_one(f'.values.resources .{res}')
+                tag = planet_div.select_one(f'.values.resources .{res_str}')
                 if tag:
                     val = tag.get_text(strip=True).replace(',', '')
                     try:
-                        resources[res] = int(val)
+                        resources[res_str] = int(val)
                     except ValueError:
-                        resources[res] = val
+                        resources[res_str] = val
 
         # Storage
-        storage: PlanetStorage = {}
-        for res in ResourceStorageClass.allStorages():
+        storage: PlanetStorage = {
+            "metalStorage": 0,
+            "crystalStorage": 0,
+            "deuteriumStorage": 0,
+            "foodStorage": 0,
+            "populationStorage": 0
+        }
+        for res in ResourceStorageClass.get_all_names():
             tag = planet_div.select_one(f'.values.storage .{res}')
             if tag:
                 val = tag.get_text(strip=True).replace(',', '')
                 try:
-                    storage[res] = int(val)
+                    storage[str(res)] = int(val)
                 except ValueError:
-                    storage[res] = val
+                    storage[str(res)] = val
             else:
                 print(f"[DEBUG] Storage extraction: tag for '{res}' not found in planet {planet_id} ({name})")
 

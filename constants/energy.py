@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List
 
-from config.types import PlanetDict, TechId, TechLevel
+from config.shared_types import PlanetDict, TechId, TechLevel
 
 class EnergyBuilding(Enum):
     SOLAR_PLANT = "solarPlant"

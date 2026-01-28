@@ -1,17 +1,12 @@
-from typing import Literal, NewType, TypedDict, List, Dict, Optional
+from typing import Literal, TypedDict, List, Dict, Optional
 from constants.energy import EnergyBuilding
+from config.shared_types import TechId, TechLevel, PlanetDict, PlanetId, PlanetName, StringCoords, TechName
 from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
 from constants.research import Research
 from constants.lifeform_buildings import HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding
 from constants.resources import ResourceStorage, Resources
 
-TechId = NewType('TechId', str)
-PlanetId = NewType('PlanetId', str)
-PlanetName = NewType('PlanetName', str)
-TechName = NewType('TechName', str)
-TechLevel = NewType('TechLevel', int)
-StringCoords = NewType('StringCoords', str)
 
 UpgradeGroup = Literal[
       "facilities",

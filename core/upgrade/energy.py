@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
-from config.types import ConfigType, PlanetDict, PlanetId, TechId, TechLevel
+from config.types import ConfigType
+from config.shared_types import PlanetDict, PlanetId, TechId, TechLevel
 from playwright.sync_api import Page
 
 from constants.energy import EnergyBuilding, EnergyBuildings

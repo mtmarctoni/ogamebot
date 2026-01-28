@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Tuple
 
-from config.types import TechId
+from config.shared_types import TechId
 
 # Type alias for all technology tuples (id, amount/level, category)
 TechnologyTuple = Tuple[int, int, str]

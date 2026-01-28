@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Callable, List
 
-from config.types import PlanetDict, TechId, TechLevel
+from config.shared_types import PlanetDict, TechId, TechLevel
 
 class Resources(Enum):
     METAL = 'metal'

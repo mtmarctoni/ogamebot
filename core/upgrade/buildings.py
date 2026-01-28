@@ -1,7 +1,8 @@
 from typing import Dict, Optional, List
 from playwright.sync_api import Page
 
-from config.types import ConfigType, StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName, UpgradableResourceBuilding
+from config.types import ConfigType, UpgradableResourceBuilding
+from config.shared_types import StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName
 from constants.buildings import buildings
 from constants.general import COMPONENTS
 from constants.resources import RESOURCE_TO_STORAGE, ResourceClass, Resources

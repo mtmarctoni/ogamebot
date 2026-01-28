@@ -1,6 +1,7 @@
 
 from typing import Callable, Dict, List, Optional
-from config.types import PlanetDict, ConfigType
+from config.shared_types import PlanetDict
+from config.types import ConfigType
 from config.types import ConfigRawType
 from core.notifications.telegram_notifier import TelegramNotifier
 from playwright.sync_api import Page

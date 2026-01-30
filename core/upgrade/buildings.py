@@ -229,11 +229,14 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
         return upgrade_durations
     
     # Get config
-    resource_priorities = config["upgrades"]["priorities"]['resources']
-    soft_caps = config["upgrades"]['soft_level_caps']['resources']
+    resource_priorities = [Resources(r) for r in config["upgrades"]["priorities"]['resources']]
+    soft_caps = {Resources(k): v for k, v in config["upgrades"]['soft_level_caps']['resources'].items()}
 
     # Sort the upgradable buildings list before determining which one to upgrade
-    upgradable_buildings = sorted(upgradable_buildings, key=lambda b: (resource_priorities.index(b['resource']), b['level']))
+    upgradable_buildings = sorted(
+        upgradable_buildings,
+        key=lambda b: (resource_priorities.index(Resources(str(b['resource']))), b['level'])
+    )
 
     print(f"[INFO] Upgradable building candidates found: {len(upgradable_buildings)}")
 

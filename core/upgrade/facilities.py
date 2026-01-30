@@ -14,7 +14,9 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
     upgrade_durations: List[int] = []
 
     # extract the config that might be needed in future enhancements
-    prioritized_facilities = config["upgrades"]["priorities"]['facilities']
+    prioritized_facilities = [Facility(f) for f in config['upgrades']['priorities']['facilities']]
+    # prioritized_facilities = config["upgrades"]["priorities"]['facilities']
+    print(f"[DEBUG] Prioritized facilities from config: {prioritized_facilities}")
 
     # Extract free fields from the "fields" string
     fields = planet.get('fields', "0/0")

@@ -28,34 +28,34 @@
       "lifeform_research": true
     },
     "priorities": {
-      "resources": ["CRYSTAL_MINE", "DEUTERIUM_SYNTHESIZER", "METAL_MINE"],
-      "storage": ["METAL_STORAGE", "CRYSTAL_STORAGE", "DEUTERIUM_TANK"],
+      "resources": ["crystal", "deuterium", "metal"],
+      "storage": ["metalStorage", "crystalStorage", "deuteriumStorage"],
       "facilities": [
-        "NANITE_FACTORY",
-        "ROBOTICS_FACTORY",
-        "RESEARCH_LAB",
-        "SHIPYARD",
-        "TERRAFORMER",
-        "MISSILE_SILO",
-        "ALLIANCE_DEPOT",
-        "SPACE_DOCK"
+        "naniteFactory",
+        "roboticsFactory",
+        "researchLaboratory",
+        "shipyard",
+        "terraformer",
+        "missileSilo",
+        "allianceDepot",
+        "repairDock"
       ],
       "research": [
-        "ASTROPHYSICS",
-        "PLASMA",
-        "COMBUSTION_DRIVE",
-        "IMPULSE_DRIVE",
-        "HYPERSPACE",
-        "COMPUTER",
-        "ENERGY",
-        "ESPIONAGE",
-        "WEAPONS",
-        "SHIELDING",
-        "ARMOR",
-        "LASER",
-        "ION",
-        "INTERGALACTIC_RESEARCH_NETWORK",
-        "GRAVITON"
+        "astrophysicsTechnology",
+        "plasmaTechnology",
+        "combustionDriveTechnology",
+        "impulseDriveTechnology",
+        "hyperspaceTechnology",
+        "computerTechnology",
+        "energyTechnology",
+        "espionageTechnology",
+        "weaponsTechnology",
+        "shieldingTechnology",
+        "armorTechnology",
+        "laserTechnology",
+        "ionTechnology",
+        "researchNetworkResearchNetwork",
+        "gravitonTechnology"
       ],
       "lifeform_buildings": {
         "human": [
@@ -118,18 +118,18 @@
     },
     "soft_level_caps": {
       "energy": {
-        "SOLAR_PLANT": 50,
-        "FUSION_REACTOR": 30
+        "solarPlant": 50,
+        "fusionPlant": 30
       },
       "resources": {
-        "METAL_MINE": 50,
-        "CRYSTAL_MINE": 50,
-        "DEUTERIUM_SYNTHESIZER": 50
+        "metal": 50,
+        "crystal": 50,
+        "deuterium": 50
       },
       "storage": {
-        "METAL_STORAGE": 30,
-        "CRYSTAL_STORAGE": 30,
-        "DEUTERIUM_TANK": 30
+        "metalStorage": 30,
+        "crystalStorage": 30,
+        "deuteriumStorage": 30
       },
       "facilities": {
         "NANITE_FACTORY": 20,

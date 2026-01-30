@@ -46,6 +46,7 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, config: Conf
     upgrade_durations: List[int] = []
 
     soft_level_caps = config["upgrades"]["soft_level_caps"]['energy']
+    soft_level_caps = {EnergyBuilding(k): v for k, v in soft_level_caps.items()}
 
     # Define the energy buildings in priority order using constants from the buildings module
     for building_name in EnergyBuilding:

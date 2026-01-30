@@ -5,7 +5,7 @@ class Research(Enum):
     HYPERSPACE = "hyperspaceTechnology"
     IMPULSE_DRIVE = "impulseDriveTechnology"
     COMBUSTION_DRIVE = "combustionDriveTechnology"
-    PLASMA = "plasma"
+    PLASMA = "plasmaTechnology"
     ASTROPHYSICS = "astrophysicsTechnology"
     ESPIONAGE = "espionageTechnology"
     ENERGY = "energyTechnology"

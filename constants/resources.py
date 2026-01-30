@@ -67,9 +67,9 @@ class ResourceClass:
         Returns:
             tuple[int, int, int]: A tuple containing the levels of metal, crystal, and deuterium respectively.
         """
-        metal = TechLevel(planet["buildings"][Resources.METAL.value]["level"])
-        crystal = TechLevel(planet["buildings"][Resources.CRYSTAL.value]["level"])
-        deut = TechLevel(planet["buildings"][Resources.DEUTERIUM.value]["level"])
+        metal = TechLevel(planet["buildings"][ResourceClass.get_id_by_name(Resources.METAL)]["level"])
+        crystal = TechLevel(planet["buildings"][ResourceClass.get_id_by_name(Resources.CRYSTAL)]["level"])
+        deut = TechLevel(planet["buildings"][ResourceClass.get_id_by_name(Resources.DEUTERIUM)]["level"])
         return metal, crystal, deut
 
 
@@ -137,9 +137,9 @@ class ResourceStorageClass:
             tuple[int, int, int, int, int]: A tuple containing the levels of metal storage,
             crystal storage, deuterium tank, food storage, and population storage respectively.
         """
-        metal_storage = TechLevel(planet['buildings'][ResourceStorage.METAL_STORAGE.value]['level'])
-        crystal_storage = TechLevel(planet['buildings'][ResourceStorage.CRYSTAL_STORAGE.value]['level'])
-        deut_tank = TechLevel(planet['buildings'][ResourceStorage.DEUTERIUM_TANK.value]['level'])
+        metal_storage = TechLevel(planet['buildings'][ResourceStorageClass.get_id_by_name(ResourceStorage.METAL_STORAGE)]['level'])
+        crystal_storage = TechLevel(planet['buildings'][ResourceStorageClass.get_id_by_name(ResourceStorage.CRYSTAL_STORAGE)]['level'])
+        deut_tank = TechLevel(planet['buildings'][ResourceStorageClass.get_id_by_name(ResourceStorage.DEUTERIUM_TANK)]['level'])
         return metal_storage, crystal_storage, deut_tank
     
 

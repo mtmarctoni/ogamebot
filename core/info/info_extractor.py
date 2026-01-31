@@ -96,24 +96,33 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
             "food": 0,
             "population": 0
         }
+        
+        print(f"[DEBUG] Extracting resources for planet {name} (ID: {planet_id})")
         for res in ResourceClass.get_all_names():
-            res_str = str(res)
-            tag = planet_div.select_one(f'.values.resources .{res_str} span')
+            res_str = res.value  # Use .value to get the string value from the enum
+            selector1 = f'.values.resources .{res_str} span'
+            selector2 = f'.values.resources .{res_str}'
+            
+            tag = planet_div.select_one(selector1)
             if tag:
                 val = tag.get_text(strip=True).replace(',', '')
+                print(f"[DEBUG]   {res_str}: Found with selector '{selector1}', value='{val}'")
                 try:
                     resources[res_str] = int(val)
                 except ValueError:
-                    resources[res_str] = val
+                    resources[res_str] = 0
             else:
                 # Sometimes no <span>
-                tag = planet_div.select_one(f'.values.resources .{res_str}')
+                tag = planet_div.select_one(selector2)
                 if tag:
                     val = tag.get_text(strip=True).replace(',', '')
+                    print(f"[DEBUG]   {res_str}: Found with selector '{selector2}', value='{val}'")
                     try:
                         resources[res_str] = int(val)
                     except ValueError:
-                        resources[res_str] = val
+                        resources[res_str] = 0
+                else:
+                    print(f"[DEBUG]   {res_str}: NOT FOUND with selectors '{selector1}' or '{selector2}'")
 
         # Storage
         storage: PlanetStorage = {
@@ -123,16 +132,22 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
             "foodStorage": 0,
             "populationStorage": 0
         }
+        
+        print(f"[DEBUG] Extracting storage for planet {name} (ID: {planet_id})")
         for res in ResourceStorageClass.get_all_names():
-            tag = planet_div.select_one(f'.values.storage .{res}')
+            res_str = res.value  # Use .value to get the string value from the enum
+            selector = f'.values.storage .{res_str}'
+            
+            tag = planet_div.select_one(selector)
             if tag:
                 val = tag.get_text(strip=True).replace(',', '')
+                print(f"[DEBUG]   {res_str}: Found with selector '{selector}', value='{val}'")
                 try:
-                    storage[str(res)] = int(val)
+                    storage[res_str] = int(val)
                 except ValueError:
-                    storage[str(res)] = val
+                    storage[res_str] = 0
             else:
-                print(f"[DEBUG] Storage extraction: tag for '{res}' not found in planet {planet_id} ({name})")
+                print(f"[DEBUG]   {res_str}: NOT FOUND with selector '{selector}'")
 
         # Helper to extract building/ship/defense/research/lifeform levels
         def escape_class(cls: str) -> str:

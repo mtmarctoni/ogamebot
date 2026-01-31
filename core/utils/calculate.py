@@ -124,6 +124,8 @@ def check_deuterium_level(planet: PlanetDict) -> tuple[bool, int]:
     # 15% safety buffer + 25k minimum
     threshold = max(required_deut * 1.15 + 25_000, 75_000)  
     deuterium = int(planet['resources']['deuterium'])  
+    print(f"[DEBUG] check_deuterium_level: Available Deuterium={deuterium}, Required Deuterium with buffer={threshold}")
+    print("Planer: ", planet)
     return deuterium >= threshold, required_deut
 
 def get_expo_points(fleet: FleetToDispatch) -> int:

@@ -2,18 +2,8 @@ from enum import Enum
 
 class HumanLifeformBuilding(Enum):
     RESIDENTIAL_SECTOR = 'residential_sector'
-    RESEARCH_CENTER = 'research_center'
-    ACADEMY = 'academy'
-    FOOD_PROCESSOR = 'food_processor'
-    WATER_TREATMENT = 'water_treatment'
-    COMMUNICATIONS_ARRAY = 'communications_array'
-    PLANETARY_SHIELD = 'planetary_shield'
-    SPACEPORT = 'spaceport'
-    TRADE_HUB = 'trade_hub'
-    DEFENSE_GRID = 'defense_grid'
-    ENERGY_GENERATOR = 'energy_generator'
-    BIODOME = 'biodome'
     BIOSPHERE_FARM = 'biosphere_farm'
+    RESEARCH_CENTER = 'research_center'
     ACADEMY_OF_SCIENCES = 'academy_of_sciences'
     NEURO_CALIBRATION_CENTER = 'neuro_calibration_center'
     HIGH_ENERGY_SMELTING = 'high_energy_smelting'
@@ -22,6 +12,7 @@ class HumanLifeformBuilding(Enum):
     SKYSCRAPER = 'skyscraper'
     BIOTECH_LAB = 'biotech_lab'
     METROPOLIS = 'metropolis'
+    PLANETARY_SHIELD = 'planetary_shield'
 
 class HumanLifeformBuildingClass:
     """

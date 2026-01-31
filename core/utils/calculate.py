@@ -78,7 +78,7 @@ def check_deuterium_level(planet: PlanetDict) -> bool:
     available_ships = get_available_ships(planet)
     total_ships = sum(ship['count'] for ship in available_ships)
     # For each 1000 ships we need at least 10000 deuterium
-    threshold = (total_ships // 1000) * 10_0
+    threshold = (total_ships // 1000) * 10
     # Minimum threshold of 10000 deuterium
     if threshold < 50_000:
         threshold = 50_000

@@ -76,8 +76,21 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
         mission_button.click()
         page.wait_for_timeout(1000)
 
+        # 3. Set Speed to Minimum (10%)
+        print("[INFO] Setting expedition speed to 10%...")
+        try:
+            # Locate the speed percentage div containing the "10" option
+            speed_selector = page.locator('#speedPercentage div[data-step="1"]:has-text("10")')
+            if speed_selector.is_visible():
+                speed_selector.click()
+                print("[INFO] Speed set to 10%")
+                page.wait_for_timeout(500)
+            else:
+                print("[WARN] Could not find speed selector with 10%. Proceeding with default speed.")
+        except Exception as e:
+            print(f"[WARN] Failed to set speed to 10%: {e}. Proceeding with default speed.")
 
-        # Click the send fleet button
+        # 4. Click the send fleet button
         send_button = page.locator("#sendFleet")
         send_button.click()
 

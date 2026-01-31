@@ -1,19 +1,20 @@
-from constants.ships import Ship
+# --- Distance Constants ---
+BASE_DISTANCE_PENALTY = 1000
+INTRA_SYSTEM_DISTANCE = 5
+DISTANCE_DIVISOR = 35000
 
-SHIP_EXPO_POINTS = {
-    Ship.LIGHT_FIGHTER: 20,
-    Ship.HEAVY_FIGHTER: 50,
-    Ship.CRUISER: 135,
-    Ship.BATTLESHIP: 300,
-    Ship.BATTLECRUISER: 350,
-    Ship.BOMBER: 375,
-    Ship.DESTROYER: 600,
-    Ship.DEATHSTAR: 900,
-    Ship.SMALL_CARGO: 10,
-    Ship.LARGE_CARGO: 25,
-    Ship.COLONY_SHIP: 100,
-    Ship.RECYCLER: 40,
-    Ship.REAPER: 900,
-    Ship.PATHFINDER: 75,
-    Ship.ESPIONAGE_PROBE: 1
-}
+# --- Speed Constants ---
+# Using 10% speed for maximum fuel efficiency (0.1)
+# Formula uses (Speed + 1)^2 -> (0.1 + 1)^2 = 1.21
+SELECTED_SPEED_FACTOR = 0.1
+SPEED_SQUARE_COEFFICIENT = (SELECTED_SPEED_FACTOR + 1) ** 2
+
+# --- Server & Class Modifiers (Pluto s271-en) ---
+PLUTO_CONSUMPTION_RATE = 0.5
+PLUTO_PEACEFUL_SPEED_MULT = 4
+DISCOVERER_FUEL_DISCOUNT = 1
+
+IS_DISCVERER_CLASS = True
+
+# 1. Calculate Distance
+FURTHER_SYSTEM_DISTANCE_FOR_EXPEDITION = 5

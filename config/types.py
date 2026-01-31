@@ -1,12 +1,7 @@
-from typing import Literal, TypedDict, List, Dict, Optional
-from constants.energy import EnergyBuilding
+from typing import Literal, TypedDict, List, Dict, Optional, Type
 from config.shared_types import TechId, TechLevel, PlanetDict, PlanetId, PlanetName, StringCoords, TechName
-from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
-from constants.research import Research
 from constants.lifeform_buildings import HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding
-from constants.resources import ResourceStorage, Resources
-
 
 UpgradeGroup = Literal[
       "facilities",
@@ -33,6 +28,14 @@ class UpgradeTogglesRawType(TypedDict):
     storage: bool
 
 type LifeformBuildingsType = HumanLifeformBuilding | KaeleshLifeformBuilding | MechaLifeformBuilding | RocktalLifeformBuilding
+
+# Mapping from Lifeform enum to corresponding building enum class
+LIFEFORM_BUILDING_ENUM_MAP: Dict[Lifeforms, Type[LifeformBuildingsType]] = {
+    Lifeforms.HUMAN: HumanLifeformBuilding,
+    Lifeforms.KAELESH: KaeleshLifeformBuilding,
+    Lifeforms.MECHA: MechaLifeformBuilding,
+    Lifeforms.ROCKTAL: RocktalLifeformBuilding,
+}
 
 class UpgradesPrioritiesRawType(TypedDict):
     resources: List[str]
@@ -66,18 +69,19 @@ class ConfigRawType(TypedDict):
     upgrades: UpgradesRawType
 
 class UpgradesPrioritiesType(TypedDict):
-    resources: List[TechName]
-    storage: List[ResourceStorage]
-    facilities: List[Facility]
-    research: List[Research]
-    lifeform_buildings: Dict[Lifeforms, List[LifeformBuildingsType]]
+    resources: List[str]  # Runtime: strings from JSON, converted on-demand
+    storage: List[str]  # Runtime: strings from JSON, converted on-demand
+    facilities: List[str]  # Runtime: strings from JSON, converted on-demand
+    research: List[str]  # Runtime: strings from JSON, converted on-demand
+    lifeform_buildings: Dict[str, List[str]]  # Runtime: string keys and values from JSON
 
 class UpgradeSoftLevelCapsType(TypedDict):
-    energy: Dict[EnergyBuilding, TechLevel]
-    resources: Dict[Resources, TechLevel]
-    facilities: Dict[Facility, TechLevel]
-    research: Dict[Research, TechLevel]
-    lifeform_buildings: Dict[Lifeforms, Dict[LifeformBuildingsType, TechLevel]]
+    energy: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
+    resources: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
+    facilities: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand  
+    research: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
+    storage: Dict[str, int]  # Runtime: string keys from JSON
+    lifeform_buildings: Dict[str, Dict[str, int]]  # Runtime: string keys from JSON
 
 class UpgradesSectionType(TypedDict):
     group_order: List[UpgradeGroup]

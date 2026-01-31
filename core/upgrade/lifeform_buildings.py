@@ -1,8 +1,8 @@
-from typing import cast
+from typing import cast, Type
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
-from config.types import ConfigType, LifeformBuildingsType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel
+from config.types import ConfigType, LifeformBuildingsType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel, LIFEFORM_BUILDING_ENUM_MAP
 from constants.lifeforms import LifeformClass, Lifeforms
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
@@ -114,7 +114,11 @@ def handle_lifeform_buildings_upgrade(
         return upgrade_durations
 
     # get prioritized upgradable lifeform buildings from config
-    prioritized_lifeform_buildings = config["upgrades"]['priorities']['lifeform_buildings'][lifeform]
+    # Convert config strings to the appropriate Enum type based on lifeform
+    enum_class: Type[LifeformBuildingsType] = LIFEFORM_BUILDING_ENUM_MAP[lifeform]
+    prioritized_lifeform_buildings: List[LifeformBuildingsType] = [
+        enum_class(b) for b in config["upgrades"]['priorities']['lifeform_buildings'][lifeform.value]
+    ]
 
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
     building_list: List[TechName] =  [b['building'] for b in upgradable_buildings]

@@ -121,13 +121,9 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         print("[INFO] No target planet IDs in config. Using default Moon.")
         planet_id = PlanetId(DEFAULT_EXPEDITION_PLANET_ID)
 
-    print(f"[DEBUG] handle_expeditions: Requested planet_id={planet_id} (type: {type(planet_id)})")
     planet = get_target_planet(empire_data, planet_id)
     if not planet:
         print(f"[ERROR] Target planet not found for expedition. Requested ID: {planet_id}")
-        print(f"[INFO] Available planets:")
-        for p in empire_data["planets"]:
-            print(f"  - {p['name']} (ID: {p['id']})")
         return 0
 
     planet_id = PlanetId(str(planet['id']))

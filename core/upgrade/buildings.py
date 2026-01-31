@@ -135,15 +135,11 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
     resource = building['resource']
     building_level = building['level']
 
-    print(f"[DEBUG] Checking {resource} level {building_level} on {planet.get('name')}")
-
     # Get current energy on the planet
     current_energy = energy_int(planet.get('energy', '0'))
 
     # Calculate energy consumption after the upgrade
     energy_needed = calculate_energy_needed(resource, building_level)
-
-    print(f"[DEBUG]   Energy: current={current_energy}, needed={energy_needed}")
 
     # Check if there is enough energy for the upgrade
     if current_energy < energy_needed:
@@ -151,41 +147,27 @@ def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: 
         if notifier:
             safe_notify(
                 notifier,
-                f"[NOTIFICATION] Not enough energy to upgrade {resource} on {building['planet_name']} ({building['coordinates']}). "
+                f"Not enough energy to upgrade {resource} on {building['planet_name']} ({building['coordinates']}). "
                 f"Energy needed: {energy_needed}, Current energy: {current_energy}."
             )
         return None
 
     # Retrieve resource levels
     metal, crystal, deut = ResourceClass.get_levels(planet)
-    
-    print(f"[DEBUG]   Current levels: Metal={metal}, Crystal={crystal}, Deut={deut}")
-    print(f"[DEBUG]   Soft caps: Metal={soft_caps.get(Resources.METAL)}, Crystal={soft_caps.get(Resources.CRYSTAL)}, Deut={soft_caps.get(Resources.DEUTERIUM)}")
 
     # Determine upgrade priority based on resource levels and soft caps
     if resource == Resources.CRYSTAL.value:
-        can_upg = can_upgrade(crystal, soft_caps[Resources.CRYSTAL], crystal <= metal)
-        print(f"[DEBUG]   Crystal check: can_upgrade={can_upg} (crystal={crystal} < cap={soft_caps[Resources.CRYSTAL]} and crystal={crystal} <= metal={metal})")
-        if can_upg:
-            print(f"[INFO] ✓ Crystal upgrade approved")
+        if can_upgrade(crystal, soft_caps[Resources.CRYSTAL], crystal <= metal):
             return building
 
     if resource == Resources.METAL.value:
-        can_upg = can_upgrade(metal, soft_caps[Resources.METAL], metal <= crystal + 1)
-        print(f"[DEBUG]   Metal check: can_upgrade={can_upg} (metal={metal} < cap={soft_caps[Resources.METAL]} and metal={metal} <= crystal+1={crystal + 1})")
-        if can_upg:
-            print(f"[INFO] ✓ Metal upgrade approved")
+        if can_upgrade(metal, soft_caps[Resources.METAL], metal <= crystal + 1):
             return building
 
     if resource == Resources.DEUTERIUM.value:
-        can_upg = can_upgrade(deut, soft_caps[Resources.DEUTERIUM], deut + 3 <= crystal)
-        print(f"[DEBUG]   Deuterium check: can_upgrade={can_upg} (deut={deut} < cap={soft_caps[Resources.DEUTERIUM]} and deut+3={deut + 3} <= crystal={crystal})")
-        if can_upg:
-            print(f"[INFO] ✓ Deuterium upgrade approved")
+        if can_upgrade(deut, soft_caps[Resources.DEUTERIUM], deut + 3 <= crystal):
             return building
 
-    # If no priority matches, return None
-    print(f"[DEBUG] ✗ No upgrade criteria matched for {resource}")
     return None
 
 def upgrade_building(page: Page, building: UpgradableResourceBuilding, notifier: Optional[TelegramNotifier] = None) -> int:
@@ -232,21 +214,15 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
     Triggers the upgrade if possible and returns a list of upgrade durations.
     On moons (type=='moon'), skips all upgrades (moonbase logic handled in facilities handler).
     """
-    print(f"[DEBUG] handle_building_resources_upgrade: Planet {planet.get('name')} (type: {planet.get('type')})")
-    
     if planet.get('type') == 'moon':
         # Only Moonbase upgrades allowed on moons, handled by facilities upgrade logic.
-        print(f"[DEBUG] Skipping resource upgrades for moon: {planet.get('name')}")
         return []
     
     # Initial check for upgradable resources buildings
     upgradable_buildings = check_for_upgradable_resource_buildings(planet)
-    upgrade_durations: List[int] = []  # Explicitly define the type of the list
+    upgrade_durations: List[int] = []
 
-    print(f"[DEBUG] Found {len(upgradable_buildings)} upgradable resource buildings on {planet.get('name')}")
-    
     if not upgradable_buildings:
-        print(f"[DEBUG] No upgradable resource buildings on {planet.get('name')}")
         return upgrade_durations
     
     # Get config and convert to proper types
@@ -255,9 +231,6 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
         Resources(k): TechLevel(v) 
         for k, v in config["upgrades"]['soft_level_caps']['resources'].items()
     }
-    
-    print(f"[DEBUG] Resource priorities: {[r.value for r in resource_priorities]}")
-    print(f"[DEBUG] Soft caps: {[(k.value, v) for k, v in soft_caps.items()]}")
 
     # Sort the upgradable buildings list before determining which one to upgrade
     upgradable_buildings = sorted(
@@ -265,19 +238,15 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
         key=lambda b: (resource_priorities.index(Resources(b['resource'])), b['level'])
     )
 
-    print(f"[INFO] Upgradable building candidates found: {len(upgradable_buildings)}")
-    for i, bldg in enumerate(upgradable_buildings):
-        print(f"  {i+1}. {bldg['resource']} level {bldg['level']} on {bldg['planet_name']}")
+    print(f"[INFO] Found {len(upgradable_buildings)} upgradable resource buildings on {planet.get('name')}")
 
     for building in upgradable_buildings:
-        print(f"[DEBUG] Evaluating upgrade for {building['resource']} level {building['level']}")
         building_to_upgrade = determine_building_to_upgrade(building, planet, soft_caps, notifier)
         
         if not building_to_upgrade:
-            print(f"[DEBUG] {building['resource']} level {building['level']} did not pass upgrade criteria")
             continue
 
-        print(f"[INFO] Selected for upgrade: {building_to_upgrade['resource']} level {building_to_upgrade['level']}")
+        print(f"[INFO] Upgrading {building_to_upgrade['resource']} level {building_to_upgrade['level']} on {planet.get('name')}")
         duration = upgrade_building(game_page, building_to_upgrade)
         if duration > 0:
             upgrade_durations.append(duration)

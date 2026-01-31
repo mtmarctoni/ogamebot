@@ -16,7 +16,7 @@ class QueueItemDict(TypedDict, total=True):
     count: Optional[int]
     finish_time: Optional[str]
 
-class BuildingInfoDict(TypedDict, total=True):
+class TechInfoDict(TypedDict, total=True):
     level: int
     upgradable: bool
     upgrade_js: Optional[str]
@@ -47,11 +47,11 @@ class PlanetDict(TypedDict, total=True):
     energy: str
     resources: PlanetResources
     storage: PlanetStorage
-    buildings: Dict[str, BuildingInfoDict]
-    facilities: Dict[str, BuildingInfoDict]
-    defense: Dict[str, BuildingInfoDict]
-    ships: Dict[str, BuildingInfoDict]
-    research: Dict[str, BuildingInfoDict]
-    lifeform_buildings: Dict[str, BuildingInfoDict]
-    lifeform_research: Dict[str, BuildingInfoDict]
+    buildings: Dict[str, TechInfoDict]
+    facilities: Dict[str, TechInfoDict]
+    defense: Dict[str, TechInfoDict]
+    ships: Dict[str, TechInfoDict]
+    research: Dict[str, TechInfoDict]
+    lifeform_buildings: Dict[str, TechInfoDict]
+    lifeform_research: Dict[str, TechInfoDict]
     queue: List[QueueItemDict]

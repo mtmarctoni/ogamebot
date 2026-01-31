@@ -122,10 +122,14 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         print(f"[ERROR] Target planet not found for expedition.")
         return 0
 
+    planet_id = PlanetId(str(planet['id']))
+
     # Check Deuterium Level
-    if not check_deuterium_level(planet):
-        print(f"[WARN] Not enough deuterium on planet {planet.get('name', 'Unknown')} for expeditions.")
-        safe_notify(notifier, f"⚠️ Not enough deuterium on planet {planet.get('name', 'Unknown')} for expeditions. Skipping expedition dispatch.")
+    has_enough_deut, required_deut = check_deuterium_level(planet)
+    if not has_enough_deut:
+        current_deut = int(planet['resources']['deuterium'])
+        print(f"[WARN] Not enough deuterium on planet {planet['name']} for expeditions. Have: {current_deut:,}, Need: ~{required_deut:,}")
+        safe_notify(notifier, f"⚠️ Not enough deuterium on planet {planet['name']} for expeditions. Have: {current_deut:,}, Need: ~{required_deut:,}. Skipping expedition dispatch.")
         return wait_minutes(10)
 
     # 2. Switch to Target Planet and Go to Fleet Dispatch

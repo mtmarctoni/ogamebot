@@ -97,7 +97,9 @@ def calculate_expedition_deuterium(planet: PlanetDict) -> int:
     
     # 2. Base Consumption Logic
     total_fuel_sum = 0
-    for ship_id, count in fleet:
+    for ship in fleet:
+        ship_id = ship['ship_id']
+        count = ship['count']
         ship_base_cons = Ships.get_consumption_by_id(ship_id)
         # Ensure both ship_base_cons and count are numeric
         count = int(count)

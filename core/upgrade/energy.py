@@ -1,5 +1,5 @@
-from typing import Dict, List, Optional
-from config.types import ConfigType
+from typing import List, Optional
+from config.types import ConfigType, EnergySoftLevelCaps
 from config.shared_types import PlanetDict, PlanetId, TechId, TechLevel
 from playwright.sync_api import Page
 
@@ -7,7 +7,7 @@ from constants.energy import EnergyBuilding, EnergyBuildings
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
-def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: PlanetDict, soft_caps: Dict[EnergyBuilding, TechLevel]) -> Optional[EnergyBuilding]:
+def determine_energy_building_to_upgrade(building_name: EnergyBuilding, planet: PlanetDict, soft_caps: EnergySoftLevelCaps) -> Optional[EnergyBuilding]:
     """
     Determine which energy building to upgrade based on soft caps.
 
@@ -45,8 +45,11 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, config: Conf
         return []
     upgrade_durations: List[int] = []
 
-    soft_level_caps = config["upgrades"]["soft_level_caps"]['energy']
-    soft_level_caps = {EnergyBuilding(k): v for k, v in soft_level_caps.items()}
+    # Convert raw config to typed soft caps
+    soft_level_caps: EnergySoftLevelCaps = {
+        EnergyBuilding(k): TechLevel(v) 
+        for k, v in config["upgrades"]["soft_level_caps"]['energy'].items()
+    }
 
     # Define the energy buildings in priority order using constants from the buildings module
     for building_name in EnergyBuilding:

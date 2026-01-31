@@ -1,7 +1,11 @@
 from typing import Literal, TypedDict, List, Dict, Optional, Type
 from config.shared_types import TechId, TechLevel, PlanetDict, PlanetId, PlanetName, StringCoords, TechName
+from constants.energy import EnergyBuilding
+from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
 from constants.lifeform_buildings import HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding
+from constants.research import Research
+from constants.resources import Resources
 
 UpgradeGroup = Literal[
       "facilities",
@@ -82,6 +86,19 @@ class UpgradeSoftLevelCapsType(TypedDict):
     research: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
     storage: Dict[str, int]  # Runtime: string keys from JSON
     lifeform_buildings: Dict[str, Dict[str, int]]  # Runtime: string keys from JSON
+
+# Type aliases for processed/converted config data used in handlers
+EnergySoftLevelCaps = Dict[EnergyBuilding, TechLevel]
+ResourcesSoftLevelCaps = Dict[Resources, TechLevel]
+FacilitiesSoftLevelCaps = Dict[Facility, TechLevel]
+ResearchSoftLevelCaps = Dict[Research, TechLevel]
+LifeformBuildingsSoftLevelCaps = Dict[LifeformBuildingsType, TechLevel]
+
+# Priority list types after conversion
+ResourcesPriorityList = List[Resources]
+FacilitiesPriorityList = List[Facility]
+ResearchPriorityList = List[Research]
+LifeformBuildingsPriorityList = List[LifeformBuildingsType]
 
 class UpgradesSectionType(TypedDict):
     group_order: List[UpgradeGroup]

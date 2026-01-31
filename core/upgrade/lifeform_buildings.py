@@ -106,12 +106,7 @@ def handle_lifeform_buildings_upgrade(
 
     upgrade_durations: List[int] = []
     # Convert to Lifeforms enum
-    lifeform = planet.get("specie", "").lower()
-    try:
-        lifeform = Lifeforms(lifeform.capitalize())
-    except ValueError:
-        print(f"[ERROR] Unknown lifeform specie: {lifeform}. Skipping lifeform building upgrades.")
-        return upgrade_durations
+    lifeform = Lifeforms(planet.get("specie", "human").lower())
 
     # get prioritized upgradable lifeform buildings from config
     # Convert config strings to the appropriate Enum type based on lifeform

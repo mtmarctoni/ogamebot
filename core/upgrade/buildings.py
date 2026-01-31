@@ -1,15 +1,13 @@
-from typing import Dict, Optional, List
+from typing import Optional, List
 from playwright.sync_api import Page
 
-from config.types import ConfigType, UpgradableResourceBuilding
+from config.types import ConfigType, UpgradableResourceBuilding, ResourcesSoftLevelCaps, ResourcesPriorityList, StorageUpgradeCandidate
 from config.shared_types import StringCoords, PlanetDict, PlanetId, PlanetName, TechId, TechLevel, TechName
 from constants.buildings import buildings
 from constants.general import COMPONENTS
 from constants.resources import RESOURCE_TO_STORAGE, ResourceClass, Resources
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
-from typing import List, Optional
-from config.types import StorageUpgradeCandidate
 from core.utils.calculate import calculate_energy_needed, can_upgrade, energy_int
 from core.utils.time_utils import parse_duration
 
@@ -120,7 +118,7 @@ def check_for_upgradable_resource_buildings(planet: PlanetDict) -> List[Upgradab
 
     return upgradable_buildings
 
-def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: PlanetDict, soft_caps: Dict[Resources, TechLevel] , notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableResourceBuilding]:
+def determine_building_to_upgrade(building: UpgradableResourceBuilding, planet: PlanetDict, soft_caps: ResourcesSoftLevelCaps, notifier: Optional[TelegramNotifier] = None) -> Optional[UpgradableResourceBuilding]:
     """
     Determine which building to upgrade based on custom logic.
     Prioritize resource buildings (metal, crystal, deuterium) based on soft caps and relative levels.
@@ -228,9 +226,12 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
         # Check if solar plant or fusion reactor can be upgraded and add them to the list
         return upgrade_durations
     
-    # Get config
-    resource_priorities = [Resources(r) for r in config["upgrades"]["priorities"]['resources']]
-    soft_caps = {Resources(k): v for k, v in config["upgrades"]['soft_level_caps']['resources'].items()}
+    # Get config and convert to proper types
+    resource_priorities: ResourcesPriorityList = [Resources(r) for r in config["upgrades"]["priorities"]['resources']]
+    soft_caps: ResourcesSoftLevelCaps = {
+        Resources(k): TechLevel(v) 
+        for k, v in config["upgrades"]['soft_level_caps']['resources'].items()
+    }
 
     # Sort the upgradable buildings list before determining which one to upgrade
     upgradable_buildings = sorted(

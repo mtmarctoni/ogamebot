@@ -39,8 +39,6 @@ def get_coords_from_planet(planet: PlanetDict) -> Coordinates:
         KeyError: If "coords" is missing from the planet dictionary.
         ValueError: If "coords" is not in the expected format.
     """
-    coords_str = planet.get("coords")
-    if coords_str is None:
-        raise KeyError('Planet dictionary is missing "coords" key.')
+    coords_str = planet["coords"]
     coords_str = coords_str.strip('[]')
     return [int(part) for part in coords_str.split(':')]

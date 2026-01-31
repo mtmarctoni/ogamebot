@@ -84,27 +84,42 @@ PLANETS = {
         "coords": "[4:268:8]",
         "species": "Kaelesh",
     },
+    "colony8": {
+        "id": "33677183",
+        "name": "Voidfall Bastion",
+        "coords": "[5:436:8]",
+        "species": "Kaelesh",
+    },
     "moon_home": {
         "id": "33645298",
-        "name": "Moon",
+        "name": "Nexus Selene",
         "coords": "[2:16:8]",
         "species": "Human",
-    }
+    },
+    "moon_colony2": {
+        "id": "33672833",
+        "name": "Halo Phobos",
+        "coords": "[2:8:9]",
+        "species": "Human",
+    },
+    "moon_colony4": {
+        "id": "33676839",
+        "name": "Haven Crateris",
+        "coords": "[1:413:9]",
+        "species": "Human",
+    },
+    "moon_colony5": {
+        "id": "33672621",
+        "name": "Veil Somnus",
+        "coords": "[1:413:8]",
+        "species": "Kaelesh",
+    },
 }
 
 DEFAULT_PLANET_ID = PLANETS["home_planet"]["id"]
 
 # Planet to use for expeditions
 DEFAULT_EXPEDITION_PLANET_ID = PLANETS["colony3"]["id"]
-
-# Target coordinates for expeditions
-TARGET_COORDINATES = [
-    [1, 413, 16],
-    [1, 411, 16],
-    [1, 414, 16],
-    [1, 415, 16],
-    [1, 412, 16]
-]
 
 # Lobby URL
 LOBBY_URL = f"https://lobby.ogame.gameforge.com/en_GB/hub"

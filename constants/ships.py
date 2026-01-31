@@ -67,6 +67,64 @@ class Ships:
         if ship_name not in cls._name_to_id_mapping:
             raise ValueError(f"Invalid Ship: {ship_name}. No corresponding ID found.")
         return cls._name_to_id_mapping[ship_name]
+    
+    @classmethod
+    def get_consumption_by_id(cls, ship_id: str) -> int:
+        """
+        Get the Ship consumption by its ID.
+        Raises a ValueError if the ID is invalid.
+        """
+        consumption_lookup = {
+            Ship.SMALL_CARGO: 20,   # Small Cargo
+            Ship.LARGE_CARGO: 50,   # Large Cargo
+            Ship.LIGHT_FIGHTER: 20,   # Light Fighter
+            Ship.HEAVY_FIGHTER: 75,   # Heavy Fighter
+            Ship.CRUISER: 300,   # Cruiser
+            Ship.BATTLESHIP: 500,  # Battleship
+            Ship.COLONY_SHIP: 1000,  # Colony Ship
+            Ship.RECYCLER: 300,  # Recycler
+            Ship.ESPIONAGE_PROBE: 1,    # Espionage Probe
+            Ship.BOMBER: 700, # Bomber
+            Ship.SOLAR_SATELLITE: 1,    # Solar Satellite
+            Ship.DESTROYER: 1000, # Destroyer
+            Ship.DEATHSTAR: 1,# Deathstar
+            Ship.BATTLECRUISER: 250,  # Battlecruiser
+            Ship.REAPER: 1100, # Reaper
+            Ship.PATHFINDER: 300,   # Pathfinder
+            Ship.CRAWLER: 1    # Crawler
+        }
+        ship_name = cls.get_name_by_id(ship_id)
+        if ship_name not in consumption_lookup:
+            raise ValueError(f"Invalid Ship ID: {ship_id}. No corresponding consumption found.")
+        return consumption_lookup[ship_name]
+    
+    @classmethod
+    def get_expedition_points_by_id(cls, ship_id: str) -> int:
+        """
+        Get the Ship expedition points by its ID.
+        Raises a ValueError if the ID is invalid.
+        """
+        expedition_points_lookup = {
+            Ship.LIGHT_FIGHTER: 20,
+            Ship.HEAVY_FIGHTER: 50,
+            Ship.CRUISER: 135,
+            Ship.BATTLESHIP: 300,
+            Ship.BATTLECRUISER: 350,
+            Ship.BOMBER: 375,
+            Ship.DESTROYER: 600,
+            Ship.DEATHSTAR: 900,
+            Ship.SMALL_CARGO: 10,
+            Ship.LARGE_CARGO: 25,
+            Ship.COLONY_SHIP: 100,
+            Ship.RECYCLER: 40,
+            Ship.REAPER: 900,
+            Ship.PATHFINDER: 75,
+            Ship.ESPIONAGE_PROBE: 1
+        }
+        ship_name = cls.get_name_by_id(ship_id)
+        if ship_name not in expedition_points_lookup:
+            raise ValueError(f"Invalid Ship ID: {ship_id}. No corresponding expedition points found.")
+        return expedition_points_lookup[ship_name]
 
 unwanted_ships_for_expeditions = [
     Ship.ESPIONAGE_PROBE.value,

@@ -248,8 +248,8 @@ class ShipToDispatch(TypedDict):
 FleetToDispatch = List[ShipToDispatch]
 Coordinates = List[int]  # [galaxy, system, slot]
 
-class ExpeditionConfig(TypedDict, total=False):
+class ExpeditionConfig(TypedDict, total=True):
     target_id: str
 
-class DiscoveriesConfig(TypedDict, total=False):
+class DiscoveriesConfig(TypedDict, total=True):
     target_id: str

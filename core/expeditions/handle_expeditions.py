@@ -97,11 +97,8 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     print("[INFO] Handling expeditions batch...")
 
     # 1. Get Target Planet
-    if config and config.get("target_id"):
-        target_id = config.get("target_id") or ""
-        planet = None
-
-        # for now just get the first planet on the list
+    if config and config["target_id"]:
+        target_id = config["target_id"]
         planet_id = PlanetId(target_id)
     else:
         print("[INFO] No target planet IDs in config. Using default Moon.")
@@ -111,8 +108,6 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     if not planet:
         print(f"[ERROR] Target planet not found for expedition.")
         return 0
-
-    planet_id = PlanetId(str(planet.get("id")))
 
     # Check Deuterium Level
     if not check_deuterium_level(planet):

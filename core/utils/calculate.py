@@ -83,6 +83,7 @@ def check_deuterium_level(planet: PlanetDict) -> bool:
     if threshold < 50_000:
         threshold = 50_000
     deuterium = int(planet.get('resources', {}).get('deuterium', 0))
+    return True
     return deuterium >= threshold
 
 # def calculate_expedition_deuterium(planet: PlanetDict, target_coords: str) -> int:

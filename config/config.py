@@ -121,6 +121,10 @@ DEFAULT_PLANET_ID = PLANETS["home_planet"]["id"]
 # Planet to use for expeditions
 DEFAULT_EXPEDITION_PLANET_ID = PLANETS["colony3"]["id"]
 
+# Expedition fleet speed percentage (10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+# Lower speed = less fuel consumption, Higher speed = faster return
+DEFAULT_EXPEDITION_SPEED = 100  # 100% speed
+
 # Lobby URL
 LOBBY_URL = f"https://lobby.ogame.gameforge.com/en_GB/hub"
 

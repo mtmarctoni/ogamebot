@@ -3,7 +3,7 @@ import re
 from typing import List, Optional
 from playwright.sync_api import Page
 
-from config.config import DEFAULT_EXPEDITION_PLANET_ID
+from config.config import DEFAULT_EXPEDITION_PLANET_ID, DEFAULT_EXPEDITION_SPEED
 from config.types import EmpireSnapshotDict, ExpeditionConfig, FleetToDispatch, PlanetId
 from constants.general import COMPONENTS
 from constants.ships import Ships
@@ -76,19 +76,23 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
         mission_button.click()
         page.wait_for_timeout(1000)
 
-        # 3. Set Speed to Minimum (10%)
-        print("[INFO] Setting expedition speed to 10%...")
+        # 3. Set Speed
+        print(f"[INFO] Setting expedition speed to {DEFAULT_EXPEDITION_SPEED}%...")
         try:
-            # Locate the speed percentage div containing the "10" option
-            speed_selector = page.locator('#speedPercentage div[data-step="1"]:has-text("10")')
+            # Calculate the data-step attribute based on speed percentage
+            # Speed steps: 10%=1, 20%=2, 30%=3, ..., 100%=10
+            speed_step = DEFAULT_EXPEDITION_SPEED // 10
+            
+            # Locate the speed percentage div for the configured speed
+            speed_selector = page.locator(f'#speedPercentage div[data-step="{speed_step}"]:has-text("{DEFAULT_EXPEDITION_SPEED}")')
             if speed_selector.is_visible():
                 speed_selector.click()
-                print("[INFO] Speed set to 10%")
+                print(f"[INFO] Speed set to {DEFAULT_EXPEDITION_SPEED}%")
                 page.wait_for_timeout(500)
             else:
-                print("[WARN] Could not find speed selector with 10%. Proceeding with default speed.")
+                print(f"[WARN] Could not find speed selector with {DEFAULT_EXPEDITION_SPEED}%. Proceeding with default speed.")
         except Exception as e:
-            print(f"[WARN] Failed to set speed to 10%: {e}. Proceeding with default speed.")
+            print(f"[WARN] Failed to set speed to {DEFAULT_EXPEDITION_SPEED}%: {e}. Proceeding with default speed.")
 
         # 4. Click the send fleet button
         send_button = page.locator("#sendFleet")

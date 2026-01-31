@@ -5,7 +5,7 @@
     "expedition_planet_id": "33634167"
   },
   "discoveries": {
-    "enable_discoveries": true,
+    "enable_discoveries": false,
     "discovery_planet_id": "33634167"
   },
   "upgrades": {
@@ -59,58 +59,58 @@
       ],
       "lifeform_buildings": {
         "human": [
+          "high_energy_smelting",
+          "fusion_powered_production",
+          "biosphere_farm",
+          "residential_sector",
           "research_center",
           "academy_of_sciences",
           "neuro_calibration_center",
-          "high_energy_smelting",
-          "skyscraper",
-          "biosphere_farm",
-          "residential_sector",
-          "food_silo",
-          "fusion_powered_production",
           "biotech_lab",
+          "skyscraper",
+          "food_silo",
           "metropolis",
           "planetary_shield"
         ],
         "kaelesh": [
-          "sanctuary",
-          "antimatter_condenser",
           "vortex_chamber",
-          "halls_of_realization",
-          "forum_of_transcendence",
-          "antimatter_convector",
+          "antimatter_condenser",
           "cloning_laboratory",
+          "halls_of_realization",
+          "antimatter_convector",
           "chrysalis_accelerator",
           "bio_modifier",
           "psionic_modulator",
           "ship_manufacturing_hall",
-          "supra_refractor"
+          "sanctuary",
+          "supra_refractor",
+          "forum_of_transcendence"
         ],
         "mecha": [
           "assembly_line",
           "fusion_cell_factory",
-          "robotics_research_centre",
-          "update_network",
-          "quantum_computer_centre",
-          "automatised_assembly_centre",
-          "high_performance_transformer",
-          "microchip_assembly_line",
-          "production_assembly_hall",
           "high_performance_synthesiser",
+          "high_performance_transformer",
+          "production_assembly_hall",
+          "robotics_research_centre",
+          "quantum_computer_centre",
+          "update_network",
+          "automatised_assembly_centre",
+          "microchip_assembly_line",
           "chip_mass_production",
           "nano_repair_bots"
         ],
         "rocktal": [
-          "meditation_enclave",
           "crystal_farm",
+          "deuterium_furnace",
+          "rocktal_collector",
+          "crystal_refinery",
           "rune_technologium",
           "oriktorium",
           "magma_forge",
+          "meditation_enclave",
           "disruption_chamber",
           "metropolis",
-          "rocktal_collector",
-          "crystal_refinery",
-          "deuterium_furnace",
           "megalith",
           "forum_of_transcendence"
         ]
@@ -118,28 +118,28 @@
     },
     "soft_level_caps": {
       "energy": {
-        "solarPlant": 50,
-        "fusionPlant": 30
+        "solarPlant": 28,
+        "fusionPlant": 12
       },
       "resources": {
-        "metal": 50,
-        "crystal": 50,
-        "deuterium": 50
+        "metal": 35,
+        "crystal": 31,
+        "deuterium": 30
       },
       "storage": {
-        "metalStorage": 30,
-        "crystalStorage": 30,
-        "deuteriumStorage": 30
+        "metalStorage": 20,
+        "crystalStorage": 20,
+        "deuteriumStorage": 20
       },
+      "missileSilo": 5,
       "facilities": {
-        "naniteFactory": 20,
-        "roboticsFactory": 20,
-        "researchLaboratory": 20,
-        "shipyard": 20,
-        "terraformer": 10,
-        "missileSilo": 10,
-        "allianceDepot": 10,
-        "repairDock": 10
+        "naniteFactory": 6,
+        "roboticsFactory": 15,
+        "researchLaboratory": 14,
+        "shipyard": 12,
+        "terraformer": 12,
+        "allianceDepot": 1,
+        "repairDock": 4
       },
       "research": {
         "astrophysicsTechnology": 100,
@@ -155,65 +155,65 @@
         "armorTechnology": 100,
         "laserTechnology": 100,
         "ionTechnology": 100,
-        "researchNetworkResearchNetwork": 5,
+        "researchNetworkResearchNetwork": 100,
         "gravitonTechnology": 1
       },
       "lifeform_buildings": {
         "human": {
-          "research_center": 15,
-          "academy_of_sciences": 15,
-          "neuro_calibration_center": 15,
-          "high_energy_smelting": 15,
-          "skyscraper": 15,
-          "biosphere_farm": 15,
-          "residential_sector": 15,
-          "food_silo": 15,
-          "fusion_powered_production": 15,
-          "biotech_lab": 15,
-          "metropolis": 10,
-          "planetary_shield": 10
+          "research_center": 100,
+          "high_energy_smelting": 100,
+          "academy_of_sciences": 100,
+          "neuro_calibration_center": 100,
+          "skyscraper": 100,
+          "biosphere_farm": 100,
+          "residential_sector": 100,
+          "food_silo": 100,
+          "fusion_powered_production": 100,
+          "biotech_lab": 100,
+          "metropolis": 100,
+          "planetary_shield": 100
         },
         "kaelesh": {
-          "sanctuary": 15,
-          "antimatter_condenser": 15,
-          "vortex_chamber": 15,
-          "halls_of_realization": 15,
-          "forum_of_transcendence": 10,
-          "antimatter_convector": 15,
-          "cloning_laboratory": 15,
-          "chrysalis_accelerator": 15,
-          "bio_modifier": 15,
-          "psionic_modulator": 15,
-          "ship_manufacturing_hall": 10,
-          "supra_refractor": 10
+          "sanctuary": 100,
+          "antimatter_condenser": 100,
+          "vortex_chamber": 100,
+          "halls_of_realization": 100,
+          "forum_of_transcendence": 100,
+          "antimatter_convector": 100,
+          "cloning_laboratory": 100,
+          "chrysalis_accelerator": 100,
+          "bio_modifier": 100,
+          "psionic_modulator": 100,
+          "ship_manufacturing_hall": 100,
+          "supra_refractor": 100
         },
         "mecha": {
-          "assembly_line": 15,
-          "fusion_cell_factory": 15,
-          "robotics_research_centre": 15,
-          "update_network": 15,
-          "quantum_computer_centre": 15,
-          "automatised_assembly_centre": 15,
-          "high_performance_transformer": 15,
-          "microchip_assembly_line": 15,
-          "production_assembly_hall": 15,
-          "high_performance_synthesiser": 15,
-          "chip_mass_production": 15,
-          "nano_repair_bots": 10
+          "assembly_line": 100,
+          "fusion_cell_factory": 100,
+          "robotics_research_centre": 100,
+          "update_network": 100,
+          "quantum_computer_centre": 100,
+          "automatised_assembly_centre": 100,
+          "high_performance_transformer": 100,
+          "microchip_assembly_line": 100,
+          "production_assembly_hall": 100,
+          "high_performance_synthesiser": 100,
+          "chip_mass_production": 100,
+          "nano_repair_bots": 100
         },
         "rocktal": {
-          "meditation_enclave": 15,
-          "crystal_farm": 15,
-          "rune_technologium": 15,
-          "oriktorium": 15,
-          "magma_forge": 15,
-          "disruption_chamber": 15,
-          "metropolis": 10,
-          "rocktal_collector": 15,
-          "crystal_refinery": 15,
-          "deuterium_furnace": 15,
-          "megalith": 10,
-          "forum_of_transcendence": 10
+          "meditation_enclave": 100,
+          "crystal_farm": 100,
+          "rune_technologium": 100,
+          "oriktorium": 100,
+          "magma_forge": 100,
+          "disruption_chamber": 100,
+          "metropolis": 100,
+          "rocktal_collector": 100,
+          "crystal_refinery": 100,
+          "deuterium_furnace": 100,
+          "megalith": 100,
+          "forum_of_transcendence": 100
         }
       }
     }

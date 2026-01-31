@@ -83,10 +83,8 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
         # use PLANETS config to get specie info
         for _, planet_info in PLANETS.items():
             if str(planet_info.get('id')) == str(planet_id):
-                specie['id'] = LifeformClass.get_id_by_name(
-    Lifeforms(planet_info.get('species', 'human').lower())
-)
                 specie['name'] = planet_info.get('species', 'human').lower()
+                specie['id'] = LifeformClass.get_id_by_name(Lifeforms(specie['name']))
                 break   
 
         # Resources
@@ -228,7 +226,7 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
             'temperature': temp,
             'energy': energy,
             'type': 'moon' if is_moon else 'planet',
-            'specie': specie.get("name", "Unknown"),
+            'specie': specie['name'],
             'resources': resources,
             'storage': storage,
             'buildings': buildings,

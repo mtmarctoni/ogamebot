@@ -35,13 +35,12 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
     """
     total_durations: List[int] = []
 
-    # Use SafeTypedConfig utility for type-safe access
     upgrades_section = config["upgrades"]
     upgrade_order = upgrades_section["group_order"]
     
     for planet in empire_data["planets"]:
-        planet_name = planet.get('name', 'Unknown')
-        planet_id = planet.get('id', 'Unknown')
+        planet_name = planet['name']
+        planet_id = planet['id']
         print(f"\n[INFO] Processing upgrades for: {planet_name} (ID: {planet_id})")
 
         planet_durations: List[int] = []
@@ -49,10 +48,11 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
             enabled = upgrades_section["toggles"][upgrade]
             if not enabled:
                 continue
-            handler = UPGRADE_HANDLERS.get(upgrade)
-            if handler:
-                durations = handler(planet, page, config, notifier)
-                planet_durations.extend(durations if durations else [])
+            handler = UPGRADE_HANDLERS[upgrade]
+
+            durations = handler(planet, page, config, notifier)
+            planet_durations.extend(durations if durations else [])
+            
         total_durations.extend([d for d in planet_durations if d > 0])
 
     if total_durations:

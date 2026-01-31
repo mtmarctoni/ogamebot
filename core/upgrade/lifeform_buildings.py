@@ -2,8 +2,8 @@ from typing import cast, Type
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
-from config.types import ConfigType, LifeformBuildingsType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel, LIFEFORM_BUILDING_ENUM_MAP
-from constants.lifeforms import LifeformClass, Lifeforms
+from config.types import ConfigType, LifeformBuildingsType, PlanetDict, PlanetId, PlanetName, UpgradableLifeformBuilding, StringCoords, TechId, TechName, TechLevel, LIFEFORM_BUILDING_ENUM_MAP, LIFEFORM_BUILDING_CLASS_MAP
+from constants.lifeforms import Lifeforms
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.upgrade.actions import UpgradeTech, upgrade_tech
 
@@ -43,21 +43,38 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
     """
     upgradable_buildings: List[UpgradableLifeformBuilding] = []
 
-    planet_id = planet.get('id')
-    planet_name = planet.get('name') or "Unknown"
-    coords = planet.get('coords') or "?"
-    lifeform_buildings_data = planet.get('lifeform_buildings', {})
+    planet_id = planet['id']
+    planet_name = planet['name']
+    coords = planet['coords']
+    lifeform_buildings_data = planet['lifeform_buildings']
+    
+    # Determine the lifeform type for this planet
+    lifeform_str = planet['specie'].lower()
+
+    try:
+        lifeform = Lifeforms(lifeform_str)
+    except ValueError:
+        print(f"[ERROR] Unknown lifeform specie: {lifeform_str}. Skipping building lookup.")
+        return upgradable_buildings
+    
+    # Get the appropriate building class for ID lookups
+    building_class = LIFEFORM_BUILDING_CLASS_MAP[lifeform]
 
     for building_id, building_info in lifeform_buildings_data.items():
-        building_name = LifeformClass.get_name_by_id(building_id) or "Not a lifeform building"
-        if building_info.get('upgradable'):
+        try:
+            building_name = building_class.get_name_by_id(building_id)
+        except ValueError:
+            print(f"[WARN] Unknown building ID {building_id} for {lifeform.value} on planet {planet_name}")
+            continue
+            
+        if building_info['upgradable'] is True:
             upgradable_buildings.append({
                 'planet_id': PlanetId(str(planet_id)),
                 'planet_name': PlanetName(planet_name),
                 'coordinates': StringCoords(coords),
                 'building': cast(TechName, building_name),
                 'building_id': TechId(building_id),
-                'level': TechLevel(building_info.get('level', 0)),
+                'level': TechLevel(building_info['level']),
                 })
 
     return upgradable_buildings
@@ -105,8 +122,12 @@ def handle_lifeform_buildings_upgrade(
     """
 
     upgrade_durations: List[int] = []
+
+    # Find all upgradable lifeform buildings on the planet
+    upgradable_buildings = find_upgradable_lifeform_buildings(planet)
+    
     # Convert to Lifeforms enum
-    lifeform = Lifeforms(planet.get("specie", "human").lower())
+    lifeform = Lifeforms(planet['specie'].lower())
 
     # get prioritized upgradable lifeform buildings from config
     # Convert config strings to the appropriate Enum type based on lifeform
@@ -115,7 +136,6 @@ def handle_lifeform_buildings_upgrade(
         enum_class(b) for b in config["upgrades"]['priorities']['lifeform_buildings'][lifeform.value]
     ]
 
-    upgradable_buildings = find_upgradable_lifeform_buildings(planet)
     building_list: List[TechName] =  [b['building'] for b in upgradable_buildings]
 
     # Prioritize the upgradable buildings based on the defined priority
@@ -145,11 +165,11 @@ def handle_lifeform_buildings_upgrade(
 
         if duration > 0:
             upgrade_durations.append(duration)
-            print(f"[INFO] Lifeform upgrade: '{building_name}' started on planet {planet.get('name', 'Unknown')} (duration: {duration}s)")
-            safe_notify(notifier, f"✅ Successfully started upgrade for '{building_name}' on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
+            print(f"[INFO] Lifeform upgrade: '{building_name}' started on planet {planet['name']} (duration: {duration}s)")
+            safe_notify(notifier, f"✅ Successfully started upgrade for '{building_name}' on planet {planet['name']}. Duration: {duration} seconds.")
         else:
-            print(f"[ERROR] Lifeform upgrade failed: '{building_name}' on planet {planet.get('name', 'Unknown')}")
-            safe_notify(notifier, f"⚠️ Failed to upgrade '{building_name}' on planet {planet.get('name', 'Unknown')}. Please check manually.")
+            print(f"[ERROR] Lifeform upgrade failed: '{building_name}' on planet {planet['name']}")
+            safe_notify(notifier, f"⚠️ Failed to upgrade '{building_name}' on planet {planet['name']}. Please check manually.")
 
         break  # Exit after upgrading one building
     return upgrade_durations

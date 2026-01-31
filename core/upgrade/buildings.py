@@ -236,7 +236,7 @@ def handle_building_resources_upgrade(planet: PlanetDict, game_page: Page, confi
     # Sort the upgradable buildings list before determining which one to upgrade
     upgradable_buildings = sorted(
         upgradable_buildings,
-        key=lambda b: (resource_priorities.index(Resources(str(b['resource']))), b['level'])
+        key=lambda b: (resource_priorities.index(Resources(b['resource'])), b['level'])
     )
 
     print(f"[INFO] Upgradable building candidates found: {len(upgradable_buildings)}")

@@ -3,7 +3,10 @@ from config.shared_types import TechId, TechLevel, PlanetDict, PlanetId, PlanetN
 from constants.energy import EnergyBuilding
 from constants.facilities import Facility
 from constants.lifeforms import Lifeforms
-from constants.lifeform_buildings import HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding
+from constants.lifeform_buildings import (
+    HumanLifeformBuilding, KaeleshLifeformBuilding, MechaLifeformBuilding, RocktalLifeformBuilding,
+    HumanLifeformBuildingClass, KaeleshLifeformBuildingClass, MechaLifeformBuildingClass, RocktalLifeformBuildingClass
+)
 from constants.research import Research
 from constants.resources import Resources
 
@@ -32,6 +35,7 @@ class UpgradeTogglesRawType(TypedDict):
     storage: bool
 
 type LifeformBuildingsType = HumanLifeformBuilding | KaeleshLifeformBuilding | MechaLifeformBuilding | RocktalLifeformBuilding
+type LifeformBuildingTypeClass = type[HumanLifeformBuildingClass] | type[KaeleshLifeformBuildingClass] | type[MechaLifeformBuildingClass] | type[RocktalLifeformBuildingClass]
 
 # Mapping from Lifeform enum to corresponding building enum class
 LIFEFORM_BUILDING_ENUM_MAP: Dict[Lifeforms, Type[LifeformBuildingsType]] = {
@@ -39,6 +43,17 @@ LIFEFORM_BUILDING_ENUM_MAP: Dict[Lifeforms, Type[LifeformBuildingsType]] = {
     Lifeforms.KAELESH: KaeleshLifeformBuilding,
     Lifeforms.MECHA: MechaLifeformBuilding,
     Lifeforms.ROCKTAL: RocktalLifeformBuilding,
+}
+
+# Mapping from Lifeform enum to corresponding building class helper (for ID lookups)
+LIFEFORM_BUILDING_CLASS_MAP: Dict[
+    Lifeforms,
+    LifeformBuildingTypeClass
+] = {
+    Lifeforms.HUMAN: HumanLifeformBuildingClass,
+    Lifeforms.KAELESH: KaeleshLifeformBuildingClass,
+    Lifeforms.MECHA: MechaLifeformBuildingClass,
+    Lifeforms.ROCKTAL: RocktalLifeformBuildingClass,
 }
 
 class UpgradesPrioritiesRawType(TypedDict):

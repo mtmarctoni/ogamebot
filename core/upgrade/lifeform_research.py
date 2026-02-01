@@ -59,8 +59,10 @@ def handle_lifeform_research_upgrade(
     if not upgradable_research:
         return upgrade_durations
 
-    # Upgrade the first upgradable research
-    research_to_upgrade = upgradable_research[0]  # Select the highest-priority research
+    # Upgrade tech with the lowest level (first if a tie)
+    min_level = min([t["level"] for t in upgradable_research])
+    lowest_level_techs = [t for t in upgradable_research if t["level"] == min_level]
+    research_to_upgrade = lowest_level_techs[0]
     tech_id = research_to_upgrade["research_id"]
 
     params: UpgradeTech = {
@@ -74,8 +76,9 @@ def handle_lifeform_research_upgrade(
 
     if duration > 0:
         upgrade_durations.append(duration)
-        print(f"[INFO] Lifeform research upgrade: '{tech_id}' started on planet {planet.get('name', 'Unknown')} (duration: {duration}s)")
-        safe_notify(notifier, f"✅ Successfully started lifeform research for '{tech_id}' on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
+        print(f"[INFO] Lifeform research upgrade: '{tech_id}' (level {min_level}) started on planet {planet.get('name', 'Unknown')} (duration: {duration}s)")
+        safe_notify(notifier,
+            f"✅ Successfully started lifeform research for '{tech_id}' (level {min_level}) on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
     else:
         print(f"[ERROR] Lifeform research upgrade failed: '{tech_id}' on planet {planet.get('name', 'Unknown')}")
         safe_notify(notifier, f"⚠️ Failed to upgrade lifeform research '{tech_id}' on planet {planet.get('name', 'Unknown')}. Please check manually.")

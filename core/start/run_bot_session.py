@@ -65,14 +65,14 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 # Save the empire snapshot to a file
                 save_empire_snapshot(empire_data)
 
-                # Handle all upgrades for the empire
-                upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
-
                 # Handle expeditions based on dynamic config
                 if config["expeditions"]["enable_expeditions"]:
                     handle_expeditions(game_page, empire_data, notifier, ExpeditionConfig(target_id=config["expeditions"]["expedition_planet_id"]))
                 else:
                      print("[INFO] Expeditions are disabled in the configuration.")
+
+                # Handle all upgrades for the empire
+                upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
                 
                 # Handle discoveries based on dynamic config
                 if config["discoveries"]["enable_discoveries"]:

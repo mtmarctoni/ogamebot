@@ -128,7 +128,7 @@ PLANETS = {
     },
 }
 
-DEFAULT_PLANET_ID = PLANETS["home_planet"]["id"]
+DEFAULT_PLANET_ID = "33625285"
 
 # Planet to use for expeditions
 DEFAULT_EXPEDITION_PLANET_ID = PLANETS["colony3"]["id"]

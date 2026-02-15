@@ -14,7 +14,12 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
     """
     upgrade_durations: List[int] = []
 
-    # extract the config that might be needed in future enhancements
+    # Parse facility soft level caps from config (keys are Facility names)
+    facility_soft_caps = {
+        Facility(k): v
+        for k, v in config['upgrades']['soft_level_caps']['facilities'].items()
+    }
+
     prioritized_facilities = [Facility(f) for f in config['upgrades']['priorities']['facilities']]
 
     # Extract free fields from the "fields" string
@@ -49,25 +54,27 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
         if facility_id not in allowed_facilities:
             continue
         facility_info = planet['facilities'][facility_id]
-        # Facility upgrade filtering rules
+        # Facility upgrade filtering: skip Alliance Depot, enforce soft cap for all others
         ALLIANCE_DEPOT_ID = Facilities.get_id_by_name(Facility.ALLIANCE_DEPOT)
-        SPACE_DOCK_ID = Facilities.get_id_by_name(Facility.SPACE_DOCK)
-        MISSILE_SILO_ID = Facilities.get_id_by_name(Facility.MISSILE_SILO)
         if facility_id == ALLIANCE_DEPOT_ID:
             continue  # Never upgrade Alliance Depot
-        if facility_id == SPACE_DOCK_ID and facility_info['level'] >= 7:
-            continue  # Only upgrade Repair Dock if level < 7
-        if facility_id == MISSILE_SILO_ID and facility_info['level'] >= 5:
-            continue  # Only upgrade Missile Silo if level < 5
+
+        # Get config-driven cap for this facility (if present)
+        cap = facility_soft_caps.get(facility_name, None)
+        if cap is not None and facility_info['level'] >= cap:
+            print(f"[WARN] Skipping {facility_name}: at or above soft cap ({facility_info['level']} >= {cap}) on planet {planet['name']} ({planet['coords']})")
+            safe_notify(notifier, f"⚠️ {facility_name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
+            continue
+
         if facility_info['upgradable']:
             upgradable_count += 1
             planet_id = PlanetId(planet['id'])
-            facility_id = TechId(facility_id)
+            tech_id = TechId(facility_id)
             # Prepare the facility upgrade parameters
             params: UpgradeTech = {
                 'page': page,
                 'planet_id': planet_id,
-                'tech_id': facility_id,
+                'tech_id': tech_id,
                 'notifier': notifier
             }
 

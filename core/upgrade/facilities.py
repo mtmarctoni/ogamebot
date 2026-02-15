@@ -59,10 +59,6 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
         if facility_id == ALLIANCE_DEPOT_ID:
             continue  # Never upgrade Alliance Depot
 
-        print("---------------------------------------")
-        print(facility.name, facility_id, allowed_facilities, planet['name'], planet['coords'])
-        print(facility_soft_caps)
-
         # Get config-driven cap for this facility (if present)
         cap = facility_soft_caps[facility.value] if facility.value in facility_soft_caps else None
         if cap is None:
@@ -70,7 +66,6 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
             continue
         if facility_info['level'] >= cap:
             print(f"[WARN] Skipping {facility.name}: at or above soft cap ({facility_info['level']} >= {cap}) on planet {planet['name']} ({planet['coords']})")
-            safe_notify(notifier, f"⚠️ {facility.name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
             continue
 
         if facility_info['upgradable']:
@@ -96,7 +91,6 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
                 break  # Exit after successful upgrade
             else:
                 print(f"[WARN] ⚠ Failed to upgrade {facility.name} on planet {planet['name']} ({planet['coords']}). Button may be blocked. Trying next candidate...")
-                safe_notify(notifier, f"⚠️ Could not upgrade {facility.name} on planet {planet['name']} ({planet['coords']}) - may be blocked by ongoing operation")
                 continue  # Continue to next facility
 
     # Log if no facilities were upgradable or if all attempts failed

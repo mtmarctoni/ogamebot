@@ -90,10 +90,22 @@ PLANETS = {
         "coords": "[5:436:8]",
         "species": "Kaelesh",
     },
+    "colony9": {
+        "id": "33689973",
+        "name": "Nexus of the Void",
+        "coords": "[3:440:8]",
+        "species": "Kaelesh",
+    },
     "moon_home": {
         "id": "33645298",
         "name": "Nexus Selene",
         "coords": "[2:16:8]",
+        "species": "Human",
+    },
+        "moon_colony1": {
+        "id": "33684348",
+        "name": "Silent Echo",
+        "coords": "[2:21:8]",
         "species": "Human",
     },
     "moon_colony2": {

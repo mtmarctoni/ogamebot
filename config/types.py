@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, List, Dict, Optional, Type
+from typing import Literal, TypeAlias, TypedDict, List, Dict, Optional, Type
 from config.shared_types import TechId, TechLevel, PlanetDict, PlanetId, PlanetName, StringCoords, TechName
 from constants.energy import EnergyBuilding
 from constants.facilities import Facility
@@ -94,13 +94,15 @@ class UpgradesPrioritiesType(TypedDict):
     research: List[str]  # Runtime: strings from JSON, converted on-demand
     lifeform_buildings: Dict[str, List[str]]  # Runtime: string keys and values from JSON
 
+UpgradeCapsDict: TypeAlias = Dict[str, int]
+
 class UpgradeSoftLevelCapsType(TypedDict):
-    energy: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
-    resources: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
-    facilities: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand  
-    research: Dict[str, int]  # Runtime: string keys from JSON, converted on-demand
-    storage: Dict[str, int]  # Runtime: string keys from JSON
-    lifeform_buildings: Dict[str, Dict[str, int]]  # Runtime: string keys from JSON
+    energy: UpgradeCapsDict  # Runtime: string keys from JSON, converted on-demand
+    resources: UpgradeCapsDict  # Runtime: string keys from JSON, converted on-demand
+    facilities: UpgradeCapsDict  # Runtime: string keys from JSON, converted on-demand  
+    research: UpgradeCapsDict  # Runtime: string keys from JSON, converted on-demand
+    storage: UpgradeCapsDict  # Runtime: string keys from JSON
+    lifeform_buildings: Dict[str, UpgradeCapsDict]  # Runtime: string keys from JSON
 
 # Type aliases for processed/converted config data used in handlers
 EnergySoftLevelCaps = Dict[EnergyBuilding, TechLevel]

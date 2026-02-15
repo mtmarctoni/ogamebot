@@ -155,7 +155,18 @@ def handle_lifeform_buildings_upgrade(
         building_to_upgrade = buildings[0]  # The first building is the highest priority
         building_id = building_to_upgrade['building_id']
         building_name = building_to_upgrade['building']
+        current_level = building_to_upgrade['level']
 
+        # Enforce soft cap for this lifeform building
+        caps = config["upgrades"]["soft_level_caps"]['lifeform_buildings']
+        specie_caps = caps[lifeform.value]
+        cap = specie_caps[building_name]
+        
+        if current_level >= cap:
+            print(f"[WARN] Skipping {lifeform.value}/{building_name} on {planet['name']}: at or above soft cap ({current_level} >= {cap})")
+            safe_notify(notifier, f"⚠️ {lifeform.value.capitalize()} {building_name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
+            continue
+        
         # Simulate navigation and upgrade logic
         params: UpgradeTech = {
             "page": page,  # Replace with actual Page instance

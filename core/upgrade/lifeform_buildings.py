@@ -62,7 +62,7 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
 
     for building_id, building_info in lifeform_buildings_data.items():
         try:
-            building_name = building_class.get_name_by_id(building_id)
+            building_name = building_class.get_name_by_id(building_id).value
         except ValueError:
             print(f"[WARN] Unknown building ID {building_id} for {lifeform.value} on planet {planet_name}")
             continue
@@ -72,7 +72,7 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
                 'planet_id': PlanetId(str(planet_id)),
                 'planet_name': PlanetName(planet_name),
                 'coordinates': StringCoords(coords),
-                'building': cast(TechName, building_name),
+                'building': TechName(building_name),
                 'building_id': TechId(building_id),
                 'level': TechLevel(building_info['level']),
                 })
@@ -160,7 +160,11 @@ def handle_lifeform_buildings_upgrade(
         # Enforce soft cap for this lifeform building
         caps = config["upgrades"]["soft_level_caps"]['lifeform_buildings']
         specie_caps = caps[lifeform.value]
-        cap = specie_caps[building_name]
+        print("HEREEEEEEEEEEEEEEEE", specie_caps, building_name)
+        cap = specie_caps[building_name] if building_name in specie_caps else None
+        if cap is None:
+            print(f"[WARN] No soft cap configured for {lifeform.value}/{building_name} on planet {planet['name']}. Skipping upgrade.")
+            continue
         
         if current_level >= cap:
             print(f"[WARN] Skipping {lifeform.value}/{building_name} on {planet['name']}: at or above soft cap ({current_level} >= {cap})")

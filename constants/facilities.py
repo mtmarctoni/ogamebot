@@ -41,11 +41,11 @@ class Facilities:
         return cls._id_to_name_mapping[facility_id]
 
     @classmethod
-    def get_id_by_name(cls, facility_name: Facility) -> str:
+    def get_id_by_name(cls, facility: Facility) -> str:
         """
         Get the Facility ID by its name.
         Raises a ValueError if the name is invalid.
         """
-        if facility_name not in cls._name_to_id_mapping:
-            raise ValueError(f"Invalid Facility: {facility_name}. No corresponding ID found.")
-        return cls._name_to_id_mapping[facility_name]
+        if facility not in cls._name_to_id_mapping:
+            raise ValueError(f"Invalid Facility: {facility.name}. No corresponding ID found.")
+        return cls._name_to_id_mapping[facility]

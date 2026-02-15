@@ -16,7 +16,7 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
 
     # Parse facility soft level caps from config (keys are Facility names)
     facility_soft_caps = {
-        Facility(k): v
+        Facility(k).value: v
         for k, v in config['upgrades']['soft_level_caps']['facilities'].items()
     }
 
@@ -49,8 +49,8 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
     # Track if we found any upgradable facilities
     upgradable_count = 0
     
-    for facility_name in dynamic_priority:  # Use dynamic priority
-        facility_id = Facilities.get_id_by_name(facility_name)
+    for facility in dynamic_priority:  # Use dynamic priority
+        facility_id = Facilities.get_id_by_name(facility)
         if facility_id not in allowed_facilities:
             continue
         facility_info = planet['facilities'][facility_id]
@@ -59,11 +59,18 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
         if facility_id == ALLIANCE_DEPOT_ID:
             continue  # Never upgrade Alliance Depot
 
+        print("---------------------------------------")
+        print(facility.name, facility_id, allowed_facilities, planet['name'], planet['coords'])
+        print(facility_soft_caps)
+
         # Get config-driven cap for this facility (if present)
-        cap = facility_soft_caps[facility_name]
+        cap = facility_soft_caps[facility.value] if facility.value in facility_soft_caps else None
+        if cap is None:
+            print(f"[WARN] No soft cap configured for {facility.name}. Skipping upgrade on planet {planet['name']} ({planet['coords']}).")
+            continue
         if facility_info['level'] >= cap:
-            print(f"[WARN] Skipping {facility_name.name}: at or above soft cap ({facility_info['level']} >= {cap}) on planet {planet['name']} ({planet['coords']})")
-            safe_notify(notifier, f"⚠️ {facility_name.name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
+            print(f"[WARN] Skipping {facility.name}: at or above soft cap ({facility_info['level']} >= {cap}) on planet {planet['name']} ({planet['coords']})")
+            safe_notify(notifier, f"⚠️ {facility.name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
             continue
 
         if facility_info['upgradable']:
@@ -79,17 +86,17 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
             }
 
             # Attempt to upgrade the facility
-            print(f"[INFO] Attempting to upgrade {facility_name.name} on planet {planet['name']} ({planet['coords']})...")
+            print(f"[INFO] Attempting to upgrade {facility.name} on planet {planet['name']} ({planet['coords']})...")
             duration = upgrade_tech(**params)
 
             if duration > 0:
                 upgrade_durations.append(duration)
-                print(f"[INFO] ✓ Successfully upgraded {facility_name.name} on planet {planet['name']} ({planet['coords']}). Duration: {duration}s")
-                safe_notify(notifier, f"✅ Upgraded {facility_name.name} on planet {planet['name']} ({planet['coords']}). Duration: {duration}s")
+                print(f"[INFO] ✓ Successfully upgraded {facility.name} on planet {planet['name']} ({planet['coords']}). Duration: {duration}s")
+                safe_notify(notifier, f"✅ Upgraded {facility.name} on planet {planet['name']} ({planet['coords']}). Duration: {duration}s")
                 break  # Exit after successful upgrade
             else:
-                print(f"[WARN] ⚠ Failed to upgrade {facility_name.name} on planet {planet['name']} ({planet['coords']}). Button may be blocked. Trying next candidate...")
-                safe_notify(notifier, f"⚠️ Could not upgrade {facility_name.name} on planet {planet['name']} ({planet['coords']}) - may be blocked by ongoing operation")
+                print(f"[WARN] ⚠ Failed to upgrade {facility.name} on planet {planet['name']} ({planet['coords']}). Button may be blocked. Trying next candidate...")
+                safe_notify(notifier, f"⚠️ Could not upgrade {facility.name} on planet {planet['name']} ({planet['coords']}) - may be blocked by ongoing operation")
                 continue  # Continue to next facility
 
     # Log if no facilities were upgradable or if all attempts failed

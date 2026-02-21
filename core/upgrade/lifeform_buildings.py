@@ -62,7 +62,7 @@ def find_upgradable_lifeform_buildings(planet: PlanetDict) -> List[UpgradableLif
 
     for building_id, building_info in lifeform_buildings_data.items():
         try:
-            building_name = building_class.get_name_by_id(building_id).value
+            building_name = building_class.get_name_by_id(building_id)
         except ValueError:
             print(f"[WARN] Unknown building ID {building_id} for {lifeform.value} on planet {planet_name}")
             continue
@@ -140,6 +140,12 @@ def handle_lifeform_buildings_upgrade(
         enum_class(b) for b in config["upgrades"]['priorities']['lifeform_buildings'][lifeform.value]
     ]
 
+    # Skip if this planet is the designated expedition planet
+    expedition_planet_id = config["expeditions"]["expedition_planet_id"]
+    if planet['id'] == expedition_planet_id:
+        print(f"[INFO] Skipping lifeform building upgrades on expedition planet {planet['name']} ({planet['coords']}).")
+        return upgrade_durations
+
     building_list: List[TechName] =  [b['building'] for b in upgradable_buildings]
 
     # Prioritize the upgradable buildings based on the defined priority
@@ -160,7 +166,6 @@ def handle_lifeform_buildings_upgrade(
         # Enforce soft cap for this lifeform building
         caps = config["upgrades"]["soft_level_caps"]['lifeform_buildings']
         specie_caps = caps[lifeform.value]
-        print("HEREEEEEEEEEEEEEEEE", specie_caps, building_name)
         cap = specie_caps[building_name] if building_name in specie_caps else None
         if cap is None:
             print(f"[WARN] No soft cap configured for {lifeform.value}/{building_name} on planet {planet['name']}. Skipping upgrade.")
@@ -168,7 +173,6 @@ def handle_lifeform_buildings_upgrade(
         
         if current_level >= cap:
             print(f"[WARN] Skipping {lifeform.value}/{building_name} on {planet['name']}: at or above soft cap ({current_level} >= {cap})")
-            safe_notify(notifier, f"⚠️ {lifeform.value.capitalize()} {building_name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
             continue
         
         # Simulate navigation and upgrade logic
@@ -188,7 +192,6 @@ def handle_lifeform_buildings_upgrade(
             safe_notify(notifier, f"✅ Successfully started upgrade for '{building_name}' on planet {planet['name']}. Duration: {duration} seconds.")
         else:
             print(f"[ERROR] Lifeform upgrade failed: '{building_name}' on planet {planet['name']}")
-            safe_notify(notifier, f"⚠️ Failed to upgrade '{building_name}' on planet {planet['name']}. Please check manually.")
 
         break  # Exit after upgrading one building
     return upgrade_durations

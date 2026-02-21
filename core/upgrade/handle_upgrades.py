@@ -18,7 +18,7 @@ UPGRADE_HANDLERS: UpgradeHandlersType= {
     "resources": handle_building_resources_upgrade,
     "energy": handle_energy_buildings_upgrade,
     "research": handle_research_upgrades,
-    "lifeforms": handle_lifeform_buildings_upgrade,
+    "lifeform_buildings": handle_lifeform_buildings_upgrade,
     "storage": upgrade_full_storages,
     "lifeform_research": handle_lifeform_research_upgrade
 }

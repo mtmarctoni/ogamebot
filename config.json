@@ -25,7 +25,7 @@
       "research": true,
       "lifeforms": true,
       "storage": true,
-      "lifeform_research": true
+      "lifeform_research": false
     },
     "priorities": {
       "resources": ["crystal", "deuterium", "metal"],
@@ -47,34 +47,32 @@
         "impulseDriveTechnology",
         "hyperspaceTechnology",
         "computerTechnology",
-        "energyTechnology",
+        "ionTechnology",
         "espionageTechnology",
         "weaponsTechnology",
         "shieldingTechnology",
         "armorTechnology",
-        "laserTechnology",
-        "ionTechnology",
         "researchNetworkResearchNetwork",
+        "energyTechnology",
         "gravitonTechnology"
       ],
       "lifeform_buildings": {
         "human": [
+          "research_center",
           "high_energy_smelting",
           "fusion_powered_production",
-          "biosphere_farm",
-          "residential_sector",
-          "research_center",
           "academy_of_sciences",
           "neuro_calibration_center",
           "biotech_lab",
           "skyscraper",
           "food_silo",
           "metropolis",
+          "biosphere_farm",
+          "residential_sector",
           "planetary_shield"
         ],
         "kaelesh": [
           "vortex_chamber",
-          "antimatter_condenser",
           "cloning_laboratory",
           "halls_of_realization",
           "antimatter_convector",
@@ -82,9 +80,10 @@
           "bio_modifier",
           "psionic_modulator",
           "ship_manufacturing_hall",
-          "sanctuary",
           "supra_refractor",
-          "forum_of_transcendence"
+          "forum_of_transcendence",
+          "sanctuary",
+          "antimatter_condenser"
         ],
         "mecha": [
           "assembly_line",
@@ -118,20 +117,19 @@
     },
     "soft_level_caps": {
       "energy": {
-        "solarPlant": 28,
+        "solarPlant": 30,
         "fusionPlant": 12
       },
       "resources": {
         "metal": 35,
         "crystal": 31,
-        "deuterium": 30
+        "deuterium": 31
       },
       "storage": {
         "metalStorage": 20,
         "crystalStorage": 20,
         "deuteriumStorage": 20
       },
-      "missileSilo": 5,
       "facilities": {
         "naniteFactory": 6,
         "roboticsFactory": 15,
@@ -139,6 +137,7 @@
         "shipyard": 12,
         "terraformer": 12,
         "allianceDepot": 1,
+        "missileSilo": 5,
         "repairDock": 4
       },
       "research": {
@@ -148,14 +147,14 @@
         "impulseDriveTechnology": 100,
         "hyperspaceTechnology": 100,
         "computerTechnology": 100,
-        "energyTechnology": 100,
+        "ionTechnology": 25,
         "espionageTechnology": 100,
         "weaponsTechnology": 100,
         "shieldingTechnology": 100,
         "armorTechnology": 100,
-        "laserTechnology": 100,
-        "ionTechnology": 100,
-        "researchNetworkResearchNetwork": 100,
+        "laserTechnology": 12,
+        "energyTechnology": 15,
+        "researchNetworkResearchNetwork": 10,
         "gravitonTechnology": 1
       },
       "lifeform_buildings": {

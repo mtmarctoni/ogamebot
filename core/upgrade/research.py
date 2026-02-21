@@ -19,16 +19,16 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
     # Parse research soft level caps from config
     research_soft_caps = config["upgrades"]["soft_level_caps"]["research"]
 
-    for research_name in prioritized_researches:
-        research_id = Researches.get_id_by_name(research_name)
+    for research in prioritized_researches:
+        research_id = Researches.get_id_by_name(research.name)
         research_info = planet['research'][research_id]
         current_level = research_info['level']
-        cap = research_soft_caps[research_name.value]
+        cap = research_soft_caps[research.value]
 
         # Enforce cap
         if current_level >= cap:
-            print(f"[WARN] Skipping {research_name.name}: at or above soft cap ({current_level} >= {cap}) on planet {planet['name']} ({planet['coords']}).")
-            safe_notify(notifier, f"⚠️ {research_name.name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
+            print(f"[WARN] Skipping {research.name}: at or above soft cap ({current_level} >= {cap}) on planet {planet['name']} ({planet['coords']}).")
+            safe_notify(notifier, f"⚠️ {research.name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
             continue
         if research_info.get('upgradable', False):
             planet_id = PlanetId(planet['id'])
@@ -42,14 +42,14 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
             }
 
             # Upgrade the research
-            print(f"[DEBUG] Upgrading {research_name} on planet {planet['name']} ({planet['coords']}).")
+            print(f"[DEBUG] Upgrading {research} on planet {planet['name']} ({planet['coords']}).")
             duration = upgrade_tech(**params)
 
             if duration > 0:
                 upgrade_durations.append(duration)
-                safe_notify(notifier, f"Upgraded {research_name} on planet {planet['name']} ({planet['coords']}).. Duration: {duration} seconds.")
+                safe_notify(notifier, f"Upgraded {research} on planet {planet['name']} ({planet['coords']}).. Duration: {duration} seconds.")
             else:
-                safe_notify(notifier, f"Failed to upgrade {research_name} on planet {planet['name']} ({planet['coords']})..")
+                safe_notify(notifier, f"Failed to upgrade {research} on planet {planet['name']} ({planet['coords']})..")
 
             break  # Exit after upgrading one research
 

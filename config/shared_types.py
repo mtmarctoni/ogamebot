@@ -5,6 +5,7 @@ TechId = NewType('TechId', str)
 PlanetId = NewType('PlanetId', str)
 PlanetName = NewType('PlanetName', str)
 TechName = NewType('TechName', str)
+TechValue = NewType('TechValue', str)
 TechLevel = NewType('TechLevel', int)
 StringCoords = NewType('StringCoords', str)
 

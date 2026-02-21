@@ -123,6 +123,12 @@ def handle_lifeform_buildings_upgrade(
 
     upgrade_durations: List[int] = []
 
+    # Skip if this planet is the designated expedition planet
+    expedition_planet_id = config["expeditions"]["expedition_planet_id"]
+    if planet['id'] == expedition_planet_id:
+        print(f"[INFO] Skipping lifeform building upgrades on expedition planet {planet['name']} ({planet['coords']}).")
+        return upgrade_durations
+
     # Find all upgradable lifeform buildings on the planet
     upgradable_buildings = find_upgradable_lifeform_buildings(planet)
     
@@ -139,12 +145,6 @@ def handle_lifeform_buildings_upgrade(
     prioritized_lifeform_buildings: List[LifeformBuildingsType] = [
         enum_class(b) for b in config["upgrades"]['priorities']['lifeform_buildings'][lifeform.value]
     ]
-
-    # Skip if this planet is the designated expedition planet
-    expedition_planet_id = config["expeditions"]["expedition_planet_id"]
-    if planet['id'] == expedition_planet_id:
-        print(f"[INFO] Skipping lifeform building upgrades on expedition planet {planet['name']} ({planet['coords']}).")
-        return upgrade_durations
 
     building_list: List[TechName] =  [b['building'] for b in upgradable_buildings]
 

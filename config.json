@@ -14,7 +14,7 @@
       "resources",
       "energy",
       "research",
-      "lifeforms",
+      "lifeform_buildings",
       "lifeform_research",
       "storage"
     ],
@@ -23,7 +23,7 @@
       "resources": true,
       "energy": true,
       "research": true,
-      "lifeforms": true,
+      "lifeform_buildings": true,
       "storage": true,
       "lifeform_research": false
     },

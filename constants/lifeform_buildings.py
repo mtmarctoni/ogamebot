@@ -88,6 +88,38 @@ class HumanLifeformBuildingClass:
         """Return all Human building names as TechName objects."""
         return [TechName(e.name) for e in HumanLifeformBuilding]
 
+    @classmethod
+    def get_enum_by_name(cls, building_name: Union[str, TechName]) -> HumanLifeformBuilding:
+        """
+        Get Enum by building name (internal/advanced).
+        Accepts str or TechName.
+        Raises ValueError if not found.
+        """
+        typed_name = TechName(building_name)
+        if typed_name not in cls._name_to_enum_mapping:
+            raise ValueError(f"Invalid Human building name: {building_name}.")
+        return cls._name_to_enum_mapping[typed_name]
+
+    @classmethod
+    def get_name_by_value(cls, value: str) -> str:
+        """
+        Given a building 'value', return its Enum 'name'.
+        """
+        for member in HumanLifeformBuilding:
+            if member.value == value:
+                return member.name
+        raise ValueError(f"Value '{value}' not found in HumanLifeformBuilding.")
+
+    @classmethod
+    def get_value_by_name(cls, name: str) -> str:
+        """
+        Given a building Enum 'name', return its 'value'.
+        """
+        try:
+            return HumanLifeformBuilding[name].value
+        except KeyError:
+            raise ValueError(f"Name '{name}' not found in HumanLifeformBuilding.")
+
 
 class KaeleshLifeformBuilding(Enum):
     SANCTUARY = 'sanctuary'
@@ -128,6 +160,26 @@ class KaeleshLifeformBuildingClass:
     }
     _enum_to_id_mapping = {v: k for k, v in _id_to_enum_mapping.items()}
     _name_to_enum_mapping = {TechName(e.name): e for e in KaeleshLifeformBuilding}
+
+    @classmethod
+    def get_name_by_value(cls, value: str) -> str:
+        """
+        Given a building 'value', return its Enum 'name'.
+        """
+        for member in KaeleshLifeformBuilding:
+            if member.value == value:
+                return member.name
+        raise ValueError(f"Value '{value}' not found in KaeleshLifeformBuilding.")
+
+    @classmethod
+    def get_value_by_name(cls, name: str) -> str:
+        """
+        Given a building Enum 'name', return its 'value'.
+        """
+        try:
+            return KaeleshLifeformBuilding[name].value
+        except KeyError:
+            raise ValueError(f"Name '{name}' not found in KaeleshLifeformBuilding.")
 
     @classmethod
     def get_name_by_id(cls, building_id: Union[str, TechId]) -> TechName:
@@ -176,6 +228,18 @@ class KaeleshLifeformBuildingClass:
         """Return all Kaelesh building names as TechName objects."""
         return [TechName(e.name) for e in KaeleshLifeformBuilding]
 
+    @classmethod
+    def get_enum_by_name(cls, building_name: Union[str, TechName]) -> KaeleshLifeformBuilding:
+        """
+        Get Enum by building name (internal/advanced).
+        Accepts str or TechName.
+        Raises ValueError if not found.
+        """
+        typed_name = TechName(building_name)
+        if typed_name not in cls._name_to_enum_mapping:
+            raise ValueError(f"Invalid Kaelesh building name: {building_name}.")
+        return cls._name_to_enum_mapping[typed_name]
+
 
 class MechaLifeformBuilding(Enum):
     ASSEMBLY_LINE = 'assembly_line'
@@ -216,6 +280,26 @@ class MechaLifeformBuildingClass:
     }
     _enum_to_id_mapping = {v: k for k, v in _id_to_enum_mapping.items()}
     _name_to_enum_mapping = {TechName(e.name): e for e in MechaLifeformBuilding}
+
+    @classmethod
+    def get_name_by_value(cls, value: str) -> str:
+        """
+        Given a building 'value', return its Enum 'name'.
+        """
+        for member in MechaLifeformBuilding:
+            if member.value == value:
+                return member.name
+        raise ValueError(f"Value '{value}' not found in MechaLifeformBuilding.")
+
+    @classmethod
+    def get_value_by_name(cls, name: str) -> str:
+        """
+        Given a building Enum 'name', return its 'value'.
+        """
+        try:
+            return MechaLifeformBuilding[name].value
+        except KeyError:
+            raise ValueError(f"Name '{name}' not found in MechaLifeformBuilding.")
 
     @classmethod
     def get_name_by_id(cls, building_id: Union[str, TechId]) -> TechName:
@@ -264,6 +348,18 @@ class MechaLifeformBuildingClass:
         """Return all Mecha building names as TechName objects."""
         return [TechName(e.name) for e in MechaLifeformBuilding]
 
+    @classmethod
+    def get_enum_by_name(cls, building_name: Union[str, TechName]) -> MechaLifeformBuilding:
+        """
+        Get Enum by building name (internal/advanced).
+        Accepts str or TechName.
+        Raises ValueError if not found.
+        """
+        typed_name = TechName(building_name)
+        if typed_name not in cls._name_to_enum_mapping:
+            raise ValueError(f"Invalid Mecha building name: {building_name}.")
+        return cls._name_to_enum_mapping[typed_name]
+
 
 class RocktalLifeformBuilding(Enum):
     MEDITATION_ENCLAVE = 'meditation_enclave'
@@ -304,6 +400,26 @@ class RocktalLifeformBuildingClass:
     }
     _enum_to_id_mapping = {v: k for k, v in _id_to_enum_mapping.items()}
     _name_to_enum_mapping = {TechName(e.name): e for e in RocktalLifeformBuilding}
+
+    @classmethod
+    def get_name_by_value(cls, value: str) -> str:
+        """
+        Given a building 'value', return its Enum 'name'.
+        """
+        for member in RocktalLifeformBuilding:
+            if member.value == value:
+                return member.name
+        raise ValueError(f"Value '{value}' not found in RocktalLifeformBuilding.")
+
+    @classmethod
+    def get_value_by_name(cls, name: str) -> str:
+        """
+        Given a building Enum 'name', return its 'value'.
+        """
+        try:
+            return RocktalLifeformBuilding[name].value
+        except KeyError:
+            raise ValueError(f"Name '{name}' not found in RocktalLifeformBuilding.")
 
     @classmethod
     def get_name_by_id(cls, building_id: Union[str, TechId]) -> TechName:
@@ -351,3 +467,15 @@ class RocktalLifeformBuildingClass:
     def get_all_names(cls) -> List[TechName]:
         """Return all Rocktal building names as TechName objects."""
         return [TechName(e.name) for e in RocktalLifeformBuilding]
+
+    @classmethod
+    def get_enum_by_name(cls, building_name: Union[str, TechName]) -> RocktalLifeformBuilding:
+        """
+        Get Enum by building name (internal/advanced).
+        Accepts str or TechName.
+        Raises ValueError if not found.
+        """
+        typed_name = TechName(building_name)
+        if typed_name not in cls._name_to_enum_mapping:
+            raise ValueError(f"Invalid Rocktal building name: {building_name}.")
+        return cls._name_to_enum_mapping[typed_name]

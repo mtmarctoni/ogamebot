@@ -1,4 +1,4 @@
-from typing import cast, Type
+from typing import Type
 from playwright.sync_api import Page
 from typing import List, Dict, Optional
 
@@ -10,8 +10,8 @@ from core.upgrade.actions import UpgradeTech, upgrade_tech
 
 def prioritize_lifeform_buildings(
     buildings: List[TechName],
-    prioritized_lifeform_buildings: List[LifeformBuildingsType]
-) -> List[LifeformBuildingsType]:
+    prioritized_lifeform_buildings: List[TechName]
+) -> List[TechName]:
     """
     Sorts the given list of lifeform buildings based on the priority defined in the configuration.
 
@@ -22,8 +22,8 @@ def prioritize_lifeform_buildings(
     Returns:
         list[str]: Sorted list of buildings based on priority.
     """
-    sorted_buildings: List[LifeformBuildingsType] = []
-    lifeform_buildings = cast(List[LifeformBuildingsType], buildings)
+    sorted_buildings: List[TechName] = []
+    lifeform_buildings = buildings
     for priority_building in prioritized_lifeform_buildings:
         for building in lifeform_buildings:
             if building == priority_building:
@@ -142,20 +142,24 @@ def handle_lifeform_buildings_upgrade(
     # get prioritized upgradable lifeform buildings from config
     # Convert config strings to the appropriate Enum type based on lifeform
     enum_class: Type[LifeformBuildingsType] = LIFEFORM_BUILDING_ENUM_MAP[lifeform]
-    prioritized_lifeform_buildings: List[LifeformBuildingsType] = [
-        enum_class(b) for b in config["upgrades"]['priorities']['lifeform_buildings'][lifeform.value]
+    prioritized_lifeform_buildings: List[TechName] = [
+        TechName(enum_class(b).name) for b in config["upgrades"]['priorities']['lifeform_buildings'][lifeform.value]
     ]
 
     building_list: List[TechName] =  [b['building'] for b in upgradable_buildings]
 
+    print(f"[DEBUG] Upgradable lifeform buildings on planet {planet['name']} ({planet['coords']}): {building_list}")
+    print(f"[DEBUG] Prioritized lifeform buildings from config for {lifeform.value}: {prioritized_lifeform_buildings}")
     # Prioritize the upgradable buildings based on the defined priority
     prioritized_upgradable_lifeform_buildings = prioritize_lifeform_buildings(building_list, prioritized_lifeform_buildings)
-
+    print(f"[DEBUG] Prioritized upgradable lifeform buildings on planet {planet['name']} ({planet['coords']}): {prioritized_upgradable_lifeform_buildings}")
     # Filter the upgradable buildings to match the prioritized order
     upgradable_buildings = [b for name in prioritized_upgradable_lifeform_buildings for b in upgradable_buildings if b['building'] == name]
-
+    print(f"[DEBUG] Final ordered list of upgradable lifeform buildings on planet {planet['name']} ({planet['coords']}): {[b['building'] for b in upgradable_buildings]}")
     # Group buildings by planet
     grouped_buildings = group_upgradable_buildings_by_planet(upgradable_buildings)
+
+    print(f"[DEBUG] Found {len(upgradable_buildings)} upgradable lifeform buildings on planet {planet['name']} ({planet['coords']}). Prioritizing upgrades based on config.")
 
     for planet_id, buildings in grouped_buildings.items():
         building_to_upgrade = buildings[0]  # The first building is the highest priority
@@ -166,7 +170,9 @@ def handle_lifeform_buildings_upgrade(
         # Enforce soft cap for this lifeform building
         caps = config["upgrades"]["soft_level_caps"]['lifeform_buildings']
         specie_caps = caps[lifeform.value]
-        cap = specie_caps[building_name] if building_name in specie_caps else None
+        building_class = LIFEFORM_BUILDING_CLASS_MAP[lifeform]
+        building_value = building_class.get_value_by_name(building_name)
+        cap = specie_caps[building_value] if building_value in specie_caps else None
         if cap is None:
             print(f"[WARN] No soft cap configured for {lifeform.value}/{building_name} on planet {planet['name']}. Skipping upgrade.")
             continue

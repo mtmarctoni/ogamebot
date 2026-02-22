@@ -32,7 +32,7 @@ DEFAULT_CONFIG: ConfigRawType = {
             "resources",
             "energy",
             "research",
-            "lifeforms",
+            "lifeform_buildings",
             "lifeform_research",
             "storage"
         ],
@@ -41,7 +41,7 @@ DEFAULT_CONFIG: ConfigRawType = {
             "resources": True,
             "energy": True,
             "research": True,
-            "lifeforms": True,
+            "lifeform_buildings": True,
             "storage": True,
             "lifeform_research": True
         },
@@ -75,6 +75,8 @@ DEFAULT_CONFIG: ConfigRawType = {
                 "INTERGALACTIC_RESEARCH_NETWORK",
                 "GRAVITON"
             ],
+            # Lifeform building priorities use plain string keys for building names.
+            # Bot handlers convert these to enums for ergonomic and type-safe lookup.
             "lifeform_buildings": {
                 "human": [
                 "RESEARCH_CENTER",
@@ -176,6 +178,8 @@ DEFAULT_CONFIG: ConfigRawType = {
                 "INTERGALACTIC_RESEARCH_NETWORK": 5,
                 "GRAVITON": 1
             },
+            # Lifeform building soft caps are keyed by plain string names.
+            # Bot handlers convert these keys to enums for robust/ergonomic access.
             "lifeform_buildings": {
                 "human": {
                     "RESEARCH_CENTER": 15,

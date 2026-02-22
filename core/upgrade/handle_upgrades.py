@@ -49,7 +49,7 @@ def handle_upgrades(empire_data: EmpireSnapshotDict, page: Page, notifier: Optio
             if not enabled:
                 continue
             handler = UPGRADE_HANDLERS[upgrade]
-
+            print(f"[DEBUG] Handling {upgrade} upgrades for planet {planet_name} (ID: {planet_id}).")
             durations = handler(planet, page, config, notifier)
             planet_durations.extend(durations if durations else [])
             

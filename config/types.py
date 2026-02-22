@@ -15,7 +15,7 @@ UpgradeGroup = Literal[
       "resources",
       "energy",
       "research",
-      "lifeforms",
+      "lifeform_buildings",
       "lifeform_research",
       "storage"
     ]
@@ -30,7 +30,7 @@ class UpgradeTogglesRawType(TypedDict):
     resources: bool
     energy: bool
     research: bool
-    lifeforms: bool
+    lifeform_buildings: bool
     lifeform_research: bool
     storage: bool
 

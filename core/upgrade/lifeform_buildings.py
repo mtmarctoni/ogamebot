@@ -125,7 +125,7 @@ def handle_lifeform_buildings_upgrade(
 
     # Skip if this planet is the designated expedition planet
     expedition_planet_id = config["expeditions"]["expedition_planet_id"]
-    if planet['id'] == expedition_planet_id:
+    if str(planet['id']) == str(expedition_planet_id):
         print(f"[INFO] Skipping lifeform building upgrades on expedition planet {planet['name']} ({planet['coords']}).")
         return upgrade_durations
 

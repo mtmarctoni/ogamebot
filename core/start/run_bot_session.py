@@ -13,6 +13,7 @@ from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
 from core.upgrade.handle_upgrades import handle_upgrades
 from core.expeditions.handle_expeditions import handle_expeditions
+from core.transport.handle_transports import handle_transports
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.discoveries.handle_discoveries import handle_discoveries
 from services.manage_config import reload_config
@@ -75,6 +76,12 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                     handle_expeditions(game_page, empire_data, notifier, ExpeditionConfig(target_id=config["expeditions"]["expedition_planet_id"]))
                 else:
                      print("[INFO] Expeditions are disabled in the configuration.")
+
+                # Handle transports based on dynamic config
+                if config["transports"]["enable_transports"]:
+                    handle_transports(game_page, empire_data, notifier, config["transports"])
+                else:
+                    print("[INFO] Transports are disabled in the configuration.")
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)

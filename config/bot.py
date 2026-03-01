@@ -26,6 +26,17 @@ DEFAULT_CONFIG: ConfigRawType = {
         "enable_discoveries": True,
         "discovery_planet_id": "33634167"
     },
+    "transports": {
+        "enable_transports": False,
+        "target_planet_ids": [],
+        "amount_mode": "percentage",
+        "resources": {
+            "metal": 25,
+            "crystal": 25,
+            "deuterium": 25
+        },
+        "dispatch_interval_seconds": 3
+    },
     "upgrades": {
         "resource_minimums": {
             "metal": 0,

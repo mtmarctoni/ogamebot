@@ -37,6 +37,22 @@ EXCLUDED_EXPEDITION_SHIPS = {
     Ship.SOLAR_SATELLITE,
 }
 
+# Transport strategy: keep some cargo utility ships on the origin planet
+RESERVE_ON_PLANET_TRANSPORT_SHIPS = {
+    Ship.SMALL_CARGO,
+    Ship.LARGE_CARGO,
+    Ship.PATHFINDER,
+}
+
+# Ships that should not be used for transport dispatches
+EXCLUDED_TRANSPORT_SHIPS = {
+    Ship.COLONY_SHIP,
+    Ship.RECYCLER,
+    Ship.CRAWLER,
+    Ship.SOLAR_SATELLITE,
+    Ship.ESPIONAGE_PROBE,
+}
+
 class Ships:
     """
     A utility class to map between Ship names and their corresponding IDs.
@@ -142,6 +158,22 @@ class Ships:
         if ship_name not in expedition_points_lookup:
             raise ValueError(f"Invalid Ship ID: {ship_id}. No corresponding expedition points found.")
         return expedition_points_lookup[ship_name]
+
+    @classmethod
+    def get_cargo_capacity_by_id(cls, ship_id: str) -> int:
+        """
+        Get ship cargo capacity by ship ID.
+        Raises a ValueError if the ID is invalid.
+        """
+        cargo_lookup = {
+            Ship.SMALL_CARGO: 5000,
+            Ship.LARGE_CARGO: 25000,
+            Ship.PATHFINDER: 10000,
+            Ship.RECYCLER: 20000,
+            Ship.COLONY_SHIP: 7500,
+        }
+        ship_name = cls.get_name_by_id(ship_id)
+        return cargo_lookup.get(ship_name, 0)
 
 unwanted_ships_for_expeditions = [
     Ship.ESPIONAGE_PROBE.value,

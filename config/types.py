@@ -87,10 +87,25 @@ class DiscoveriesRawType(TypedDict):
     enable_discoveries: bool
     discovery_planet_id: str
 
+TransportAmountMode = Literal["absolute", "percentage"]
+
+class TransportResourcesType(TypedDict):
+    metal: int
+    crystal: int
+    deuterium: int
+
+class TransportsRawType(TypedDict):
+    enable_transports: bool
+    target_planet_ids: List[str]
+    amount_mode: TransportAmountMode
+    resources: TransportResourcesType
+    dispatch_interval_seconds: int
+
 class ConfigRawType(TypedDict):
     check_interval: int
     expeditions: ExpeditionsRawType
     discoveries: DiscoveriesRawType
+    transports: TransportsRawType
     upgrades: UpgradesRawType
 
 class UpgradesPrioritiesType(TypedDict):
@@ -138,10 +153,18 @@ class DiscoveriesType(TypedDict):
     enable_discoveries: bool
     discovery_planet_id: str
 
+class TransportsType(TypedDict):
+    enable_transports: bool
+    target_planet_ids: List[str]
+    amount_mode: TransportAmountMode
+    resources: TransportResourcesType
+    dispatch_interval_seconds: int
+
 class ConfigType(TypedDict):
     check_interval: int
     expeditions: ExpeditionsType
     discoveries: DiscoveriesType
+    transports: TransportsType
     upgrades: UpgradesSectionType
 
 

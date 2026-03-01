@@ -11,6 +11,8 @@ from core.transport.fleet_planner import build_transport_fleet_for_origin
 from core.transport.planner import TransportOrder, build_transport_orders
 from core.utils.coords_utils import get_coords_from_planet
 
+_last_transport_dispatch_at: Dict[str, float] = {}
+
 
 def _group_orders_by_origin(orders: List[TransportOrder]) -> Dict[str, List[TransportOrder]]:
     grouped: Dict[str, List[TransportOrder]] = defaultdict(list)
@@ -21,6 +23,15 @@ def _group_orders_by_origin(orders: List[TransportOrder]) -> Dict[str, List[Tran
 
 def _resolve_target_type(planet: PlanetDict) -> TargetType:
     return "moon" if planet.get("type") == "moon" else "planet"
+
+
+def _is_origin_in_cooldown(origin_id: str, cooldown_seconds: int) -> bool:
+    if cooldown_seconds <= 0:
+        return False
+    last_dispatch_at = _last_transport_dispatch_at.get(origin_id)
+    if last_dispatch_at is None:
+        return False
+    return (time.time() - last_dispatch_at) < cooldown_seconds
 
 
 def handle_transports(
@@ -42,14 +53,22 @@ def handle_transports(
 
     grouped_orders = _group_orders_by_origin(transport_orders)
 
-    for _, orders in grouped_orders.items():
+    for origin_id, orders in grouped_orders.items():
         origin = orders[0]["origin"]
+        if _is_origin_in_cooldown(origin_id, config["cooldown_seconds"]):
+            print(
+                f"[INFO] Skipping transports from {origin['name']} ({origin['coords']}) due to cooldown "
+                f"({config['cooldown_seconds']}s)."
+            )
+            continue
+
         fleet = build_transport_fleet_for_origin(origin, len(orders))
         if not fleet:
             print(f"[WARN] No fleet available for transport from {origin['name']} ({origin['coords']}).")
             continue
 
         print(f"[INFO] Processing {len(orders)} transports from {origin['name']} ({origin['coords']}).")
+        sent_from_origin = False
 
         for order in orders:
             target = order["target"]
@@ -83,6 +102,10 @@ def handle_transports(
                 )
                 print(message)
                 safe_notify(notifier, message)
+                sent_from_origin = True
                 time.sleep(max(0, config["dispatch_interval_seconds"]))
             else:
                 print(f"[WARN] Transport not sent from {origin['name']} to {target['name']}.")
+
+        if sent_from_origin:
+            _last_transport_dispatch_at[origin_id] = time.time()

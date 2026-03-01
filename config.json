@@ -15,12 +15,23 @@
   },
   "transports": {
     "enable_transports": true,
-    "target_planet_ids": [],
+    "target_planet_ids": ["33629156", "33632165"],
     "amount_mode": "percentage",
     "resources": {
       "metal": 10,
       "crystal": 10,
       "deuterium": 10
+    },
+    "threshold": {
+      "metal": 250000,
+      "crystal": 125000,
+      "deuterium": 75000
+    },
+    "cooldown_seconds": 7200,
+    "safety_reserve": {
+      "metal": 10000000,
+      "crystal": 5000000,
+      "deuterium": 2500000
     },
     "dispatch_interval_seconds": 3
   },

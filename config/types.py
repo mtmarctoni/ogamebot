@@ -94,11 +94,24 @@ class TransportResourcesType(TypedDict):
     crystal: int
     deuterium: int
 
+class TransportThresholdType(TypedDict):
+    metal: int
+    crystal: int
+    deuterium: int
+
+class TransportSafetyReserveType(TypedDict):
+    metal: int
+    crystal: int
+    deuterium: int
+
 class TransportsRawType(TypedDict):
     enable_transports: bool
     target_planet_ids: List[str]
     amount_mode: TransportAmountMode
     resources: TransportResourcesType
+    threshold: TransportThresholdType
+    cooldown_seconds: int
+    safety_reserve: TransportSafetyReserveType
     dispatch_interval_seconds: int
 
 class ConfigRawType(TypedDict):
@@ -158,6 +171,9 @@ class TransportsType(TypedDict):
     target_planet_ids: List[str]
     amount_mode: TransportAmountMode
     resources: TransportResourcesType
+    threshold: TransportThresholdType
+    cooldown_seconds: int
+    safety_reserve: TransportSafetyReserveType
     dispatch_interval_seconds: int
 
 class ConfigType(TypedDict):

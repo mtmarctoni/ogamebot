@@ -35,6 +35,17 @@ DEFAULT_CONFIG: ConfigRawType = {
             "crystal": 25,
             "deuterium": 25
         },
+        "threshold": {
+            "metal": 0,
+            "crystal": 0,
+            "deuterium": 0
+        },
+        "cooldown_seconds": 7200,
+        "safety_reserve": {
+            "metal": 0,
+            "crystal": 0,
+            "deuterium": 0
+        },
         "dispatch_interval_seconds": 3
     },
     "upgrades": {

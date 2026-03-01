@@ -8,7 +8,6 @@ from config.types import FleetToDispatch, Coordinates, TransportResourcesType
 from constants.general import COMPONENTS
 from constants.ships import Ships
 from core.navigation.planet import navigate_to_section
-from core.utils.cookie_banner import handle_cookie_banner
 
 TargetType = Literal["planet", "moon", "debris"]
 
@@ -22,7 +21,6 @@ TARGET_TYPE_SELECTOR = {
 
 def _go_to_fleet_dispatch(page: Page, origin_id: PlanetId) -> None:
     navigate_to_section(page, origin_id, COMPONENTS.FLEET_DISPATCH)
-    handle_cookie_banner(page)
 
 
 def _fill_ships_and_go_next(page: Page, ships: FleetToDispatch) -> bool:
@@ -56,9 +54,22 @@ def _fill_destination_and_select_transport_mission(
 ) -> None:
     galaxy, system, position = coordinates
 
-    page.locator("input#galaxy").fill(str(galaxy))
-    page.locator("input#system").fill(str(system))
-    page.locator("input#position").fill(str(position))
+    galaxy_input = page.locator("input#galaxy")
+    system_input = page.locator("input#system")
+    position_input = page.locator("input#position")
+
+    galaxy_input.focus()
+    galaxy_input.type(str(galaxy))
+
+    system_input.focus()
+    system_input.type(str(system))
+
+    position_input.focus()
+    position_input.type(str(position)) 
+
+    # page.locator("input#galaxy").fill(str(galaxy))
+    # page.locator("input#system").fill(str(system))
+    # page.locator("input#position").fill(str(position))
 
     _select_target_type(page, target_type)
 

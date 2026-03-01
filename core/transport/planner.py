@@ -17,21 +17,33 @@ def _calculate_total_resources_to_transport(
     origin: PlanetDict,
     amount_mode: str,
     requested: TransportResourcesType,
+    safety_reserve: TransportResourcesType,
+    threshold: TransportResourcesType,
 ) -> TransportResourcesType:
     current_resources = origin["resources"]
+    available_resources: TransportResourcesType = {
+        "metal": _clamp_non_negative(current_resources["metal"] - safety_reserve["metal"]),
+        "crystal": _clamp_non_negative(current_resources["crystal"] - safety_reserve["crystal"]),
+        "deuterium": _clamp_non_negative(current_resources["deuterium"] - safety_reserve["deuterium"]),
+    }
 
     if amount_mode == "percentage":
-        return {
-            "metal": _clamp_non_negative(current_resources["metal"] * requested["metal"] // 100),
-            "crystal": _clamp_non_negative(current_resources["crystal"] * requested["crystal"] // 100),
-            "deuterium": _clamp_non_negative(current_resources["deuterium"] * requested["deuterium"] // 100),
+        planned = {
+            "metal": _clamp_non_negative(available_resources["metal"] * requested["metal"] // 100),
+            "crystal": _clamp_non_negative(available_resources["crystal"] * requested["crystal"] // 100),
+            "deuterium": _clamp_non_negative(available_resources["deuterium"] * requested["deuterium"] // 100),
+        }
+    else:
+        planned = {
+            "metal": _clamp_non_negative(min(requested["metal"], available_resources["metal"])),
+            "crystal": _clamp_non_negative(min(requested["crystal"], available_resources["crystal"])),
+            "deuterium": _clamp_non_negative(min(requested["deuterium"], available_resources["deuterium"])),
         }
 
-    # absolute mode
     return {
-        "metal": _clamp_non_negative(min(requested["metal"], current_resources["metal"])),
-        "crystal": _clamp_non_negative(min(requested["crystal"], current_resources["crystal"])),
-        "deuterium": _clamp_non_negative(min(requested["deuterium"], current_resources["deuterium"])),
+        "metal": planned["metal"] if planned["metal"] >= threshold["metal"] else 0,
+        "crystal": planned["crystal"] if planned["crystal"] >= threshold["crystal"] else 0,
+        "deuterium": planned["deuterium"] if planned["deuterium"] >= threshold["deuterium"] else 0,
     }
 
 
@@ -89,6 +101,8 @@ def build_transport_orders(empire_data: EmpireSnapshotDict, config: TransportsTy
             origin,
             config["amount_mode"],
             config["resources"],
+            config["safety_reserve"],
+            config["threshold"],
         )
 
         if total_resources["metal"] + total_resources["crystal"] + total_resources["deuterium"] <= 0:

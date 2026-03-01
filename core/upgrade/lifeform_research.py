@@ -18,19 +18,19 @@ def find_upgradable_lifeform_research(planet: PlanetDict) -> List[UpgradableLife
     """
     upgradable_research: List[UpgradableLifeformResearch] = []
 
-    planet_id = planet.get('id')
-    planet_name = planet.get('name') or "Unknown"
-    coords = planet.get('coords') or "?"
+    planet_id = planet['id']
+    planet_name = planet["name"]
+    coords = planet["coords"]
     upgradable_research = []
 
-    for tech_id, tech_info in planet.get("lifeform_research", {}).items():
-        if tech_info.get("upgradable"):
+    for tech_id, tech_info in planet["lifeform_research"].items():
+        if tech_info["upgradable"]:
             upgradable_research.append({
                 "planet_id": PlanetId(str(planet_id)),
                 "planet_name": PlanetName(planet_name),
                 "coordinates": StringCoords(coords),
                 "research_id": TechId(tech_id),
-                "level": TechLevel(tech_info.get("level", 0)),
+                "level": TechLevel(tech_info["level"]),
             })
 
     return upgradable_research
@@ -74,7 +74,7 @@ def handle_lifeform_research_upgrade(
 
     params: UpgradeTech = {
         "page": page,
-        "planet_id": PlanetId(planet.get("id", "")),
+        "planet_id": PlanetId(planet['id']),
         "tech_id": tech_id,
         "notifier": notifier,
     }
@@ -83,11 +83,11 @@ def handle_lifeform_research_upgrade(
 
     if duration > 0:
         upgrade_durations.append(duration)
-        print(f"[INFO] Lifeform research upgrade: '{tech_id}' (level {min_level}) started on planet {planet.get('name', 'Unknown')} (duration: {duration}s)")
+        print(f"[INFO] Lifeform research upgrade: '{tech_id}' (level {min_level}) started on planet {planet['name']} (duration: {duration}s)")
         safe_notify(notifier,
-            f"✅ Successfully started lifeform research for '{tech_id}' (level {min_level}) on planet {planet.get('name', 'Unknown')}. Duration: {duration} seconds.")
+            f"✅ Successfully started lifeform research for '{tech_id}' (level {min_level}) on planet {planet['name']}. Duration: {duration} seconds.")
     else:
-        print(f"[ERROR] Lifeform research upgrade failed: '{tech_id}' on planet {planet.get('name', 'Unknown')}")
-        safe_notify(notifier, f"⚠️ Failed to upgrade lifeform research '{tech_id}' on planet {planet.get('name', 'Unknown')}. Please check manually.")
+        print(f"[ERROR] Lifeform research upgrade failed: '{tech_id}' on planet {planet['name']}")
+        safe_notify(notifier, f"⚠️ Failed to upgrade lifeform research '{tech_id}' on planet {planet['name']}. Please check manually.")
 
     return upgrade_durations

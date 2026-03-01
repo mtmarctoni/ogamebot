@@ -20,6 +20,23 @@ class Ship(Enum):
     CRAWLER = "resbuggy"
 
 
+PROBES_PER_EXPEDITION = 2
+
+# Keep some ships on planet by dividing by (slots + 1)
+RESERVE_ON_PLANET_SHIPS = {
+    Ship.SMALL_CARGO,
+    Ship.LARGE_CARGO,
+    Ship.PATHFINDER,
+}
+
+# Never send these on expeditions
+EXCLUDED_EXPEDITION_SHIPS = {
+    Ship.COLONY_SHIP,
+    Ship.RECYCLER,
+    Ship.CRAWLER,
+    Ship.SOLAR_SATELLITE,
+}
+
 class Ships:
     """
     A utility class to map between Ship names and their corresponding IDs.

@@ -1,5 +1,5 @@
 from config.types import FleetToDispatch, PlanetDict, ShipToDispatch, TechId
-from constants.ships import Ships, unwanted_ships_for_expeditions
+from constants.ships import Ship, Ships, PROBES_PER_EXPEDITION, RESERVE_ON_PLANET_SHIPS, EXCLUDED_EXPEDITION_SHIPS
 
 
 def calculate_ships_per_expedition(total_ships: FleetToDispatch, slots: int) -> FleetToDispatch:
@@ -13,7 +13,23 @@ def calculate_ships_per_expedition(total_ships: FleetToDispatch, slots: int) -> 
 
     ships_per_expedition: FleetToDispatch = []
     for ship in total_ships:
-        per_slot = ship['count'] // (slots + 1)  # Divide by slots + 1 to leave some ships on the planet
+        ship_id = str(ship['ship_id'])
+        ship_count = int(ship['count'])
+        ship_type = Ships.get_name_by_id(ship_id)
+
+        if ship_type in EXCLUDED_EXPEDITION_SHIPS:
+            continue
+
+        # Send only a couple of probes per expedition, keep the rest on the planet
+        if ship_type == Ship.ESPIONAGE_PROBE:
+            per_slot = min(PROBES_PER_EXPEDITION, ship_count // slots)
+        # Leave reserve for cargos and pathfinders (transport/farming utility)
+        elif ship_type in RESERVE_ON_PLANET_SHIPS:
+            per_slot = ship_count // (slots + 1)
+        # Combat ships: send all available across expedition slots
+        else:
+            per_slot = ship_count // slots
+
         if per_slot > 0:
             ships_per_expedition.append({
                 'ship_id': ship['ship_id'],
@@ -33,13 +49,13 @@ def get_available_ships(planet: PlanetDict) -> FleetToDispatch:
             count = int(ship_info.get('level', 0))
 
             try:
-                ship_name = Ships.get_name_by_id(str(ship_id)).value
+                ship_type = Ships.get_name_by_id(str(ship_id))
             except ValueError:
                 print(f"[WARN] Invalid ship ID {ship_id} encountered. Skipping.")
                 continue  # Skip invalid ship IDs
 
-            # Skip unwanted ships for expeditions
-            if ship_name in unwanted_ships_for_expeditions:
+            # Skip ships that should never be sent on expeditions
+            if ship_type in EXCLUDED_EXPEDITION_SHIPS:
                 continue
 
             ship_to_dispatch: ShipToDispatch = {

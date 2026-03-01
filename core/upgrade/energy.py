@@ -44,6 +44,7 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, config: Conf
     if planet.get('type') == 'moon':
         return []
     upgrade_durations: List[int] = []
+    resource_minimums = config["upgrades"]["resource_minimums"]
 
     # Convert raw config to typed soft caps
     soft_level_caps: EnergySoftLevelCaps = {
@@ -62,7 +63,8 @@ def handle_energy_buildings_upgrade(planet: PlanetDict, page: Page, config: Conf
             'page': page,
             'planet_id': PlanetId(str(planet.get('id'))),
             'tech_id': TechId(building_id),
-            'notifier': notifier
+            'notifier': notifier,
+            'resource_minimums': resource_minimums
         }
 
         # Upgrade the building

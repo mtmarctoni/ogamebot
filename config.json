@@ -1,5 +1,10 @@
 {
   "check_interval": 10,
+  "resource_minimums": {
+    "metal": 0,
+    "crystal": 0,
+    "deuterium": 0
+  },
   "expeditions": {
     "enable_expeditions": true,
     "expedition_planet_id": "33652874"

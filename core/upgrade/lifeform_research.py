@@ -54,6 +54,7 @@ def handle_lifeform_research_upgrade(
         List[int]: A list of durations for successfully upgraded technologies.
     """
     upgrade_durations: List[int] = []
+    resource_minimums = config["upgrades"]["resource_minimums"]
 
     # Skip upgrade if planet is the designated expedition planet
     expedition_planet_id = config["expeditions"]["expedition_planet_id"]
@@ -77,6 +78,7 @@ def handle_lifeform_research_upgrade(
         "planet_id": PlanetId(planet['id']),
         "tech_id": tech_id,
         "notifier": notifier,
+        "resource_minimums": resource_minimums,
     }
 
     duration = upgrade_tech(**params)

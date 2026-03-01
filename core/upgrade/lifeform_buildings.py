@@ -122,6 +122,7 @@ def handle_lifeform_buildings_upgrade(
     """
 
     upgrade_durations: List[int] = []
+    resource_minimums = config["upgrades"]["resource_minimums"]
 
     # Skip if this planet is the designated expedition planet
     expedition_planet_id = config["expeditions"]["expedition_planet_id"]
@@ -186,7 +187,8 @@ def handle_lifeform_buildings_upgrade(
             "page": page,  # Replace with actual Page instance
             "planet_id": PlanetId(planet_id),
             "tech_id": TechId(building_id),
-            "notifier": notifier
+            "notifier": notifier,
+            "resource_minimums": resource_minimums
         }
 
         # Unpack the dictionary into the function

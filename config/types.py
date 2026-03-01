@@ -71,11 +71,17 @@ class UpgradeSoftLevelCapsRawType(TypedDict):
     research: Dict[str, int]
     lifeform_buildings: Dict[str, Dict[str, int]]
 
+class ResourceMinimumsType(TypedDict):
+    metal: int
+    crystal: int
+    deuterium: int
+
 class UpgradesRawType(TypedDict):
     group_order: List[UpgradeGroup]
     toggles: UpgradeTogglesRawType
     priorities: UpgradesPrioritiesRawType
     soft_level_caps: UpgradeSoftLevelCapsRawType
+    resource_minimums: ResourceMinimumsType
 
 class DiscoveriesRawType(TypedDict):
     enable_discoveries: bool
@@ -122,6 +128,7 @@ class UpgradesSectionType(TypedDict):
     toggles: UpgradeTogglesRawType  # unchanged structure
     priorities: UpgradesPrioritiesType
     soft_level_caps: UpgradeSoftLevelCapsType
+    resource_minimums: ResourceMinimumsType
 
 class ExpeditionsType(TypedDict):
     enable_expeditions: bool

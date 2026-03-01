@@ -12,6 +12,7 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
     Returns the upgrade duration if an upgrade is performed, otherwise an empty list.
     """
     upgrade_durations: List[int] = []
+    resource_minimums = config["upgrades"]["resource_minimums"]
 
     # Get config section for upgrades if needed in future enhancements
     prioritized_researches = [Research(r) for r in config["upgrades"]['priorities']['research']]
@@ -38,7 +39,8 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
                 'page': page,
                 'planet_id': planet_id,
                 'tech_id': tech_id,
-                'notifier': notifier
+                'notifier': notifier,
+                'resource_minimums': resource_minimums
             }
 
             # Upgrade the research

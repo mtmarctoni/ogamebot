@@ -27,6 +27,11 @@ DEFAULT_CONFIG: ConfigRawType = {
         "discovery_planet_id": "33634167"
     },
     "upgrades": {
+        "resource_minimums": {
+            "metal": 0,
+            "crystal": 0,
+            "deuterium": 500_000
+        },
         "group_order": [
             "facilities",
             "resources",

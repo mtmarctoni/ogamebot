@@ -13,6 +13,7 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
     Continues trying other facilities if one fails (e.g., Research Lab blocked by ongoing research).
     """
     upgrade_durations: List[int] = []
+    resource_minimums = config["upgrades"]["resource_minimums"]
 
     # Parse facility soft level caps from config (keys are Facility names)
     facility_soft_caps = {
@@ -77,7 +78,8 @@ def handle_facilities_building_upgrades(planet: PlanetDict, page: Page, config: 
                 'page': page,
                 'planet_id': planet_id,
                 'tech_id': tech_id,
-                'notifier': notifier
+                'notifier': notifier,
+                'resource_minimums': resource_minimums
             }
 
             # Attempt to upgrade the facility

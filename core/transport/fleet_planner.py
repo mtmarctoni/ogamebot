@@ -46,11 +46,14 @@ def build_transport_fleet_for_origin(origin: PlanetDict, dispatch_count: int) ->
     ship_counts = _extract_ship_counts(origin)
     fleet: FleetToDispatch = []
 
+    allowed_transport_ships = {Ship.SMALL_CARGO, Ship.LARGE_CARGO}
+
     for ship_type, total_count in ship_counts.items():
+        if ship_type not in allowed_transport_ships:
+            continue
         per_dispatch = _get_per_dispatch_count(ship_type, total_count, dispatch_count)
         if per_dispatch <= 0:
             continue
-
         ship_id = Ships.get_id_by_name(ship_type)
         fleet.append(
             ShipToDispatch(

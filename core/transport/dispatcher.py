@@ -127,7 +127,7 @@ def _fill_resources_and_send(page: Page, resources: TransportResourcesType) -> O
     page.locator("#deuterium").fill(str(fitted_resources["deuterium"]))
 
     page.locator("#sendFleet").click()
-    page.wait_for_selector("span.next_event span.friendly:has-text('Transport')", timeout=12000)
+    # No confirmation selector check; return immediately
     return fitted_resources
 
 

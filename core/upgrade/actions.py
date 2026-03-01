@@ -37,6 +37,9 @@ def upgrade_tech(
     Returns:
         int: The duration of the upgrade in seconds.
     """
+    # Check if the planet has the minimum required resources for the upgrade
+    if not has_minimum_resources(page, planet_id, resource_minimums, notifier):
+        return 0
 
     # Extract the section based on tech_id
     section = TechIdToSection.get_section(tech_id)  # Removed `.value` to use the COMPONENTS enum directly
@@ -44,9 +47,6 @@ def upgrade_tech(
     # Navigate directly to the planet and component using the extracted section
     navigate_to_section(page, planet_id, section)
     print(f"[DEBUG] Navigated to planet ID {planet_id} for upgrading tech ID {tech_id} in section {section.value}.")
-
-    if not has_minimum_resources(page, planet_id, resource_minimums, notifier):
-        return 0
 
     # Locate the upgrade button for the technology
     tech_li_selector = f'#technologies li.technology[data-technology="{tech_id}"] button.upgrade'

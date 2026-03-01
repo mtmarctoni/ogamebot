@@ -1,5 +1,4 @@
 import time
-import re
 from typing import List, Optional
 from playwright.sync_api import Page
 
@@ -12,6 +11,7 @@ from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.utils.calculate import check_deuterium_level
 from core.utils.coords_utils import generate_target_coordinates_for_expedition, get_coords_from_planet
 from core.utils.empire_utils import get_target_planet
+from core.utils.fleet_slots import get_fleet_slots_info
 from core.utils.ships_utils import calculate_ships_per_expedition, get_available_ships
 from core.utils.time_utils import wait_minutes
 
@@ -158,35 +158,16 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     # 3. Check Available Slots
     available_slots = 0
     try:
-        # Wait for slots info to be visible
-        slots_locator = page.locator("#slots", has_text="Expeditions:")
-        page.wait_for_selector("#slots", timeout=5000)
-
-        # Get all text from the slots container
-        slots_text = slots_locator.inner_text()
-        # Clean up newlines for easier regex
-        slots_text_clean = slots_text.replace("\n", " ").replace("\r", "")
-
-        # Parse Expeditions: "Expeditions: 0/4"
-        exp_match = re.search(r"Expeditions:\s*(\d+)/(\d+)", slots_text_clean)
-        # Parse Fleets: "Fleets:0/11"
-        fleet_match = re.search(r"Fleets:\s*(\d+)/(\d+)", slots_text_clean)
-
-        if exp_match and fleet_match:
-            current_exp = int(exp_match.group(1))
-            max_exp = int(exp_match.group(2))
-
-            current_fleets = int(fleet_match.group(1))
-            max_fleets = int(fleet_match.group(2))
-
-            avail_exp = max_exp - current_exp
-            avail_fleets = max_fleets - current_fleets
-
-            # We are limited by whichever is smaller
-            available_slots = min(avail_exp, avail_fleets)
-            print(f"[INFO] Available slots - Expeditions: {current_exp}/{max_exp}, Fleets: {current_fleets}/{max_fleets}")
+        slots_info = get_fleet_slots_info(page)
+        if slots_info:
+            available_slots = slots_info["available_joint"]
+            print(
+                f"[INFO] Available slots - Expeditions: "
+                f"{slots_info['current_expeditions']}/{slots_info['max_expeditions']}, "
+                f"Fleets: {slots_info['current_fleets']}/{slots_info['max_fleets']}"
+            )
         else:
-            print(f"[WARN] Could not parse slots info: '{slots_text_clean}'")
+            print("[WARN] Could not parse slots info from #slots container.")
 
     except Exception as e:
         print(f"[ERROR] Checking slots failed: {e}")

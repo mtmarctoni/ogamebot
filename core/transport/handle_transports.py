@@ -5,11 +5,14 @@ from typing import Dict, List, Optional
 from playwright.sync_api import Page
 
 from config.types import EmpireSnapshotDict, PlanetDict, TransportsType
+from constants.general import COMPONENTS
+from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.transport.dispatcher import TargetType, dispatch_transport
 from core.transport.fleet_planner import build_transport_fleet_for_origin
 from core.transport.planner import TransportOrder, build_transport_orders
 from core.utils.coords_utils import get_coords_from_planet
+from core.utils.fleet_slots import get_fleet_slots_info
 
 _last_transport_dispatch_at: Dict[str, float] = {}
 
@@ -63,15 +66,44 @@ def handle_transports(
             )
             continue
 
-        fleet = build_transport_fleet_for_origin(origin, len(orders))
+        try:
+            navigate_to_section(page, origin["id"], COMPONENTS.FLEET_DISPATCH)
+            slots_info = get_fleet_slots_info(page)
+        except Exception as exc:
+            print(f"[WARN] Could not read fleet slots for transport origin {origin['name']}: {exc}")
+            continue
+
+        if not slots_info:
+            print(f"[WARN] Could not parse fleet slots for transport origin {origin['name']}. Skipping.")
+            continue
+
+        available_fleet_slots = slots_info["available_fleets"]
+        print(
+            f"[INFO] Available transport fleet slots for {origin['name']}: "
+            f"{slots_info['current_fleets']}/{slots_info['max_fleets']} "
+            f"(available: {available_fleet_slots})"
+        )
+
+        if available_fleet_slots <= 0:
+            print(f"[INFO] No fleet slots available for transports from {origin['name']} ({origin['coords']}).")
+            continue
+
+        orders_to_dispatch = orders[:available_fleet_slots]
+        if len(orders_to_dispatch) < len(orders):
+            print(
+                f"[INFO] Capping transports from {origin['name']} to {len(orders_to_dispatch)} "
+                f"due to fleet slot availability."
+            )
+
+        fleet = build_transport_fleet_for_origin(origin, len(orders_to_dispatch))
         if not fleet:
             print(f"[WARN] No fleet available for transport from {origin['name']} ({origin['coords']}).")
             continue
 
-        print(f"[INFO] Processing {len(orders)} transports from {origin['name']} ({origin['coords']}).")
+        print(f"[INFO] Processing {len(orders_to_dispatch)} transports from {origin['name']} ({origin['coords']}).")
         sent_from_origin = False
 
-        for order in orders:
+        for order in orders_to_dispatch:
             target = order["target"]
             target_coords = get_coords_from_planet(target)
             target_type = _resolve_target_type(target)

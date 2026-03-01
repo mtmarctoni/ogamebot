@@ -15,7 +15,15 @@
   },
   "transports": {
     "enable_transports": true,
-    "target_planet_ids": ["33629156", "33632165"],
+    "target_planet_ids": [
+      "33629156",
+      "33632165",
+      "33634157",
+      "33646912",
+      "33664045",
+      "33677183",
+      "33689973"
+    ],
     "amount_mode": "percentage",
     "resources": {
       "metal": 10,
@@ -54,10 +62,10 @@
       "facilities": true,
       "resources": true,
       "energy": true,
-      "research": false,
+      "research": true,
       "lifeform_buildings": true,
       "storage": true,
-      "lifeform_research": false
+      "lifeform_research": true
     },
     "priorities": {
       "resources": ["crystal", "deuterium", "metal"],

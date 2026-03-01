@@ -54,7 +54,6 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
             while True:
                 # Reload configuration dynamically
                 config: ConfigType = reload_config()
-                handle_cookie_banner(game_page)
 
                 print("[INFO] Entered main game.")
 
@@ -67,7 +66,6 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 # --- Get Empire Info ---
                 print("[INFO] Navigating to Empire View and extracting all planet and moon data...")
                 empire_data = extract_empire_info(game_page, notifier)
-                handle_cookie_banner(game_page)
 
                 # Save the empire snapshot to a file
                 save_empire_snapshot(empire_data)
@@ -75,18 +73,15 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 # Handle expeditions based on dynamic config
                 if config["expeditions"]["enable_expeditions"]:
                     handle_expeditions(game_page, empire_data, notifier, ExpeditionConfig(target_id=config["expeditions"]["expedition_planet_id"]))
-                    handle_cookie_banner(game_page)
                 else:
                      print("[INFO] Expeditions are disabled in the configuration.")
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
-                handle_cookie_banner(game_page)
                 
                 # Handle discoveries based on dynamic config
                 if config["discoveries"]["enable_discoveries"]:
                     handle_discoveries(game_page, empire_data, notifier, DiscoveriesConfig(target_id=config["discoveries"]["discovery_planet_id"]))
-                    handle_cookie_banner(game_page)
                 else:
                     print("[INFO] Discoveries are disabled in the configuration.")
                 

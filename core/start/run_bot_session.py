@@ -79,7 +79,13 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle transports based on dynamic config
                 if config["transports"]["enable_transports"]:
-                    handle_transports(game_page, empire_data, notifier, config["transports"])
+                    handle_transports(
+                        game_page,
+                        empire_data,
+                        notifier,
+                        config["transports"],
+                        config["expeditions"]["expedition_planet_id"],
+                    )
                 else:
                     print("[INFO] Transports are disabled in the configuration.")
 

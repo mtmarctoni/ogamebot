@@ -1,4 +1,4 @@
-from typing import List, TypedDict
+from typing import List, Optional, TypedDict
 
 from config.types import EmpireSnapshotDict, PlanetDict, TransportResourcesType, TransportsType
 
@@ -75,7 +75,11 @@ def _split_resources_equally(resources: TransportResourcesType, count: int) -> L
     return split
 
 
-def build_transport_orders(empire_data: EmpireSnapshotDict, config: TransportsType) -> List[TransportOrder]:
+def build_transport_orders(
+    empire_data: EmpireSnapshotDict,
+    config: TransportsType,
+    expedition_planet_id: Optional[str],
+) -> List[TransportOrder]:
     target_ids = {str(planet_id) for planet_id in config["target_planet_ids"]}
     all_planets = empire_data["planets"]
     id_to_planet = {str(planet["id"]): planet for planet in all_planets}
@@ -85,14 +89,18 @@ def build_transport_orders(empire_data: EmpireSnapshotDict, config: TransportsTy
     if not target_planets:
         return []
 
+    allowed_origin_id = str(expedition_planet_id) if expedition_planet_id else None
+
     orders: List[TransportOrder] = []
 
     for origin in all_planets:
         # Moon resources are usually not relevant for this flow
         if origin.get("type") == "moon":
             continue
-
         origin_id = str(origin["id"])
+        if allowed_origin_id and origin_id != allowed_origin_id:
+            continue
+
         eligible_targets = [target for target in target_planets if str(target["id"]) != origin_id]
         if not eligible_targets:
             continue

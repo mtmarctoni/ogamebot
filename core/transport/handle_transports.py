@@ -39,6 +39,7 @@ def handle_transports(
     empire_data: EmpireSnapshotDict,
     notifier: Optional[TelegramNotifier],
     config: TransportsType,
+    expedition_planet_id: str,
 ) -> None:
     print("[INFO] Handling transports batch...")
 
@@ -46,7 +47,7 @@ def handle_transports(
         print("[INFO] Transports are disabled in the configuration.")
         return
 
-    transport_orders = build_transport_orders(empire_data, config)
+    transport_orders = build_transport_orders(empire_data, config, expedition_planet_id)
     if not transport_orders:
         print("[INFO] No transport orders generated for this cycle.")
         return

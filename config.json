@@ -22,7 +22,7 @@
       "facilities": true,
       "resources": true,
       "energy": true,
-      "research": true,
+      "research": false,
       "lifeform_buildings": true,
       "storage": true,
       "lifeform_research": false
@@ -43,12 +43,12 @@
       "research": [
         "astrophysicsTechnology",
         "plasmaTechnology",
+        "ionTechnology",
+        "espionageTechnology",
         "combustionDriveTechnology",
         "impulseDriveTechnology",
         "hyperspaceTechnology",
         "computerTechnology",
-        "ionTechnology",
-        "espionageTechnology",
         "weaponsTechnology",
         "shieldingTechnology",
         "armorTechnology",
@@ -82,8 +82,8 @@
           "ship_manufacturing_hall",
           "supra_refractor",
           "forum_of_transcendence",
-          "sanctuary",
-          "antimatter_condenser"
+          "antimatter_condenser",
+          "sanctuary"
         ],
         "mecha": [
           "assembly_line",
@@ -121,9 +121,9 @@
         "fusionPlant": 12
       },
       "resources": {
-        "metal": 35,
-        "crystal": 31,
-        "deuterium": 31
+        "metal": 36,
+        "crystal": 32,
+        "deuterium": 35
       },
       "storage": {
         "metalStorage": 20,
@@ -131,10 +131,10 @@
         "deuteriumStorage": 20
       },
       "facilities": {
-        "naniteFactory": 6,
-        "roboticsFactory": 15,
-        "researchLaboratory": 14,
-        "shipyard": 12,
+        "naniteFactory": 8,
+        "roboticsFactory": 18,
+        "researchLaboratory": 18,
+        "shipyard": 18,
         "terraformer": 12,
         "allianceDepot": 1,
         "missileSilo": 5,

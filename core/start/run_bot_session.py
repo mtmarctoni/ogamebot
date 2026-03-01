@@ -16,6 +16,7 @@ from core.expeditions.handle_expeditions import handle_expeditions
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.discoveries.handle_discoveries import handle_discoveries
 from services.manage_config import reload_config
+from core.utils.cookie_banner import handle_cookie_banner
 
 def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
     """
@@ -28,19 +29,23 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
             browser, context = load_session(p)
             page = context.new_page()
             page.goto(LOBBY_URL)
+            handle_cookie_banner(page)
             if not session_exists:
                 print("[INFO] No session found. Please log in with Facebook manually.")
                 input("Press Enter after you have logged in and see the lobby...")
+                handle_cookie_banner(page)
                 save_session(context)
                 print("[INFO] FB session saved.")
             else:
                  print("[INFO] Existing FB session found. Logging in automatically.")
             print("[INFO] Navigating to main game universe...")
             game_page = enter_universe(page)
+            handle_cookie_banner(game_page)
             # After entering, optionally go directly to overview using config
             try:
                 url = COMPONENT_URL_TEMPLATE.format(planet_id=DEFAULT_PLANET_ID)
                 game_page.goto(url)
+                handle_cookie_banner(game_page)
                 game_page.wait_for_selector('a.menubutton.selected span.textlabel', timeout=10000)
                 assert game_page.inner_text('a.menubutton.selected span.textlabel') == "Resources"
             except Exception:
@@ -49,6 +54,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
             while True:
                 # Reload configuration dynamically
                 config: ConfigType = reload_config()
+                handle_cookie_banner(game_page)
 
                 print("[INFO] Entered main game.")
 
@@ -61,6 +67,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 # --- Get Empire Info ---
                 print("[INFO] Navigating to Empire View and extracting all planet and moon data...")
                 empire_data = extract_empire_info(game_page, notifier)
+                handle_cookie_banner(game_page)
 
                 # Save the empire snapshot to a file
                 save_empire_snapshot(empire_data)
@@ -68,15 +75,18 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 # Handle expeditions based on dynamic config
                 if config["expeditions"]["enable_expeditions"]:
                     handle_expeditions(game_page, empire_data, notifier, ExpeditionConfig(target_id=config["expeditions"]["expedition_planet_id"]))
+                    handle_cookie_banner(game_page)
                 else:
                      print("[INFO] Expeditions are disabled in the configuration.")
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
+                handle_cookie_banner(game_page)
                 
                 # Handle discoveries based on dynamic config
                 if config["discoveries"]["enable_discoveries"]:
                     handle_discoveries(game_page, empire_data, notifier, DiscoveriesConfig(target_id=config["discoveries"]["discovery_planet_id"]))
+                    handle_cookie_banner(game_page)
                 else:
                     print("[INFO] Discoveries are disabled in the configuration.")
                 

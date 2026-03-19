@@ -96,13 +96,19 @@ PLANETS = {
         "coords": "[3:440:8]",
         "species": "Kaelesh",
     },
+    "colony10": {
+        "id": "33705849",
+        "name": "Silent Nexus",
+        "coords": "[6:238:8]",
+        "species": "Kaelesh",
+    },
     "moon_home": {
         "id": "33645298",
         "name": "Nexus Selene",
         "coords": "[2:16:8]",
         "species": "Human",
     },
-        "moon_colony1": {
+    "moon_colony1": {
         "id": "33684348",
         "name": "Silent Echo",
         "coords": "[2:21:8]",
@@ -126,6 +132,18 @@ PLANETS = {
         "coords": "[1:413:8]",
         "species": "Kaelesh",
     },
+    "moon_colony6": {
+        "id": "33699119",
+        "name": "MoonVoid",
+        "coords": "[2:16:8]",
+        "species": "Kaelesh",
+    },
+    "moon_colony7": {
+        "id": "33706003",
+        "name": "MoonWard",
+        "coords": "[4:268:8]",
+        "species": "Kaelesh",
+    }
 }
 
 DEFAULT_PLANET_ID = "33625285"

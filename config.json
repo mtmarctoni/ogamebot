@@ -7,7 +7,7 @@
   },
   "expeditions": {
     "enable_expeditions": true,
-    "expedition_planet_id": "33652874"
+    "expedition_planet_id": "33689973"
   },
   "discoveries": {
     "enable_discoveries": false,
@@ -21,8 +21,7 @@
       "33634157",
       "33646912",
       "33664045",
-      "33677183",
-      "33689973"
+      "33677183"
     ],
     "amount_mode": "percentage",
     "resources": {
@@ -157,13 +156,13 @@
     },
     "soft_level_caps": {
       "energy": {
-        "solarPlant": 30,
-        "fusionPlant": 12
+        "solarPlant": 40,
+        "fusionPlant": 20
       },
       "resources": {
-        "metal": 36,
-        "crystal": 32,
-        "deuterium": 35
+        "metal": 45,
+        "crystal": 40,
+        "deuterium": 40
       },
       "storage": {
         "metalStorage": 20,

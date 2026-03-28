@@ -47,10 +47,14 @@ def _load_schedule_state() -> ScheduleState:
         with open(SCHEDULE_STATE_FILE, "r", encoding="utf-8") as file:
             data = json.load(file)
     except (OSError, json.JSONDecodeError):
-        return {DEFENSE_SCHEDULE_TASK: {}}
+        default_state = {DEFENSE_SCHEDULE_TASK: {}}
+        _save_schedule_state(default_state)
+        return default_state
 
     if not isinstance(data, dict):
-        return {DEFENSE_SCHEDULE_TASK: {}}
+        default_state = {DEFENSE_SCHEDULE_TASK: {}}
+        _save_schedule_state(default_state)
+        return default_state
 
     raw_schedule_state = cast(dict[object, object], data)
     state: ScheduleState = {}
@@ -67,6 +71,7 @@ def _load_schedule_state() -> ScheduleState:
 
     if DEFENSE_SCHEDULE_TASK not in state:
         state[DEFENSE_SCHEDULE_TASK] = {}
+        _save_schedule_state(state)
 
     return state
 
@@ -75,6 +80,10 @@ def _save_schedule_state(state: ScheduleState) -> None:
     os.makedirs(DB_SCHEDULE_PATH, exist_ok=True)
     with open(SCHEDULE_STATE_FILE, "w", encoding="utf-8") as file:
         json.dump(state, file, indent=2)
+
+
+def ensure_schedule_state_file() -> None:
+    _load_schedule_state()
 
 
 def _load_defense_state() -> ScheduleTaskState:
@@ -164,24 +173,40 @@ def _set_build_amount(page: Page, amount: int) -> bool:
         except Exception:
             continue
 
-        locator.fill(str(amount))
+        locator.click()
+        locator.fill("")
+        locator.type(str(amount))
+        page.wait_for_timeout(200)
         return True
 
+    print(f"[DEBUG] Could not find build amount input for amount={amount}")
     return False
 
 
 def _open_defense_details(page: Page, defense_id: str) -> bool:
-    button_selector = f'#technologies li.technology[data-technology="{defense_id}"] button.upgrade'
-    button = page.locator(button_selector).first
-    try:
-        if not button.is_visible(timeout=2000):
-            return False
-    except Exception:
-        return False
+    open_selectors = [
+        f'#technologies li.technology[data-technology="{defense_id}"] button.upgrade',
+        f'#technologies li.technology[data-technology="{defense_id}"] .icon',
+        f'#technologies li.technology[data-technology="{defense_id}"]',
+    ]
 
-    button.click()
-    page.wait_for_selector(f'#technologydetails[data-technology-id="{defense_id}"]', timeout=5000)
-    return True
+    for selector in open_selectors:
+        trigger = page.locator(selector).first
+        try:
+            if not trigger.is_visible(timeout=2000):
+                continue
+        except Exception:
+            continue
+
+        trigger.click()
+        try:
+            page.wait_for_selector(f'#technologydetails[data-technology-id="{defense_id}"]', timeout=5000)
+            return True
+        except Exception:
+            continue
+
+    print(f"[DEBUG] Could not open defense details for tech_id={defense_id}")
+    return False
 
 
 def _start_defense_build(page: Page) -> int:
@@ -200,8 +225,10 @@ def _start_defense_build(page: Page) -> int:
             continue
 
         button.click()
+        page.wait_for_timeout(200)
         break
     else:
+        print("[DEBUG] Could not find defense build button inside details panel")
         return 0
 
     countdown_selectors: list[str] = [
@@ -215,10 +242,11 @@ def _start_defense_build(page: Page) -> int:
         try:
             if not countdown.is_visible(timeout=3000):
                 continue
-        except Exception:
+            duration_text = countdown.inner_text(timeout=1000) or ""
+        except Exception as exc:
+            print(f"[DEBUG] Could not read countdown from selector {selector}: {exc}")
             continue
 
-        duration_text = countdown.inner_text() or ""
         digits = re.findall(r"\d+", duration_text)
         if not digits:
             continue
@@ -237,24 +265,32 @@ def _start_defense_build(page: Page) -> int:
         if "s" in duration_text:
             return int(digits[0]) + 1
 
+    print("[DEBUG] Defense build click succeeded but no countdown was detected")
     return 0
 
 
 def _build_defense_once(page: Page, defense_id: str, budget: DefenseBudget) -> tuple[int, int]:
-    if not _open_defense_details(page, defense_id):
+    try:
+        if not _open_defense_details(page, defense_id):
+            return 0, 0
+
+        budget_max_units = _get_budget_limited_max_units(defense_id, budget)
+        build_units = max(0, budget_max_units)
+        print(f"[DEBUG] Defense {defense_id}: budget-limited max units={build_units}, budget={budget}")
+
+        if build_units <= 0:
+            return 0, 0
+
+        if not _set_build_amount(page, int(build_units)):
+            return 0, 0
+
+        duration_seconds = _start_defense_build(page)
+        if duration_seconds <= 0:
+            print(f"[DEBUG] Defense {defense_id}: build action did not produce a detectable countdown")
+        return int(build_units), duration_seconds
+    except Exception as exc:
+        print(f"[WARN] Defense build attempt failed for tech_id={defense_id}: {exc}")
         return 0, 0
-
-    budget_max_units = _get_budget_limited_max_units(defense_id, budget)
-    build_units = max(0, budget_max_units)
-
-    if build_units <= 0:
-        return 0, 0
-
-    if not _set_build_amount(page, int(build_units)):
-        return 0, 0
-
-    duration_seconds = _start_defense_build(page)
-    return int(build_units), duration_seconds
 
 
 def handle_scheduled_defense_build(
@@ -263,12 +299,22 @@ def handle_scheduled_defense_build(
     notifier: Optional[TelegramNotifier],
     config: ConfigType,
 ) -> int:
-    defense_config = config["defenses"]
-    if not defense_config["enable_defenses"]:
+    print("[DEBUG] handle_scheduled_defense_build called")
+    
+    if "defenses" not in config:
+        print("[DEBUG] 'defenses' key not found in config, skipping.")
         return 0
+        
+    defense_config = config["defenses"]
+    if not defense_config.get("enable_defenses", False):
+        print("[DEBUG] Defenses are disabled in config, skipping.")
+        return 0
+
+    print(f"[DEBUG] Defense config: enable={defense_config['enable_defenses']}, interval_hours={defense_config['interval_hours']}, included_tech_ids={defense_config['included_tech_ids']}")
 
     interval_hours = max(1, int(defense_config["interval_hours"]))
     state = _load_defense_state()
+    print(f"[DEBUG] Defense schedule state: {state}")
     next_check_seconds = 0
 
     for planet in empire_data["planets"]:
@@ -278,12 +324,15 @@ def handle_scheduled_defense_build(
         planet_id = str(planet["id"])
         last_run_at = _get_last_run_at(state, planet_id)
         seconds_until_due = _seconds_until_due(last_run_at, interval_hours)
+        print(f"[DEBUG] Planet {planet_id}: last_run={last_run_at}, seconds_until_due={seconds_until_due}")
         if seconds_until_due > 0:
             next_check_seconds = seconds_until_due if next_check_seconds == 0 else min(next_check_seconds, seconds_until_due)
             continue
 
         budget = _calculate_defense_budget(planet, defense_config)
+        print(f"[DEBUG] Planet {planet_id}: budget={budget}")
         if not _has_budget(budget):
+            print(f"[DEBUG] Planet {planet_id}: no budget, skipping.")
             _mark_defense_run(state, planet_id, _now_utc())
             continue
 
@@ -294,19 +343,28 @@ def handle_scheduled_defense_build(
             continue
 
         current_resources = read_current_planet_resources(page)
+        print(f"[DEBUG] Planet {planet_id}: current_resources={current_resources}")
         if current_resources is not None:
             budget = DefenseBudget(
                 metal=min(budget.metal, current_resources["metal"]),
                 crystal=min(budget.crystal, current_resources["crystal"]),
                 deuterium=min(budget.deuterium, current_resources["deuterium"]),
             )
+        print(f"[DEBUG] Planet {planet_id}: final budget after resource check={budget}")
 
         built_any = False
         for defense_id in sorted(defense_config["included_tech_ids"], key=int, reverse=True):
             if not Defenses.is_repeatable(TechId(defense_id)):
+                print(f"[DEBUG] Defense {defense_id} is not repeatable, skipping.")
                 continue
 
-            built_units, duration_seconds = _build_defense_once(page, defense_id, budget)
+            print(f"[DEBUG] Attempting to build defense {defense_id} on planet {planet_id}")
+            try:
+                built_units, duration_seconds = _build_defense_once(page, defense_id, budget)
+            except Exception as exc:
+                print(f"[WARN] Unexpected defense error on planet {planet_id} for tech {defense_id}: {exc}")
+                continue
+            print(f"[DEBUG] Built units: {built_units}, duration: {duration_seconds}")
             if built_units <= 0:
                 continue
 
@@ -325,9 +383,12 @@ def handle_scheduled_defense_build(
             if not _has_budget(budget):
                 break
 
-        _mark_defense_run(state, planet_id, _now_utc())
-        if not built_any and next_check_seconds == 0:
-            next_check_seconds = DEFAULT_DEFENSE_RECHECK_SECONDS
+        if built_any:
+            _mark_defense_run(state, planet_id, _now_utc())
+        else:
+            print(f"[DEBUG] Planet {planet_id}: no defenses were built; leaving schedule unchanged for retry")
+            if next_check_seconds == 0:
+                next_check_seconds = DEFAULT_DEFENSE_RECHECK_SECONDS
 
     _save_defense_state(state)
     return next_check_seconds

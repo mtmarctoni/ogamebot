@@ -13,7 +13,7 @@ from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
 from core.upgrade.handle_upgrades import handle_upgrades
-from core.upgrade.defense import handle_scheduled_defense_build
+from core.upgrade.defense import ensure_schedule_state_file, handle_scheduled_defense_build
 from core.expeditions.handle_expeditions import handle_expeditions
 from core.transport.handle_transports import handle_transports
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
@@ -28,6 +28,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
     browser: Optional[Browser] = None
     try:
         with sync_playwright() as p:
+            ensure_schedule_state_file()
             session_exists = os.path.exists("fb_session.json")
             browser, context = load_session(p)
             page = context.new_page()

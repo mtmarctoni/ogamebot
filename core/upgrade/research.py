@@ -29,7 +29,6 @@ def handle_research_upgrades(planet: PlanetDict, page: Page, config: ConfigType,
         # Enforce cap
         if current_level >= cap:
             print(f"[WARN] Skipping {research.name}: at or above soft cap ({current_level} >= {cap}) on planet {planet['name']} ({planet['coords']}).")
-            safe_notify(notifier, f"⚠️ {research.name} on planet {planet['name']} is at soft level cap ({cap}). Upgrade skipped.")
             continue
         if research_info.get('upgradable', False):
             planet_id = PlanetId(planet['id'])

@@ -11,7 +11,7 @@ SESSION_FILE = "fb_session.json"
 
 def save_session(context: BrowserContext) -> None:
     storage = context.storage_state()
-    with open(SESSION_FILE, "w") as f:
+    with open(SESSION_FILE, "w", encoding="utf-8") as f:
         json.dump(storage, f)
 
 

@@ -1,7 +1,7 @@
 import os
 import traceback
 from typing import Optional, cast
-from playwright.sync_api import Browser, sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
+from playwright.sync_api import Browser, Page, sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID  
 from config.types import ConfigType, ExpeditionConfig, DiscoveriesConfig
@@ -21,6 +21,15 @@ from core.discoveries.handle_discoveries import handle_discoveries
 from services.manage_config import reload_config
 from core.utils.cookie_banner import handle_cookie_banner
 
+
+def _lobby_has_play_button(page: Page) -> bool:
+    try:
+        page.wait_for_selector("#joinGame .button-default", timeout=5000)
+        return True
+    except PlaywrightTimeoutError:
+        return False
+
+
 def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
     """
     Runs a single bot session. Returns True if it should restart, False if stopped by user.
@@ -34,17 +43,24 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
             page = context.new_page()
             page.goto(LOBBY_URL)
             handle_cookie_banner(page)
-            if not session_exists:
-                print("[INFO] No session found. Please log in with Facebook manually.")
+            logged_in = _lobby_has_play_button(page)
+
+            if not session_exists or not logged_in:
+                if session_exists and not logged_in:
+                    print("[WARN] Saved session did not restore a logged-in lobby session.")
+                print("[INFO] Please log in with Facebook manually.")
                 input("Press Enter after you have logged in and see the lobby...")
                 handle_cookie_banner(page)
+                if not _lobby_has_play_button(page):
+                    raise RuntimeError("Login did not complete: 'Play' button not found in lobby.")
                 save_session(context)
                 print("[INFO] FB session saved.")
             else:
-                 print("[INFO] Existing FB session found. Logging in automatically.")
+                print("[INFO] Existing FB session found. Logging in automatically.")
             print("[INFO] Navigating to main game universe...")
             game_page = enter_universe(page)
             handle_cookie_banner(game_page)
+            save_session(context)
             # After entering, optionally go directly to overview using config
             try:
                 url = COMPONENT_URL_TEMPLATE.format(

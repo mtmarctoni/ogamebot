@@ -4,11 +4,11 @@ import os
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import cast, Dict, Optional
+from typing import TypeAlias, cast, Dict, Optional
 
 from playwright.sync_api import Page
 
-from config.config import DB_FOLDER_PATH
+from config.config import DB_SCHEDULE_PATH
 from config.types import ConfigType, DefensesType, EmpireSnapshotDict, PlanetDict
 from config.shared_types import TechId
 from constants.defenses import Defenses
@@ -18,7 +18,11 @@ from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 from core.utils.resource_utils import read_current_planet_resources
 from core.utils.time_utils import minutes_to_seconds
 
-DEFENSE_STATE_FILE = os.path.join(DB_FOLDER_PATH, "defense_schedule_state.json")
+ScheduleTaskState: TypeAlias = Dict[str, str]
+ScheduleState: TypeAlias = Dict[str, ScheduleTaskState]
+
+SCHEDULE_STATE_FILE = os.path.join(DB_SCHEDULE_PATH, "schedule_state.json")
+DEFENSE_SCHEDULE_TASK = "defenses"
 DEFAULT_DEFENSE_RECHECK_SECONDS = minutes_to_seconds(30)
 
 
@@ -33,31 +37,59 @@ def _now_utc() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def _load_defense_state() -> Dict[str, str]:
-    if not os.path.exists(DEFENSE_STATE_FILE):
-        return {}
+def _load_schedule_state() -> ScheduleState:
+    if not os.path.exists(SCHEDULE_STATE_FILE):
+        default_state: ScheduleState = {DEFENSE_SCHEDULE_TASK: {}}
+        _save_schedule_state(default_state)
+        return default_state
 
     try:
-        with open(DEFENSE_STATE_FILE, "r") as file:
+        with open(SCHEDULE_STATE_FILE, "r", encoding="utf-8") as file:
             data = json.load(file)
     except (OSError, json.JSONDecodeError):
-        return {}
+        return {DEFENSE_SCHEDULE_TASK: {}}
 
     if not isinstance(data, dict):
-        return {}
+        return {DEFENSE_SCHEDULE_TASK: {}}
 
-    raw_state = cast(dict[object, object], data)
-    state: Dict[str, str] = {str(key): str(value) for key, value in raw_state.items()}
+    raw_schedule_state = cast(dict[object, object], data)
+    state: ScheduleState = {}
+
+    for task_name, raw_task_state in raw_schedule_state.items():
+        if not isinstance(raw_task_state, dict):
+            continue
+
+        raw_task_state_dict = cast(dict[object, object], raw_task_state)
+        state[str(task_name)] = {
+            str(key): str(value)
+            for key, value in raw_task_state_dict.items()
+        }
+
+    if DEFENSE_SCHEDULE_TASK not in state:
+        state[DEFENSE_SCHEDULE_TASK] = {}
+
     return state
 
 
-def _save_defense_state(state: Dict[str, str]) -> None:
-    os.makedirs(DB_FOLDER_PATH, exist_ok=True)
-    with open(DEFENSE_STATE_FILE, "w") as file:
+def _save_schedule_state(state: ScheduleState) -> None:
+    os.makedirs(DB_SCHEDULE_PATH, exist_ok=True)
+    with open(SCHEDULE_STATE_FILE, "w", encoding="utf-8") as file:
         json.dump(state, file, indent=2)
 
 
-def _get_last_run_at(state: Dict[str, str], planet_id: str) -> Optional[datetime]:
+def _load_defense_state() -> ScheduleTaskState:
+    schedule_state = _load_schedule_state()
+    defense_state = schedule_state.get(DEFENSE_SCHEDULE_TASK, {})
+    return dict(defense_state)
+
+
+def _save_defense_state(state: ScheduleTaskState) -> None:
+    schedule_state = _load_schedule_state()
+    schedule_state[DEFENSE_SCHEDULE_TASK] = dict(state)
+    _save_schedule_state(schedule_state)
+
+
+def _get_last_run_at(state: ScheduleTaskState, planet_id: str) -> Optional[datetime]:
     raw_value = state.get(planet_id)
     if not raw_value:
         return None
@@ -68,7 +100,7 @@ def _get_last_run_at(state: Dict[str, str], planet_id: str) -> Optional[datetime
         return None
 
 
-def _mark_defense_run(state: Dict[str, str], planet_id: str, when: datetime) -> None:
+def _mark_defense_run(state: ScheduleTaskState, planet_id: str, when: datetime) -> None:
     state[planet_id] = when.isoformat().replace("+00:00", "Z")
 
 

@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timezone
 from typing import Optional
 from config.types import EmpireSnapshotDict
-from config.config import DB_FOLDER_PATH
+from config.config import DB_SNAPSHOTS_PATH
 
 def save_empire_snapshot(empire_data: EmpireSnapshotDict, filename: Optional[str] = None) -> None:
     """Save the latest empire snapshot to a JSON file inside the data folder."""
@@ -15,12 +15,12 @@ def save_empire_snapshot(empire_data: EmpireSnapshotDict, filename: Optional[str
 
     # Save with timestamped filename
     ts_filename = f"empire_snapshot_{timestamp_str.replace(':', '').replace('-', '').replace('.', '')}.json"
-    ts_path = os.path.join(DB_FOLDER_PATH, ts_filename)
-    os.makedirs(os.path.dirname(ts_path), exist_ok=True)
+    ts_path = os.path.join(DB_SNAPSHOTS_PATH, ts_filename)
+    os.makedirs(DB_SNAPSHOTS_PATH, exist_ok=True)
     with open(ts_path, "w") as f:
         json.dump(snapshot, f, indent=2)
 
     # Also save/overwrite empire_snapshot_latest.json
-    latest_path = os.path.join(DB_FOLDER_PATH, "empire_snapshot_latest.json")
+    latest_path = os.path.join(DB_SNAPSHOTS_PATH, "empire_snapshot_latest.json")
     with open(latest_path, "w") as f:
         json.dump(snapshot, f, indent=2)

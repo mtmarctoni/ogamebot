@@ -2,6 +2,7 @@
 """
 Configuration for OGame bot: server, language, universe, and URLs.
 """
+import os
 
 from dotenv import load_dotenv
 
@@ -19,8 +20,10 @@ LANG = "en"
 DOMAIN = f"s{SERVER_ID}-{LANG}.ogame.gameforge.com"
 REFRESH_TIME = 10  # seconds
 
-# Added a constant for the database folder path
+# Database folder paths
 DB_FOLDER_PATH = "database"
+DB_SNAPSHOTS_PATH = os.path.join(DB_FOLDER_PATH, "snapshots")
+DB_SCHEDULE_PATH = os.path.join(DB_FOLDER_PATH, "schedule")
 
 # Base URL for OGame server
 OGAME_BASE_URL = f"https://{DOMAIN}"

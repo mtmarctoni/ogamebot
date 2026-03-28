@@ -4,38 +4,47 @@ from datetime import timedelta
 
 from constants.general import COMPONENTS
 
-def extract_minutes_from_text(duration_text: str) -> int:
+def extract_seconds_from_text(duration_text: str) -> int:
     """
-    Extract minutes from a duration text (e.g., '5m 30s' or '300s').
-    Adds 1 to ensure completion.
+    Extract seconds from a duration text (e.g., '5m 30s' or '300s').
+    Adds 1 second to ensure completion.
     """
+    match_hours = re.search(r'(\d+)h\s*(\d+)m\s*(\d+)s', duration_text)
+    if match_hours:
+        hours, minutes, seconds = map(int, match_hours.groups())
+        return hours * 3600 + minutes * 60 + seconds + 1
+
     match = re.search(r'(\d+)m\s*(\d+)s', duration_text)
     if match:
         minutes, seconds = map(int, match.groups())
-        return (minutes * 60 + seconds) // 60 + 1
+        return minutes * 60 + seconds + 1
+
+    match_minutes = re.search(r'(\d+)m', duration_text)
+    if match_minutes:
+        return int(match_minutes.group(1)) * 60 + 1
 
     match_seconds = re.search(r'(\d+)s', duration_text)
     if match_seconds:
-        return int(match_seconds.group(1)) // 60 + 1
+        return int(match_seconds.group(1)) + 1
 
-    return 1  # Default to 1 minute if no valid duration is found
+    return 60  # Default to 1 minute if no valid duration is found
 
 def parse_duration(duration_attr: str, duration_text: str) -> int:
     """
     Parse the duration from either an ISO 8601 duration attribute or a text-based duration.
-    Returns the duration in minutes, adding 1 to ensure completion.
+    Returns the duration in seconds, adding 1 to ensure completion.
     """
     # Try parsing ISO 8601 duration
     if duration_attr:
         try:
             duration: timedelta = isodate.parse_duration(duration_attr)  # type: ignore
             if isinstance(duration, timedelta):
-                return int(duration.total_seconds() // 60 + 1)
+                return int(duration.total_seconds()) + 1
         except Exception as e:
             print(f"[ERROR] Failed to parse ISO 8601 duration: {e}")
 
     # Fallback: Parse text-based duration
-    return extract_minutes_from_text(duration_text)
+    return extract_seconds_from_text(duration_text)
 
 
 def get_countdown_selector(section: COMPONENTS) -> str:
@@ -64,7 +73,7 @@ def get_countdown_selector(section: COMPONENTS) -> str:
     else:
         return 'time'  # Default selector as a last resort
     
-def wait_minutes(minutes: int) -> int:
+def minutes_to_seconds(minutes: int) -> int:
     """
     Converts minutes to seconds for waiting purposes.
 
@@ -74,3 +83,7 @@ def wait_minutes(minutes: int) -> int:
         int: The equivalent number of seconds.
     """
     return minutes * 60
+
+
+def wait_minutes(minutes: int) -> int:
+    return minutes_to_seconds(minutes)

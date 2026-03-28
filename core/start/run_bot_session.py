@@ -1,10 +1,11 @@
 import os
 import traceback
-from typing import Optional
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
+from typing import Optional, cast
+from playwright.sync_api import Browser, sync_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 from config.config import LOBBY_URL, COMPONENT_URL_TEMPLATE, DEFAULT_PLANET_ID  
 from config.types import ConfigType, ExpeditionConfig, DiscoveriesConfig
+from constants.general import COMPONENTS
 from core.auth.session_manager import save_session, load_session
 from core.navigation.universe import enter_universe
 from core.data.snapshot_manager import save_empire_snapshot
@@ -23,7 +24,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
     """
     Runs a single bot session. Returns True if it should restart, False if stopped by user.
     """
-    browser = None
+    browser: Optional[Browser] = None
     try:
         with sync_playwright() as p:
             session_exists = os.path.exists("fb_session.json")
@@ -44,17 +45,20 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
             handle_cookie_banner(game_page)
             # After entering, optionally go directly to overview using config
             try:
-                url = COMPONENT_URL_TEMPLATE.format(planet_id=DEFAULT_PLANET_ID)
+                url = COMPONENT_URL_TEMPLATE.format(
+                    component=COMPONENTS.OVERVIEW.value,
+                    planet_id=DEFAULT_PLANET_ID,
+                )
                 game_page.goto(url)
                 handle_cookie_banner(game_page)
                 game_page.wait_for_selector('a.menubutton.selected span.textlabel', timeout=10000)
-                assert game_page.inner_text('a.menubutton.selected span.textlabel') == "Resources"
+                assert game_page.inner_text('a.menubutton.selected span.textlabel') == "Overview"
             except Exception:
                 pass
 
             while True:
                 # Reload configuration dynamically
-                config: ConfigType = reload_config()
+                config = cast(ConfigType, reload_config())
 
                 print("[INFO] Entered main game.")
 
@@ -73,13 +77,22 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle expeditions based on dynamic config
                 if config["expeditions"]["enable_expeditions"]:
-                    handle_expeditions(game_page, empire_data, notifier, ExpeditionConfig(target_id=config["expeditions"]["expedition_planet_id"]))
+                    expedition_config: ExpeditionConfig = {
+                        "target_id": config["expeditions"]["expedition_planet_id"],
+                    }
+                    expedition_duration = handle_expeditions(
+                        game_page,
+                        empire_data,
+                        notifier,
+                        expedition_config,
+                    )
                 else:
-                     print("[INFO] Expeditions are disabled in the configuration.")
+                    print("[INFO] Expeditions are disabled in the configuration.")
+                    expedition_duration = 0
 
                 # Handle transports based on dynamic config
                 if config["transports"]["enable_transports"]:
-                    handle_transports(
+                    transport_duration = handle_transports(
                         game_page,
                         empire_data,
                         notifier,
@@ -88,19 +101,36 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                     )
                 else:
                     print("[INFO] Transports are disabled in the configuration.")
+                    transport_duration = 0
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
                 
                 # Handle discoveries based on dynamic config
                 if config["discoveries"]["enable_discoveries"]:
-                    handle_discoveries(game_page, empire_data, notifier, DiscoveriesConfig(target_id=config["discoveries"]["discovery_planet_id"]))
+                    discovery_config: DiscoveriesConfig = {
+                        "target_id": config["discoveries"]["discovery_planet_id"],
+                    }
+                    discovery_duration = handle_discoveries(
+                        game_page,
+                        empire_data,
+                        notifier,
+                        discovery_config,
+                    )
                 else:
                     print("[INFO] Discoveries are disabled in the configuration.")
+                    discovery_duration = 0
                 
-                next_action_duration = max(1, upgrade_duration)
-                # Sleep for the minimum duration across all planets
+                durations: list[int] = [
+                    duration
+                    for duration in [upgrade_duration, expedition_duration, transport_duration, discovery_duration]
+                    if duration > 0
+                ]
+
                 check_interval = config["check_interval"]
+                heartbeat_seconds = check_interval * 60 if check_interval > 0 else 0
+                next_action_duration = min(durations) if durations else heartbeat_seconds
+
                 if check_interval > 0:
                     sleep_for_minimum_duration(next_action_duration, notifier, check_interval)
                 else:

@@ -7,7 +7,7 @@ from constants.general import COMPONENTS
 from core.navigation.planet import navigate_to_section
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
 
-def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier], config: Optional[DiscoveriesConfig]) -> None:
+def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier], config: Optional[DiscoveriesConfig]) -> int:
     """
     Handles discoveries by navigating to the Galaxy page for a random planet and clicking the discovery button.
 
@@ -22,7 +22,7 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
     planets = empire_data.get('planets', [])
     if not planets:
         print("[ERROR] No planets available for discoveries.")
-        return
+        return 0
 
     # Choose a random system from the target planet
     # random_planet = choice(planets)
@@ -33,7 +33,7 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         valid_planets = [planet for planet in planets if "id" in planet]
         if not valid_planets:
             print("[ERROR] No planets with 'id' found for discoveries.")
-            return
+            return 0
         planet_id = PlanetId(valid_planets[0]["id"])
 
     print(f"[INFO] Selected random planet ID: {planet_id}")
@@ -48,7 +48,7 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         navigate_to_section(page, planet_id, COMPONENTS.GALAXY)
     except Exception as e:
         print(f"[ERROR] Failed to navigate to Galaxy page: {e}")
-        return
+        return 0
 
     # Interact with Galaxy and System inputs and the Discovery button
     try:
@@ -97,6 +97,7 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
             if discoverLunched:
                 print("[SUCCESS] Discovery mission successfully initiated!")
                 safe_notify(notifier, "🚀 Discovery mission successfully initiated!")
+                return 0
             else:
                 print("[ERROR] Discovery mission might not have started as expected.")
         except Exception as e:
@@ -105,3 +106,5 @@ def handle_discoveries(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     except Exception as e:
         print(f"[ERROR] Discovery action failed: {e}")
+
+    return 0

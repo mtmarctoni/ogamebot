@@ -43,23 +43,27 @@ def handle_transports(
     notifier: Optional[TelegramNotifier],
     config: TransportsType,
     expedition_planet_id: str,
-) -> None:
+) -> int:
     print("[INFO] Handling transports batch...")
+    next_check_seconds = 0
 
     if not config["enable_transports"]:
         print("[INFO] Transports are disabled in the configuration.")
-        return
+        return next_check_seconds
 
     transport_orders = build_transport_orders(empire_data, config, expedition_planet_id)
     if not transport_orders:
         print("[INFO] No transport orders generated for this cycle.")
-        return
+        return next_check_seconds
 
     grouped_orders = _group_orders_by_origin(transport_orders)
 
     for origin_id, orders in grouped_orders.items():
         origin = orders[0]["origin"]
         if _is_origin_in_cooldown(origin_id, config["cooldown_seconds"]):
+            remaining_cooldown = max(0, int(config["cooldown_seconds"] - (time.time() - _last_transport_dispatch_at[origin_id])))
+            if remaining_cooldown > 0:
+                next_check_seconds = remaining_cooldown if next_check_seconds == 0 else min(next_check_seconds, remaining_cooldown)
             print(
                 f"[INFO] Skipping transports from {origin['name']} ({origin['coords']}) due to cooldown "
                 f"({config['cooldown_seconds']}s)."
@@ -142,3 +146,8 @@ def handle_transports(
 
         if sent_from_origin:
             _last_transport_dispatch_at[origin_id] = time.time()
+            cooldown_seconds = max(0, config["cooldown_seconds"])
+            if cooldown_seconds > 0:
+                next_check_seconds = cooldown_seconds if next_check_seconds == 0 else min(next_check_seconds, cooldown_seconds)
+
+    return next_check_seconds

@@ -22,57 +22,63 @@ def get_default_sleep_times() -> tuple[int, int]:
     else:
         return DEFAULT_MIN_SLEEP, DEFAULT_MAX_SLEEP
 
-def sleep_random_interval(min_minutes: int = 0, max_minutes: int = 0) -> None:
-    """
-    Sleep for a random interval based on the time of day to mimic human behavior.
-    If min_minutes and max_minutes are provided, use them instead of the default behavior.
-    Enforces the default maximum sleep time for the current time of day.
-    """
-    # Determine default sleep times based on the time of day
-    default_min, default_max = get_default_sleep_times()
+def format_duration(seconds: int) -> str:
+    minutes, remaining_seconds = divmod(max(0, seconds), 60)
+    if minutes and remaining_seconds:
+        return f"{minutes}m {remaining_seconds}s"
+    if minutes:
+        return f"{minutes}m"
+    return f"{remaining_seconds}s"
 
-    # If arguments are provided, enforce the default maximum
-    if min_minutes > 0 and max_minutes > 0:
-        min_minutes = max(min_minutes, default_min)  # Ensure at least the default minimum
-        max_minutes = min(max_minutes, default_max)  # Cap at the default maximum
+
+def sleep_random_interval(min_seconds: int = 0, max_seconds: int = 0) -> None:
+    """
+    Sleep for a random interval in seconds.
+    If explicit bounds are not provided, fall back to the time-of-day defaults.
+    """
+    if min_seconds > 0 and max_seconds > 0:
+        sleep_min_seconds = min_seconds
+        sleep_max_seconds = max_seconds
     else:
-        min_minutes = default_min
-        max_minutes = default_max
+        default_min_minutes, default_max_minutes = get_default_sleep_times()
+        sleep_min_seconds = default_min_minutes * 60
+        sleep_max_seconds = default_max_minutes * 60
 
-    if min_minutes > max_minutes:
-        min_minutes, max_minutes = max_minutes, min_minutes  # Swap to ensure valid range
+    if sleep_min_seconds > sleep_max_seconds:
+        sleep_min_seconds, sleep_max_seconds = sleep_max_seconds, sleep_min_seconds
 
-    minutes = random.randint(min_minutes, max_minutes)
-    print(f"\nSleeping for {minutes} minutes before next check... (Ctrl+C to stop)")
-    time.sleep(minutes * 60)
+    duration_seconds = random.randint(sleep_min_seconds, sleep_max_seconds)
+    print(f"\nSleeping for {format_duration(duration_seconds)} before next check... (Ctrl+C to stop)")
+    time.sleep(duration_seconds)
 
-def sleep_for_minimum_duration(duration: int, notifier: Optional[TelegramNotifier], max_check: Optional[int]) -> None:
+def sleep_for_minimum_duration(duration_seconds: int, notifier: Optional[TelegramNotifier], max_check_minutes: Optional[int]) -> None:
     """
-    Sleep for the given duration, ensuring it does not exceed the default maximum sleep time
-    for the current time of day. Falls back to a random interval if duration is 0.
+    Sleep for the given duration in seconds, capped by the configured heartbeat.
+    Falls back to a random interval if duration is 0.
 
     Args:
-        duration (int): The duration to sleep in minutes.
+        duration_seconds (int): The duration to sleep in seconds.
         notifier (Optional[TelegramNotifier]): The notifier instance for sending notifications.
     """
-    if max_check is not None and max_check > 0:
-        default_max = max_check
+    if max_check_minutes is not None and max_check_minutes > 0:
+        max_sleep_seconds = max_check_minutes * 60
     else:
-        default_max = get_default_sleep_times()[1]
+        max_sleep_seconds = get_default_sleep_times()[1] * 60
 
-    # Adjust duration if it exceeds the default maximum
-    if duration > default_max:
-        print(f"[DEBUG] Provided duration ({duration} minutes) exceeds default maximum ({default_max} minutes). Using default maximum.")
-        duration = default_max
+    if duration_seconds > max_sleep_seconds:
+        print(
+            f"[DEBUG] Provided duration ({format_duration(duration_seconds)}) exceeds maximum "
+            f"({format_duration(max_sleep_seconds)}). Using maximum."
+        )
+        duration_seconds = max_sleep_seconds
 
-    if duration > 0:
-        print(f"[DEBUG] Sleeping for duration: {duration} minutes.")
-        sleep_random_interval(duration, duration + 1)
+    if duration_seconds > 0:
+        print(f"[DEBUG] Sleeping for duration: {format_duration(duration_seconds)}.")
+        sleep_random_interval(duration_seconds, duration_seconds + 5)
         if notifier:
-            notifier.send_message(f"Sleeping for {duration} minutes before next check.")
+            notifier.send_message(f"Sleeping for {format_duration(duration_seconds)} before next check.")
     else:
         print("[DEBUG] No valid durations found. Sleeping for a random interval.")
         sleep_random_interval()
         if notifier:
             notifier.send_message("Sleeping randomly before next check.")
-

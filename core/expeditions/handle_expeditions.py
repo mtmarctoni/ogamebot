@@ -13,12 +13,15 @@ from core.utils.coords_utils import generate_target_coordinates_for_expedition, 
 from core.utils.empire_utils import get_target_planet
 from core.utils.fleet_slots import get_fleet_slots_info
 from core.utils.ships_utils import calculate_ships_per_expedition, get_available_ships
-from core.utils.time_utils import wait_minutes
+from core.utils.time_utils import minutes_to_seconds
 
-def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[int]) -> Optional[int]:
+EXPEDITION_RETRY_DELAY_MINUTES = 10
+EXPEDITION_RETRY_DELAY_SECONDS = minutes_to_seconds(EXPEDITION_RETRY_DELAY_MINUTES)
+
+def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[int]) -> int:
     """
     Dispatches a single expedition.
-    Returns the return time in seconds if successful, None otherwise.
+    Returns 0 on success (timer parsing not implemented yet), -1 on failure.
     """
     try:
         # 1. Select Ships
@@ -42,7 +45,7 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
 
         if not has_ships:
             print("[WARN] Could not select any ships for expedition.")
-            return None
+            return -1
 
         page.wait_for_timeout(1000)  # Small wait to ensure inputs are registered
         # Press Enter after filling the ship inputs instead of clicking the button
@@ -101,12 +104,13 @@ def dispatch_expedition(page: Page, ships: FleetToDispatch, coordinates: List[in
         # 5. Get Return Time
         page.wait_for_selector("form#shipsChosen", timeout=10000)  # Wait for the main fleet dispatch page
         print("[INFO] Expedition dispatched successfully.")
+        return 0  # Success, but timer parsing not implemented yet
 
     except Exception as e:
         print(f"[ERROR] Expedition dispatch failed: {e}")
-        return None
+        return -1
 
-def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier], config: Optional[ExpeditionConfig]) -> Optional[int]:
+def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Optional[TelegramNotifier], config: Optional[ExpeditionConfig]) -> int:
     """
     Main handler for expeditions.
     Returns the time to wait until next check (in seconds).
@@ -134,14 +138,14 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         current_deut = int(planet['resources']['deuterium'])
         print(f"[WARN] Not enough deuterium on planet {planet['name']} for expeditions. Have: {current_deut:,}, Need: ~{required_deut:,}")
         safe_notify(notifier, f"⚠️ Not enough deuterium on planet {planet['name']} for expeditions. Have: {current_deut:,}, Need: ~{required_deut:,}. Skipping expedition dispatch.")
-        return wait_minutes(10)
+        return EXPEDITION_RETRY_DELAY_SECONDS
 
     # 2. Switch to Target Planet and Go to Fleet Dispatch
     try:
         navigate_to_section(page, planet_id, COMPONENTS.FLEET_DISPATCH)
     except Exception as e:
         print(f"[ERROR] Expedition fleet dispatch navigation failed: {e}")
-        return wait_minutes(10)
+        return EXPEDITION_RETRY_DELAY_SECONDS
 
     # Check if there are ships available
     # in the div element with id="warning" it has to be some inner text saying: "There are no ships available"
@@ -151,7 +155,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
             warning_text = warning_locator.inner_text()
             if "There are no ships on this planet." in warning_text:
                 print("[INFO] No ships available for expeditions.")
-                return wait_minutes(10)
+                return EXPEDITION_RETRY_DELAY_SECONDS
     except Exception as e:
         print(f"[ERROR] Checking for available ships failed: {e}")
 
@@ -176,7 +180,7 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     if available_slots <= 0:
         print("[INFO] No expedition slots available.")
-        return wait_minutes(10)
+        return EXPEDITION_RETRY_DELAY_SECONDS
 
     # 4. Get Available Ships
     available_ships = get_available_ships(planet)
@@ -186,9 +190,10 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
 
     if not ships_to_send:
         print("[WARN] No ships available for expedition.")
-        return wait_minutes(10)
+        return EXPEDITION_RETRY_DELAY_SECONDS
 
     # 6. Dispatch Expeditions
+    next_check_seconds = 0
     for i in range(available_slots):
         print(f"[INFO] Dispatching expedition {i+1}/{available_slots}...")
 
@@ -204,11 +209,18 @@ def handle_expeditions(page: Page, empire_data: EmpireSnapshotDict, notifier: Op
         galaxy, system, _ = get_coords_from_planet(planet)
         target_coordinates = generate_target_coordinates_for_expedition(galaxy, system)
 
-        return_time = dispatch_expedition(page, ships_to_send, target_coordinates)
+        return_code = dispatch_expedition(page, ships_to_send, target_coordinates)
 
-        if return_time:
+        if return_code >= 0:
             safe_notify(notifier, f"Expedition dispatched to {target_coordinates}. Ships: {ships_to_send}")
+            if return_code > 0:
+                next_check_seconds = return_code if next_check_seconds == 0 else min(next_check_seconds, return_code)
             # Wait a bit between dispatches
             time.sleep(5)
         else:
             print("[ERROR] Expedition dispatch failed.")
+
+    if next_check_seconds > 0:
+        return next_check_seconds
+
+    return EXPEDITION_RETRY_DELAY_SECONDS

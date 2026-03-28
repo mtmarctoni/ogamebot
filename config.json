@@ -14,7 +14,7 @@
     "discovery_planet_id": "33634167"
   },
   "transports": {
-    "enable_transports": true,
+    "enable_transports": false,
     "target_planet_ids": [
       "33629156",
       "33632165",
@@ -41,6 +41,16 @@
       "deuterium": 2500000
     },
     "dispatch_interval_seconds": 3
+  },
+  "defenses": {
+    "enable_defenses": true,
+    "interval_hours": 6,
+    "resource_budget_percent": {
+      "metal": 20,
+      "crystal": 20,
+      "deuterium": 20
+    },
+    "included_tech_ids": ["406", "405", "404", "403", "402", "401"]
   },
   "upgrades": {
     "resource_minimums": {

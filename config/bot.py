@@ -48,6 +48,16 @@ DEFAULT_CONFIG: ConfigRawType = {
         },
         "dispatch_interval_seconds": 3
     },
+    "defenses": {
+        "enable_defenses": False,
+        "interval_hours": 6,
+        "resource_budget_percent": {
+            "metal": 20,
+            "crystal": 20,
+            "deuterium": 20
+        },
+        "included_tech_ids": ["406", "405", "404", "403", "402", "401"]
+    },
     "upgrades": {
         "resource_minimums": {
             "metal": 0,

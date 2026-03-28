@@ -104,6 +104,19 @@ class TransportSafetyReserveType(TypedDict):
     crystal: int
     deuterium: int
 
+
+class DefenseResourceBudgetType(TypedDict):
+    metal: int
+    crystal: int
+    deuterium: int
+
+
+class DefensesRawType(TypedDict):
+    enable_defenses: bool
+    interval_hours: int
+    resource_budget_percent: DefenseResourceBudgetType
+    included_tech_ids: List[str]
+
 class TransportsRawType(TypedDict):
     enable_transports: bool
     target_planet_ids: List[str]
@@ -119,6 +132,7 @@ class ConfigRawType(TypedDict):
     expeditions: ExpeditionsRawType
     discoveries: DiscoveriesRawType
     transports: TransportsRawType
+    defenses: DefensesRawType
     upgrades: UpgradesRawType
 
 class UpgradesPrioritiesType(TypedDict):
@@ -176,11 +190,19 @@ class TransportsType(TypedDict):
     safety_reserve: TransportSafetyReserveType
     dispatch_interval_seconds: int
 
+
+class DefensesType(TypedDict):
+    enable_defenses: bool
+    interval_hours: int
+    resource_budget_percent: DefenseResourceBudgetType
+    included_tech_ids: List[str]
+
 class ConfigType(TypedDict):
     check_interval: int
     expeditions: ExpeditionsType
     discoveries: DiscoveriesType
     transports: TransportsType
+    defenses: DefensesType
     upgrades: UpgradesSectionType
 
 

@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from typing import Dict, Any, List, cast, Match
 
 from config.config import PLANETS
+from constants.defenses import Defenses
 from constants.lifeforms import LifeformClass, Lifeforms
 from config.types import PlanetResources, PlanetStorage, PlanetDict
 from constants.resources import ResourceClass, ResourceStorageClass
@@ -188,7 +189,7 @@ def extract_empire_view(html: str, is_moon: bool = False) -> Dict[str, List[Plan
         # Building/ship/defense/research/lifeform IDs (from config or hardcoded)
         supply_ids = ['1', '2', '3', '4', '12', '22', '23', '24']
         station_ids = ['14', '15', '21', '31', '33', '34', '44', '36']
-        defense_ids = ['401', '402', '403', '404', '405', '406', '407', '408', '502', '503']
+        defense_ids = [str(defense_id) for defense_id in Defenses.get_all_ids()]
         ship_ids = ['204', '205', '206', '207', '215', '211', '213', '214', '218', '219', '202', '203', '208', '209', '210', '212', '217']
         research_ids = ['113', '120', '121', '114', '122', '106', '108', '124', '123', '199', '115', '117', '118', '109', '110', '111']
 

@@ -13,6 +13,7 @@ from core.utils.attack_detection import check_for_attack_alert
 from core.utils.sleep_utils import sleep_for_minimum_duration
 from core.info.empire import extract_empire_info
 from core.upgrade.handle_upgrades import handle_upgrades
+from core.upgrade.defense import handle_scheduled_defense_build
 from core.expeditions.handle_expeditions import handle_expeditions
 from core.transport.handle_transports import handle_transports
 from core.notifications.telegram_notifier import TelegramNotifier, safe_notify
@@ -105,6 +106,8 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
 
                 # Handle all upgrades for the empire
                 upgrade_duration = handle_upgrades(empire_data, game_page, notifier, config)
+
+                defense_duration = handle_scheduled_defense_build(game_page, empire_data, notifier, config)
                 
                 # Handle discoveries based on dynamic config
                 if config["discoveries"]["enable_discoveries"]:
@@ -123,7 +126,7 @@ def run_bot_session(notifier: Optional[TelegramNotifier]) -> bool:
                 
                 durations: list[int] = [
                     duration
-                    for duration in [upgrade_duration, expedition_duration, transport_duration, discovery_duration]
+                    for duration in [upgrade_duration, expedition_duration, transport_duration, defense_duration, discovery_duration]
                     if duration > 0
                 ]
 
